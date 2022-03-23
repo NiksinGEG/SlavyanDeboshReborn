@@ -8,9 +8,18 @@ using UnityEngine;
 
 namespace Assets.Map.WorldMap
 {
+    public class HexCellEventArgs : EventArgs
+    {
+        public Vector3 localPosition;
+        public HexCellEventArgs(Vector3 localPosition)
+        {
+            this.localPosition = localPosition;
+        }
+    }
+
     public class HexCell : MonoBehaviour
     {
         public HexCoords coords;
-        public EventHandler MouseLeftClick;
+        public EventHandler<HexCellEventArgs> MouseLeftClick;
     }
 }

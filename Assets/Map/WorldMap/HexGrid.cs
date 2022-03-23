@@ -78,6 +78,7 @@ namespace Assets.Map.WorldMap
                 {
 					print("touched at " + position);
 					print("touched cell " + cell.coords);
+					cell.MouseLeftClick.Invoke(cell, new HexCellEventArgs(position));
 					break;
                 }
 			}
