@@ -26,6 +26,7 @@ namespace Assets.Map.WorldMap
 			{
 				for (int x = 0; x < width; x++)
 				{
+					
 					CreateCell(x, z, i++);
 				}
 			}
@@ -46,6 +47,8 @@ namespace Assets.Map.WorldMap
 			HexCell cell = cells[i] = Instantiate<HexCell>(cell_prefab);
 			cell.transform.SetParent(transform, false);
 			cell.transform.localPosition = position;
+			cell.coords = position;
+			cell.name = $"X = {Math.Round(cell.coords.x)}, Y = {Math.Round(cell.coords.y)}, Z = {Math.Round(cell.coords.z)}";
 		}
 	}
 }

@@ -5,10 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
+
 namespace Assets.Map.WorldMap
 {
     public class HexCell : MonoBehaviour
     {
+        [SerializeField] public Vector3 coords;
+
 
     }
 }
