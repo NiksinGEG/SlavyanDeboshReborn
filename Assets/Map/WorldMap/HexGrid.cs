@@ -26,7 +26,6 @@ namespace Assets.Map.WorldMap
 			{
 				for (int x = 0; x < width; x++)
 				{
-					
 					CreateCell(x, z, i++);
 				}
 			}
@@ -49,6 +48,48 @@ namespace Assets.Map.WorldMap
 			cell.transform.localPosition = position;
 			cell.coords = position;
 			cell.name = $"X = {Math.Round(cell.coords.x)}, Y = {Math.Round(cell.coords.y)}, Z = {Math.Round(cell.coords.z)}";
+		}
+
+		void Update()
+		{
+			if (Input.GetMouseButton(0))
+			{
+				HandleInput();
+			}
+		}
+
+		void HandleInput()
+		{
+			Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+			RaycastHit hit;
+			
+			if (Physics.Raycast(inputRay, out hit))
+			{
+				TouchCell(hit.point);
+			}
+		}
+
+		void TouchCell(Vector3 position)
+		{
+			position = transform.InverseTransformPoint(position);
+			//Приведение координат хита к позиции гекса
+			float off = position.z / (HexMetrics.outerRadius * 3f);
+			int x = Mathf.RoundToInt(position.x / (HexMetrics.innerRadius * 2f) - off);
+			int y = 0;
+			int z = Mathf.RoundToInt(position.z / (HexMetrics.outerRadius * 1.5f));
+			print("approximated coords: " + x + "; " + y + "; " + z);
+			foreach(var cell in cells)
+            {
+				if(Mathf.RoundToInt(cell.coords.x) == x && 
+					Mathf.RoundToInt(cell.coords.y) == y &&
+					Mathf.RoundToInt(cell.coords.z) == z)
+                {
+					print("touched cell with coords: " + x + "; " + y + "; " + z);
+                }
+			}
+			
+			print("touched at " + position);
+			Debug.Log("touched at " + position);
 		}
 	}
 }

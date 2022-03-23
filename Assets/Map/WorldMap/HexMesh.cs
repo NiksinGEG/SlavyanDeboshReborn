@@ -11,6 +11,7 @@ namespace Assets.Map.WorldMap
     public class HexMesh : MonoBehaviour
     {
 		Mesh hexMesh;
+		MeshCollider hexCollider;
 		List<Vector3> vertices;
 		List<int> triangles;
 
@@ -26,6 +27,8 @@ namespace Assets.Map.WorldMap
 			hexMesh.vertices = vertices.ToArray();
 			hexMesh.triangles = triangles.ToArray();
 			hexMesh.RecalculateNormals();
+
+			hexCollider.sharedMesh = hexMesh;
 		}
 
 		void Triangulate(HexCell cell)
@@ -52,6 +55,7 @@ namespace Assets.Map.WorldMap
 		void Awake()
 		{
 			GetComponent<MeshFilter>().mesh = hexMesh = new Mesh();
+			hexCollider = gameObject.AddComponent<MeshCollider>();
 			hexMesh.name = "Hex Mesh";
 			vertices = new List<Vector3>();
 			triangles = new List<int>();
