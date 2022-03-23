@@ -10,7 +10,7 @@ namespace Assets.Map.WorldMap
 {
     public class HexCell : MonoBehaviour
     {
-        [SerializeField] public Vector3 coords;
+        public HexCoords coords;
         public EventHandler MouseLeftClick;
     }
 }

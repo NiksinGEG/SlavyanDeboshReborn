@@ -46,8 +46,8 @@ namespace Assets.Map.WorldMap
 			HexCell cell = cells[i] = Instantiate<HexCell>(cell_prefab);
 			cell.transform.SetParent(transform, false);
 			cell.transform.localPosition = position;
-			cell.coords = position;
-			cell.name = $"X = {Math.Round(cell.coords.x)}, Y = {Math.Round(cell.coords.y)}, Z = {Math.Round(cell.coords.z)}";
+			cell.coords = HexCoords.FromOffset(x, z);
+			cell.name = $"HexCell {cell.coords}";
 		}
 
 		void Update()
@@ -72,24 +72,15 @@ namespace Assets.Map.WorldMap
 		void TouchCell(Vector3 position)
 		{
 			position = transform.InverseTransformPoint(position);
-			//Приведение координат хита к позиции гекса
-			float off = position.z / (HexMetrics.outerRadius * 3f);
-			int x = Mathf.RoundToInt(position.x / (HexMetrics.innerRadius * 2f) - off);
-			int y = 0;
-			int z = Mathf.RoundToInt(position.z / (HexMetrics.outerRadius * 1.5f));
-			print("approximated coords: " + x + "; " + y + "; " + z);
 			foreach(var cell in cells)
             {
-				if(Mathf.RoundToInt(cell.coords.x) == x && 
-					Mathf.RoundToInt(cell.coords.y) == y &&
-					Mathf.RoundToInt(cell.coords.z) == z)
+				if(cell.coords.EqualsTo(HexCoords.FromPosition(position)))
                 {
-					print("touched cell with coords: " + x + "; " + y + "; " + z);
+					print("touched at " + position);
+					print("touched cell " + cell.coords);
+					break;
                 }
 			}
-			
-			print("touched at " + position);
-			Debug.Log("touched at " + position);
 		}
 	}
 }
