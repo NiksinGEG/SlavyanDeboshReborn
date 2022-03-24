@@ -11,6 +11,8 @@ namespace Assets.Map.WorldMap
     {
         public int width = 6;
         public int height = 6;
+		public Color defaultColor = Color.white;
+		public Color chosenColor = Color.cyan;
 
         public HexCell cell_prefab;
 
@@ -36,6 +38,11 @@ namespace Assets.Map.WorldMap
 			hexMesh.Triangulate(cells);
 		}
 
+		void RedrawEvent(object sender, EventArgs e)
+        {
+			hexMesh.Triangulate(cells);
+        }
+
 		void CreateCell(int x, int z, int i)
 		{
 			Vector3 position;
@@ -48,6 +55,9 @@ namespace Assets.Map.WorldMap
 			cell.transform.localPosition = position;
 			cell.coords = HexCoords.FromOffset(x, z);
 			cell.name = $"HexCell {cell.coords}";
+			cell.color = defaultColor;
+
+			cell.MouseLeftClick += RedrawEvent;
 		}
 
 		void Update()
@@ -72,13 +82,22 @@ namespace Assets.Map.WorldMap
 		void TouchCell(Vector3 position)
 		{
 			position = transform.InverseTransformPoint(position);
-			foreach(var cell in cells)
+			/*print("touched at " + position);
+			HexCoords coords = HexCoords.FromPosition(position);
+			print("touched cell " + coords);
+			int index = coords.x + coords.z * width + coords.z / 2;
+			HexCell tmp = cells[index];
+			tmp.color = chosenColor;
+			hexMesh.Triangulate(cells);*/
+			foreach (var cell in cells)
             {
 				if(cell.coords.EqualsTo(HexCoords.FromPosition(position)))
                 {
 					print("touched at " + position);
 					print("touched cell " + cell.coords);
+					//cell.Choose();
 					cell.MouseLeftClick.Invoke(cell, new HexCellEventArgs(position));
+					//hexMesh.Triangulate(cells);
 					break;
                 }
 			}

@@ -20,6 +20,14 @@ namespace Assets.Map.WorldMap
     public class HexCell : MonoBehaviour
     {
         public HexCoords coords;
+        public Color color;
         public EventHandler<HexCellEventArgs> MouseLeftClick;
+
+        public HexCell() { MouseLeftClick += Choose; }
+
+        public void Choose(object sender, HexCellEventArgs e)
+        {
+            color = Color.cyan;
+        }
     }
 }
