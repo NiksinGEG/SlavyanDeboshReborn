@@ -48,6 +48,8 @@ namespace Assets.Map.WorldMap
 			Vector3 position;
 			position.x = (x + z * 0.5f - z / 2) * (HexMetrics.innerRadius * 2f);
 			position.y = 0f;
+			if (i == 2)
+				position.y = 10f;
 			position.z = z * (HexMetrics.outerRadius * 1.5f);
 
 			HexCell cell = cells[i] = Instantiate<HexCell>(cell_prefab);
