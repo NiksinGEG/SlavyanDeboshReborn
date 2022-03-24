@@ -16,7 +16,7 @@ namespace Assets.Map.WorldMap
 		List<int> triangles;
 		List<Color> colors;
 
-		public void Triangulate(HexCell[] cells)
+		public void Triangulate(HexCell[] cells, int width) //От параметра width надо будет избавиться
 		{
 			hexMesh.Clear();
 			vertices.Clear();
@@ -47,6 +47,21 @@ namespace Assets.Map.WorldMap
 				AddTriangleColor(cell.color);
 			}
 		}
+
+		void TriangulateConnections(HexCell[] cells, int width) //От параметра width надо будет избавиться
+		{
+			for(int i = 0; i < cells.Length; i++)
+            {
+				foreach(var nei in GetNeighbours(cells, i, width))
+                {
+					int ind = IndexFromHexCoords(nei.coords.x, nei.coords.z, width);
+					int vertind = ind * 18;
+					/*---2DO: Определиться как найти координаты (ну или индексы в массиве) трёх точек: одна (левая) на нашем ребре между клеткой и соседом
+					 * И две на ребре соседа---*/
+                }
+            }
+        }
+
 		void AddTriangle(Vector3 v1, Vector3 v2, Vector3 v3)
 		{
 			int vertexIndex = vertices.Count;
@@ -73,5 +88,49 @@ namespace Assets.Map.WorldMap
 			triangles = new List<int>();
 			colors = new List<Color>();
 		}
+
+		List<HexCell> GetNeighbours(HexCell[] cells, int index, int width) //От параметра width надо будет избавиться
+        {
+			List<HexCell> neighbours = new List<HexCell>();
+			HexCell cur_cell = cells[index];
+			HexCoords cur_coords = cur_cell.coords;
+			for(int i = 0; i < 6; i++)
+            {
+				HexCoords nei_coords = cur_coords;
+				switch(i)
+                {
+					case 0:
+						nei_coords.x += 1;
+						break;
+					case 1:
+						nei_coords.x -= 1;
+						break;
+					case 2:
+						nei_coords.z += 1;
+						break;
+					case 3:
+						nei_coords.z -= 1;
+						break;
+					case 4:
+						nei_coords.x += 1;
+						nei_coords.z -= 1;
+						break;
+					case 5:
+						nei_coords.x -= 1;
+						nei_coords.z += 1;
+						break;
+
+				}
+				int nei_index = IndexFromHexCoords(nei_coords.x, nei_coords.z, width);
+				if (nei_index >= 0 && nei_index < cells.Length)
+					neighbours.Add(cells[nei_index]);
+            }
+			return neighbours;
+		}
+
+		int IndexFromHexCoords(int x, int z, int mapWidth)
+        {
+			return x + z * mapWidth + z / 2;
+        }
 	}
 }

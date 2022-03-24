@@ -9,10 +9,12 @@ public struct HexCoords
     public int x
     {
         get { return _x; }
+        set { _x = value; }
     }
     public int z
     {
         get { return _z; }
+        set { _z = value; }
     }
     public int y
     {

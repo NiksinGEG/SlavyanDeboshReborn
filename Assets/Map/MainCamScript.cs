@@ -5,7 +5,7 @@ using UnityEngine;
 public class MainCamScript : MonoBehaviour
 {
     [SerializeField]
-    public float delta = 0;
+    public float delta = 0.5f;
 
     // Start is called before the first frame update
     void Start()
@@ -17,28 +17,16 @@ public class MainCamScript : MonoBehaviour
     void Update()
     {
         Vector3 pos = gameObject.transform.position;
-        Quaternion q = gameObject.transform.rotation;
-        //float delta = 1f;
+        Vector3 newPos = pos;
+
         if (Input.GetKey(KeyCode.D))
-        {
-            Vector3 newPos = new Vector3(pos.x + delta, pos.y, pos.z);
-            gameObject.transform.position = newPos;
-        }
-        if(Input.GetKey(KeyCode.A))
-        {
-            Vector3 newPos = new Vector3(pos.x - delta, pos.y, pos.z);
-            gameObject.transform.position = newPos;
-        }
+            newPos.x += delta;
+        if (Input.GetKey(KeyCode.A))
+            newPos.x -= delta;
         if (Input.GetKey(KeyCode.S))
-        {
-            Vector3 newPos = new Vector3(pos.x, pos.y, pos.z - delta);
-            gameObject.transform.position = newPos;
-        }
+            newPos.z -= delta;
         if (Input.GetKey(KeyCode.W))
-        {
-            Vector3 newPos = new Vector3(pos.x, pos.y, pos.z + delta);
-            gameObject.transform.position = newPos;
-        }
+            newPos.z += delta;
         if (Input.GetKey(KeyCode.Q))
         {
             Vector3 ax = new Vector3(1, 0, 0);
@@ -50,14 +38,10 @@ public class MainCamScript : MonoBehaviour
             gameObject.transform.Rotate(ax, -0.1f);
         }
         if (Input.GetKey(KeyCode.Space))
-        {
-            Vector3 newPos = new Vector3(pos.x, pos.y + delta, pos.z);
-            gameObject.transform.position = newPos;
-        }
+            newPos.y += delta;
         if (Input.GetKey(KeyCode.LeftControl))
-        {
-            Vector3 newPos = new Vector3(pos.x, pos.y - delta, pos.z);
-            gameObject.transform.position = newPos;
-        }
+            newPos.y -= delta;
+        
+        gameObject.transform.position = newPos;
     }
 }
