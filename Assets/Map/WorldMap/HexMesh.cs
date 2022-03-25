@@ -18,6 +18,7 @@ namespace Assets.Map.WorldMap
 
 		public void Triangulate(HexCell[] cells, int width) //От параметра width надо будет избавиться
 		{
+			print("Triangulate start...");
 			hexMesh.Clear();
 			vertices.Clear();
 			triangles.Clear();
@@ -26,12 +27,14 @@ namespace Assets.Map.WorldMap
 			{
 				Triangulate(cells[i]);
 			}
+			TriangulateConnections(cells, width);
 			hexMesh.vertices = vertices.ToArray();
 			hexMesh.triangles = triangles.ToArray();
 			hexMesh.colors = colors.ToArray();
 			hexMesh.RecalculateNormals();
 
 			hexCollider.sharedMesh = hexMesh;
+			print("Triangulate end...");
 		}
 
 		void Triangulate(HexCell cell)
@@ -55,9 +58,17 @@ namespace Assets.Map.WorldMap
 				foreach(var nei in GetNeighbours(cells, i, width))
                 {
 					int ind = IndexFromHexCoords(nei.coords.x, nei.coords.z, width);
-					int vertind = ind * 18;
-					/*---2DO: Определиться как найти координаты (ну или индексы в массиве) трёх точек: одна (левая) на нашем ребре между клеткой и соседом
-					 * И две на ребре соседа---*/
+					int our_vertind = i * 18;
+					int nei_vertind = ind * 18;
+					int dir = cells[i].GetDirection(nei);
+					if (dir == -1)
+						continue;
+					Vector3 v1 = vertices[1 + (dir * 3) + our_vertind];
+					int antidir = nei.GetDirection(cells[i]);
+					Vector3 v2 = vertices[1 + (antidir * 3) + nei_vertind];
+					Vector3 v3 = vertices[2 + (antidir * 3) + nei_vertind];
+					AddTriangle(v1, v2, v3);
+					AddTriangleColor(Color.yellow);
                 }
             }
         }
@@ -89,35 +100,33 @@ namespace Assets.Map.WorldMap
 			colors = new List<Color>();
 		}
 
-		List<HexCell> GetNeighbours(HexCell[] cells, int index, int width) //От параметра width надо будет избавиться
+		public List<HexCell> GetNeighbours(HexCell[] cells, int index, int width) //От параметра width надо будет избавиться
         {
 			List<HexCell> neighbours = new List<HexCell>();
 			HexCell cur_cell = cells[index];
 			HexCoords cur_coords = cur_cell.coords;
 			for(int i = 0; i < 6; i++)
             {
-				HexCoords nei_coords = cur_coords;
+				HexCoords nei_coords = new HexCoords(-1, -1);
 				switch(i)
                 {
 					case 0:
-						nei_coords.x += 1;
+						nei_coords = new HexCoords(cur_coords.x, cur_coords.z + 1);
 						break;
 					case 1:
-						nei_coords.x -= 1;
+						nei_coords = new HexCoords(cur_coords.x + 1, cur_coords.z);
 						break;
 					case 2:
-						nei_coords.z += 1;
+						nei_coords = new HexCoords(cur_coords.x + 1, cur_coords.z - 1);
 						break;
 					case 3:
-						nei_coords.z -= 1;
+						nei_coords = new HexCoords(cur_coords.x, cur_coords.z - 1);
 						break;
 					case 4:
-						nei_coords.x += 1;
-						nei_coords.z -= 1;
+						nei_coords = new HexCoords(cur_coords.x - 1, cur_coords.z);
 						break;
 					case 5:
-						nei_coords.x -= 1;
-						nei_coords.z += 1;
+						nei_coords = new HexCoords(cur_coords.x - 1, cur_coords.z + 1);
 						break;
 
 				}

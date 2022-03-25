@@ -59,10 +59,14 @@ namespace Assets.Map.WorldMap
 
 			cell.MouseLeftClick += RedrawEvent;
 
+			if (i == 1)
+				cell.Elevation = 1;
 			if (i == 2)
 				cell.Elevation = 1;
 			if (i == 4)
 				cell.Elevation = -2;
+			if (i == 125)
+				cell.Elevation = 2;
 		}
 
 		void Update()
