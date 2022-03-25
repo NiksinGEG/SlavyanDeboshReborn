@@ -19,8 +19,17 @@ namespace Assets.Map.WorldMap
 
     public class HexCell : MonoBehaviour
     {
-        public HexCoords coords;
-        public Color color;
+        [SerializeField] public HexCoords coords;
+        [SerializeField] public Color color;
+
+        //Цвета клеток для дегенерации
+        [SerializeField] public Color desertColor = Color.yellow;
+        [SerializeField] public Color terrainColor = Color.green;
+        [SerializeField] public Color rockColor = Color.gray;
+        
+        //Тестовый цвет
+        [SerializeField] public Color neighboorColor = Color.red;
+
         public EventHandler<HexCellEventArgs> MouseLeftClick;
 
         public HexCell() { MouseLeftClick += Choose; }

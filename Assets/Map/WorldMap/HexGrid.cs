@@ -9,8 +9,11 @@ namespace Assets.Map.WorldMap
 {
     public class HexGrid : MonoBehaviour
     {
-        public int width = 6;
-        public int height = 6;
+        public int width;
+        public int height;
+	
+		public int generationSeed; //Семя для генерации карты. Перекинем потом в хоста
+		
 		public Color defaultColor = Color.white;
 		public Color chosenColor = Color.cyan;
 
@@ -22,6 +25,8 @@ namespace Assets.Map.WorldMap
 		[ContextMenu("Generate game field")]
 		void Awake()
 		{
+			System.Random rnd = new System.Random();
+			generationSeed = rnd.Next(1, 30000000);	//Семя сегенерилось
 			hexMesh = GetComponentInChildren<HexMesh>();
 			cells = new HexCell[height * width];
 			for (int z = 0, i = 0; z < height; z++)
@@ -31,6 +36,9 @@ namespace Assets.Map.WorldMap
 					CreateCell(x, z, i++);
 				}
 			}
+			System.Random rndSeed = new System.Random(generationSeed);
+			cells = GenerationHexField.GenerateHexMap(cells, rndSeed, width, height);
+			Console.WriteLine("ABOBA");
 		}
 
 		void Start()
@@ -54,9 +62,16 @@ namespace Assets.Map.WorldMap
 			cell.transform.SetParent(transform, false);
 			cell.transform.localPosition = position;
 			cell.coords = HexCoords.FromOffset(x, z);
-			cell.name = $"HexCell {cell.coords}";
-			cell.color = defaultColor;
+			cell.name = $"HexCell {cell.coords}, Array {i}";
 
+			//Код для генерации флага Украины
+			/*
+			if (z < height / 2)
+				cell.color = Color.blue;
+			else
+				cell.color = cell.desertColor;*/
+
+			cell.color = cell.terrainColor;
 			cell.MouseLeftClick += RedrawEvent;
 		}
 
