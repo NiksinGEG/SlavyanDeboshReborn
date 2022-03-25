@@ -32,6 +32,19 @@ namespace Assets.Map.WorldMap
 
         public EventHandler<HexCellEventArgs> MouseLeftClick;
 
+        private int elevation;
+        public int Elevation
+        {
+            get { return elevation; }
+            set
+            {
+                elevation = value;
+                Vector3 pos = transform.localPosition;
+                pos.y = value * HexMetrics.elevationStep;
+                transform.localPosition = pos;
+            }
+        }
+
         public HexCell() { MouseLeftClick += Choose; }
 
         public void Choose(object sender, HexCellEventArgs e)

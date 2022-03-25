@@ -43,20 +43,20 @@ namespace Assets.Map.WorldMap
 
 		void Start()
 		{
-			hexMesh.Triangulate(cells);
+			hexMesh.Triangulate(cells, width);
 		}
 
 		void RedrawEvent(object sender, EventArgs e)
         {
-			hexMesh.Triangulate(cells);
+			hexMesh.Triangulate(cells, width);
         }
 
 		void CreateCell(int x, int z, int i)
 		{
-			Vector3 position;
-			position.x = (x + z * 0.5f - z / 2) * (HexMetrics.innerRadius * 2f);
-			position.y = 0f;
-			position.z = z * (HexMetrics.outerRadius * 1.5f);
+			Vector3 position = new Vector3(
+				(x + z * 0.5f - z / 2) * (HexMetrics.innerRadius * 2f),
+				0f,
+				z * (HexMetrics.outerRadius * 1.5f));
 
 			HexCell cell = cells[i] = Instantiate<HexCell>(cell_prefab);
 			cell.transform.SetParent(transform, false);
@@ -73,6 +73,11 @@ namespace Assets.Map.WorldMap
 
 			cell.color = cell.terrainColor;
 			cell.MouseLeftClick += RedrawEvent;
+
+			if (i == 2)
+				cell.Elevation = 1;
+			if (i == 4)
+				cell.Elevation = -2;
 		}
 
 		void Update()
