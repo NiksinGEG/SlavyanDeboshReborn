@@ -146,7 +146,7 @@ namespace Assets.Map.WorldMap
                     tryCount = 0;
                     int index = IndexFromHexCoords(neighbourCells[nextCell].coords.x, neighbourCells[nextCell].coords.z, width);
                     cells[index].CellColor = cells[0].rockColor;
-                    int rndEvaluate = rndSeed.Next(1, 4);
+                    int rndEvaluate = rndSeed.Next(2, 4);
                     cells[index].Elevation = rndEvaluate;
                     cells = GenerateTransition(cells, startCell, width);
                     startCell = index;
