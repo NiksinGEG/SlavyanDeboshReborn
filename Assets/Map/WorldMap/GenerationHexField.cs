@@ -143,7 +143,7 @@ namespace Assets.Map.WorldMap
 
         private HexCell[] GenerateRock(HexCell[] cells, System.Random rndSeed, int width)
         {
-            int maxCount = rndSeed.Next(10,50);
+            int maxCount = rndSeed.Next(10,250);
             int startCell = rndSeed.Next(cells.Length);
             int tryCount = 0;
             while (maxCount != 0)
@@ -156,7 +156,7 @@ namespace Assets.Map.WorldMap
                     tryCount = 0;
                     int index = IndexFromHexCoords(neighbourCells[nextCell].coords.x, neighbourCells[nextCell].coords.z, width);
                     cells[index].CellColor = cells[0].rockColor;
-                    int rndEvaluate = rndSeed.Next(2, 4);
+                    int rndEvaluate = rndSeed.Next(3, 5);
                     cells[index].Elevation = rndEvaluate;
                     cells = GenerateTransition(cells, startCell, width);
                     startCell = index;
