@@ -108,23 +108,33 @@ namespace Assets.Map.WorldMap
         private HexCell[] GenerateTransition(HexCell[] cells,int startCell, int width)
         {
             int tryCount = 0;
-            while(cells[startCell].Elevation > 1)
+            int count = 0;
+            while(count != 6)
             {
                 neighbourCells = GetNeighboursCell(cells, startCell, width);
+                int minRockEleation = cells[startCell].Elevation;
                 foreach (var cell in neighbourCells)
-                    if (cell.CellColor == cell.terrainColor && cell.Elevation < cells[startCell].Elevation)
+                {
+                    if (cell.CellColor == cell.rockColor && minRockEleation > cell.Elevation)
+                        minRockEleation = cell.Elevation;
+                }
+
+                foreach (var cell in neighbourCells)
+                    if (cell.CellColor == cell.terrainColor && cell.Elevation <= cells[startCell].Elevation)
                     {
                         tryCount = 0;
                         int index = IndexFromHexCoords(cell.coords.x, cell.coords.z, width);
-                        cells[index].Elevation = cells[startCell].Elevation - 1;
+                        cells[index].Elevation = minRockEleation - 1;
                     }
                 foreach (var cell in neighbourCells)
-                    if (cell.CellColor == cell.terrainColor && cell.Elevation == cells[startCell].Elevation - 1)
+                    if (cell.CellColor == cell.terrainColor && cell.Elevation == cells[startCell].Elevation - 1 && cell.Elevation > 0)
                     {
                         tryCount = 0;
                         startCell = IndexFromHexCoords(cell.coords.x, cell.coords.z, width);
                     }
                 tryCount++;
+                count++;
+                Console.WriteLine($"tryCount = {tryCount}");
                 if (tryCount == 5)
                     return cells;
             }
@@ -133,7 +143,7 @@ namespace Assets.Map.WorldMap
 
         private HexCell[] GenerateRock(HexCell[] cells, System.Random rndSeed, int width)
         {
-            int maxCount = rndSeed.Next(10,250);
+            int maxCount = rndSeed.Next(10,50);
             int startCell = rndSeed.Next(cells.Length);
             int tryCount = 0;
             while (maxCount != 0)
