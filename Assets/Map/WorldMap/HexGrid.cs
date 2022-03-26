@@ -63,6 +63,7 @@ namespace Assets.Map.WorldMap
 			cell.transform.localPosition = position;
 			cell.coords = HexCoords.FromOffset(x, z);
 			cell.name = $"HexCell {cell.coords}, Array {i}";
+			cell.CellColor = cell.terrainColor;
 
 			//Код для генерации флага Украины
 			/*
@@ -71,7 +72,7 @@ namespace Assets.Map.WorldMap
 			else
 				cell.color = cell.desertColor;*/
 
-			cell.color = cell.terrainColor;
+			cell.CellColor = cell.terrainColor;
 			cell.MouseLeftClick += RedrawEvent;
 		}
 

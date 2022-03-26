@@ -47,7 +47,7 @@ namespace Assets.Map.WorldMap
 					center + HexMetrics.corners[i],
 					center + HexMetrics.corners[i + 1]
 				);
-				AddTriangleColor(cell.color);
+				AddTriangleColor(cell.CellColor);
 			}
 		}
 

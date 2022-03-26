@@ -20,7 +20,6 @@ namespace Assets.Map.WorldMap
     public class HexCell : MonoBehaviour
     {
         [SerializeField] public HexCoords coords;
-        [SerializeField] public Color color;
 
         //Цвета клеток для дегенерации
         [SerializeField] public Color desertColor = Color.yellow;
@@ -31,6 +30,13 @@ namespace Assets.Map.WorldMap
         [SerializeField] public Color neighboorColor = Color.red;
 
         public EventHandler<HexCellEventArgs> MouseLeftClick;
+
+        private Color cellColor;
+        public Color CellColor
+        {
+            get { return cellColor; }
+            set { cellColor = value; }
+        }
 
         private int elevation;
         public int Elevation
@@ -49,7 +55,7 @@ namespace Assets.Map.WorldMap
 
         public void Choose(object sender, HexCellEventArgs e)
         {
-            color = Color.cyan;
+            cellColor = Color.cyan;
         }
 
         /// <summary>

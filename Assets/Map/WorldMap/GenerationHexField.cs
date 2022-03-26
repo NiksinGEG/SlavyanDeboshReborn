@@ -20,17 +20,9 @@ namespace Assets.Map.WorldMap
             foreach (HexCell cell in neighbourCells)
             {
                 i = IndexFromHexCoords(cell.coords.x, cell.coords.z, width);
-                cells[i].color = cells[i].neighboorColor;
+                cells[i].CellColor = cells[i].neighboorColor;
             }
             return cells;
-        }
-        private static int GetFirstNumber(int a)
-        {
-            double b = Convert.ToDouble(a);
-            while (b > 100)
-                b /= 10;
-            a = Convert.ToInt16(Math.Truncate(b));
-            return a;
         }
         List<HexCell> GetNeighboursCell(HexCell[] cells, int index, int width) //От параметра width надо будет избавиться
         {
@@ -76,18 +68,40 @@ namespace Assets.Map.WorldMap
             //cells = GenerateRock(cells, rndSeed);
 
             GenerationHexField aboba = new GenerationHexField();
-            cells = aboba.GenerateRock(cells, rndSeed);
-            cells = aboba.SwitchBorderColors(cells, width);
+            cells = aboba.GenerateRock(cells, rndSeed, width);
+            //cells = aboba.SwitchBorderColors(cells, width);
 
             return cells;
         }
 
 
 
-        private HexCell[] GenerateRock(HexCell[] cells, System.Random rndSeed)
-        {         
-            int startX = rndSeed.Next(cells.Length);
-            cells[startX].color = cells[startX].rockColor;
+        private HexCell[] GenerateRock(HexCell[] cells, System.Random rndSeed, int width)
+        {
+            int maxCount = rndSeed.Next(200);
+            int startCell = rndSeed.Next(cells.Length);
+            int tryCount = 0;
+            while (maxCount != 0)
+            {
+
+                neighbourCells = GetNeighboursCell(cells, startCell, width);
+                int nextCell = rndSeed.Next(neighbourCells.Count());
+                if(neighbourCells[nextCell].CellColor == cells[0].terrainColor)
+                {
+                    tryCount = 0;
+                    int index = IndexFromHexCoords(neighbourCells[nextCell].coords.x, neighbourCells[nextCell].coords.z, width);
+                    cells[index].CellColor = cells[0].rockColor;
+                    int rndEvaluate = rndSeed.Next(0, 5);
+                    cells[index].Elevation = rndEvaluate;
+                    startCell = index;
+                    maxCount--;
+                }
+                tryCount++;
+                if(tryCount == 5)
+                    startCell = rndSeed.Next(cells.Length);
+            }
+            //int startX = rndSeed.Next(cells.Length);
+            //cells[startX].color = cells[startX].rockColor;
             return cells;
         }
     }
