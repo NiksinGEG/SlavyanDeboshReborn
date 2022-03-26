@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Map.WorldMap
 {
-    public class GenerationHexField
+    public class GenerationHexField : MonoBehaviour
     {
         public List<HexCell> neighbourCells;
         public Cube weedPrefab;
