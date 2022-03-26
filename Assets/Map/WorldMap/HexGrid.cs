@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using Assets.Map.WorldMap.MapObjects;
+//using Assets.Map.WorldMap.MapObjects;
 
 namespace Assets.Map.WorldMap
 {

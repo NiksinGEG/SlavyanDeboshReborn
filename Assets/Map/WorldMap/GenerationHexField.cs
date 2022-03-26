@@ -10,15 +10,18 @@ namespace Assets.Map.WorldMap
     public class GenerationHexField : MonoBehaviour
     {
         public List<HexCell> neighbourCells;
-        public Transform weedPrefab;
+        public Cube weedPrefab;
         int IndexFromHexCoords(int x, int z, int mapWidth)
         {
             return x + z * mapWidth + z / 2;
         }
         public void AddFeature(Vector3 position)
         {
-            Transform instance = Instantiate(weedPrefab);
-            instance.localPosition = position;
+            //Transform instance = Instantiate<GameObject>(weedPrefab);
+            Cube cube = Instantiate(weedPrefab);
+            cube.transform.SetParent(transform);
+            cube.transform.localPosition = position;
+            //instance.localPosition = position;
         }
 
         List<HexCell> GetNeighboursCell(HexCell[] cells, int index, int width) //От параметра width надо будет избавиться
@@ -71,7 +74,7 @@ namespace Assets.Map.WorldMap
             //Тут будет всякая хрень для украшательств
             for(int i = 0; i < cells.Length; i++)
             {
-                aboba.AddFeature(cells[i].transform.localPosition);
+                //aboba.AddFeature(cells[i].transform.localPosition);
             }
 
             return cells;
