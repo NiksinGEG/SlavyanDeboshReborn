@@ -12,6 +12,7 @@ namespace Assets.Map.WorldMap
     {
 		Mesh hexMesh;
 		MeshCollider hexCollider;
+
 		List<Vector3> vertices;
 		List<int> triangles;
 		List<Color> colors;

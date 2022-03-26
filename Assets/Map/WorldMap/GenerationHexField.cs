@@ -3,27 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Map.WorldMap
 {
-    public class GenerationHexField
+    public class GenerationHexField : MonoBehaviour
     {
         public List<HexCell> neighbourCells;
+        public Transform weedPrefab;
         int IndexFromHexCoords(int x, int z, int mapWidth)
         {
             return x + z * mapWidth + z / 2;
         }
-
-        HexCell[] SwitchBorderColors(HexCell[] cells, int width)
+        public void AddFeature(Vector3 position)
         {
-            int i = 0;
-            foreach (HexCell cell in neighbourCells)
-            {
-                i = IndexFromHexCoords(cell.coords.x, cell.coords.z, width);
-                cells[i].CellColor = cells[i].neighboorColor;
-            }
-            return cells;
+            Transform instance = Instantiate(weedPrefab);
+            instance.localPosition = position;
         }
+
         List<HexCell> GetNeighboursCell(HexCell[] cells, int index, int width) //От параметра width надо будет избавиться
         {
             List<HexCell> neighbours = new List<HexCell>();
@@ -70,6 +67,12 @@ namespace Assets.Map.WorldMap
             GenerationHexField aboba = new GenerationHexField();
             cells = aboba.GenerateRock(cells, rndSeed, width);
             //cells = aboba.SwitchBorderColors(cells, width);
+
+            //Тут будет всякая хрень для украшательств
+            for(int i = 0; i < cells.Length; i++)
+            {
+                aboba.AddFeature(cells[i].transform.localPosition);
+            }
 
             return cells;
         }

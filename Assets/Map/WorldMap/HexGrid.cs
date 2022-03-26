@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Assets.Map.WorldMap.MapObjects;
 
 namespace Assets.Map.WorldMap
 {
@@ -17,8 +18,8 @@ namespace Assets.Map.WorldMap
 		public Color defaultColor = Color.white;
 		public Color chosenColor = Color.cyan;
 
-        public HexCell cell_prefab;
 
+		public HexCell cell_prefab;
 		HexCell[] cells;
 		HexMesh hexMesh;
 
@@ -57,14 +58,12 @@ namespace Assets.Map.WorldMap
 				(x + z * 0.5f - z / 2) * (HexMetrics.innerRadius * 2f),
 				0f,
 				z * (HexMetrics.outerRadius * 1.5f));
-
 			HexCell cell = cells[i] = Instantiate<HexCell>(cell_prefab);
 			cell.transform.SetParent(transform, false);
 			cell.transform.localPosition = position;
 			cell.coords = HexCoords.FromOffset(x, z);
 			cell.name = $"HexCell {cell.coords}, Array {i}";
 			cell.CellColor = cell.terrainColor;
-
 			//Код для генерации флага Украины
 			/*
 			if (z < height / 2)
