@@ -51,5 +51,27 @@ namespace Assets.Map.WorldMap
         {
             color = Color.cyan;
         }
+
+        /// <summary>
+        /// Возвращает положение переданной клетки относительно той, для которой вызывается этот метод
+        /// </summary>
+        /// <param name="to">Клетка, относительное положение которой надо найти</param>
+        /// <returns>Для правой верхней возвращает 0 и далее по часовой стрелке (для левой верхней вернёт 5). В случае ошибки (к примеру клетки не соседние) вернёт -1</returns>
+        public int GetDirection(HexCell to)
+        {
+            if (to.coords.y == coords.y - 1 && to.coords.z == coords.z + 1)
+                return 0;
+            if (to.coords.x == coords.x + 1 && to.coords.y == coords.y - 1)
+                return 1;
+            if (to.coords.x == coords.x + 1 && to.coords.z == coords.z - 1)
+                return 2;
+            if (to.coords.y == coords.y + 1 && to.coords.z == coords.z - 1)
+                return 3;
+            if (to.coords.x == coords.x - 1 && to.coords.y == coords.y + 1)
+                return 4;
+            if (to.coords.x == coords.x - 1 && to.coords.z == coords.z + 1)
+                return 5;
+            return -1;
+        }
     }
 }
