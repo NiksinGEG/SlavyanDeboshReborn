@@ -8,38 +8,76 @@ namespace Assets.Map.WorldMap
 {
     public class GenerationHexField
     {
-        public struct neighbourCells
+        public List<HexCell> neighbourCells;
+        int IndexFromHexCoords(int x, int z, int mapWidth)
         {
-            public int leftNeighbour;
-            public int rightNeighbour;
-            public int topNeighbour;
-            public int bottomNeighbour;
-            public neighbourCells(int leftNeighbour, int rightNeighbour, int topNeighbour, int bottomNeighbour)
-            {
-                this.leftNeighbour = leftNeighbour;
-                this.rightNeighbour = rightNeighbour;
-                this.topNeighbour = topNeighbour;
-                this.bottomNeighbour = bottomNeighbour;
-            }
+            return x + z * mapWidth + z / 2;
         }
-        private static neighbourCells getNeighbourCells(int i, int width)
+
+        HexCell[] SwitchBorderColors(HexCell[] cells, int width)
         {
-            neighbourCells nCells = new neighbourCells(i - 1, i + 1, i - width, i + width);
-            return nCells;
+            int i = 0;
+            foreach (HexCell cell in neighbourCells)
+            {
+                i = IndexFromHexCoords(cell.coords.x, cell.coords.z, width);
+                cells[i].color = cells[i].neighboorColor;
+            }
+            return cells;
+        }
+        private static int GetFirstNumber(int a)
+        {
+            double b = Convert.ToDouble(a);
+            while (b > 100)
+                b /= 10;
+            a = Convert.ToInt16(Math.Truncate(b));
+            return a;
+        }
+        List<HexCell> GetNeighboursCell(HexCell[] cells, int index, int width) //От параметра width надо будет избавиться
+        {
+            List<HexCell> neighbours = new List<HexCell>();
+            HexCell cur_cell = cells[index];
+            HexCoords cur_coords = cur_cell.coords;
+            for (int i = 0; i < 6; i++)
+            {
+                HexCoords nei_coords = cur_coords;
+                switch (i)
+                {
+                    case 0:
+                        nei_coords.x += 1;
+                        break;
+                    case 1:
+                        nei_coords.x -= 1;
+                        break;
+                    case 2:
+                        nei_coords.z += 1;
+                        break;
+                    case 3:
+                        nei_coords.z -= 1;
+                        break;
+                    case 4:
+                        nei_coords.x += 1;
+                        nei_coords.z -= 1;
+                        break;
+                    case 5:
+                        nei_coords.x -= 1;
+                        nei_coords.z += 1;
+                        break;
+
+                }
+                int nei_index = IndexFromHexCoords(nei_coords.x, nei_coords.z, width);
+                if (nei_index >= 0 && nei_index < cells.Length)
+                    neighbours.Add(cells[nei_index]);
+            }
+            return neighbours;
         }
 
         public static HexCell[] GenerateHexMap(HexCell[] cells, System.Random rndSeed, int width, int height)
         {
             //cells = GenerateRock(cells, rndSeed);
-            neighbourCells nCells = new neighbourCells();
 
-            nCells = getNeighbourCells(564, width);
-
-            cells[564].color = cells[0].neighboorColor;
-            cells[nCells.leftNeighbour].color = cells[0].neighboorColor;
-            cells[nCells.rightNeighbour].color = cells[0].neighboorColor;
-            cells[nCells.topNeighbour].color = cells[0].neighboorColor;
-            cells[nCells.bottomNeighbour].color = cells[0].neighboorColor;
+            GenerationHexField aboba = new GenerationHexField();
+            cells = aboba.GenerateRock(cells, rndSeed);
+            cells = aboba.SwitchBorderColors(cells, width);
 
             return cells;
         }

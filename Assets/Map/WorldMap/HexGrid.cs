@@ -73,11 +73,6 @@ namespace Assets.Map.WorldMap
 
 			cell.color = cell.terrainColor;
 			cell.MouseLeftClick += RedrawEvent;
-
-			if (i == 2)
-				cell.Elevation = 1;
-			if (i == 4)
-				cell.Elevation = -2;
 		}
 
 		void Update()
