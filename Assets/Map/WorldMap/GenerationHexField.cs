@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Map.WorldMap
 {
-    public class GenerationHexField : MonoBehaviour
+    public class GenerationHexField
     {
         public List<HexCell> neighbourCells;
         public Cube weedPrefab;
@@ -68,6 +68,7 @@ namespace Assets.Map.WorldMap
             //cells = GenerateRock(cells, rndSeed);
 
             GenerationHexField aboba = new GenerationHexField();
+            cells = aboba.GenerateTerrain(cells, rndSeed, width);
             cells = aboba.GenerateRock(cells, rndSeed, width);
             //cells = aboba.SwitchBorderColors(cells, width);
 
@@ -80,11 +81,59 @@ namespace Assets.Map.WorldMap
             return cells;
         }
 
+        private HexCell[] GenerateTerrain(HexCell[] cells, System.Random rndSeed, int width)
+        {
+            int maxCount = rndSeed.Next(100, 250);
+            int startCell = rndSeed.Next(cells.Length);
+            int tryCount = 0;
+            while (maxCount != 0)
+            {
 
+                neighbourCells = GetNeighboursCell(cells, startCell, width);
+                int nextCell = rndSeed.Next(neighbourCells.Count());
+                tryCount = 0;
+                int index = IndexFromHexCoords(neighbourCells[nextCell].coords.x, neighbourCells[nextCell].coords.z, width);
+                cells[index].CellColor = cells[0].terrainColor;
+                int rndEvaluate = rndSeed.Next(-1, 1);
+                cells[index].Elevation = rndEvaluate;
+                startCell = index;
+                maxCount--;
+                tryCount++;
+                if (tryCount == 5)
+                    startCell = rndSeed.Next(cells.Length);
+            }
+            return cells;
+        }
+
+        private HexCell[] GenerateTransition(HexCell[] cells,int startCell, int width)
+        {
+            int tryCount = 0;
+            while(cells[startCell].Elevation > 1)
+            {
+                neighbourCells = GetNeighboursCell(cells, startCell, width);
+                foreach (var cell in neighbourCells)
+                    if (cell.CellColor == cell.terrainColor && cell.Elevation < cells[startCell].Elevation)
+                    {
+                        tryCount = 0;
+                        int index = IndexFromHexCoords(cell.coords.x, cell.coords.z, width);
+                        cells[index].Elevation = cells[startCell].Elevation - 1;
+                    }
+                foreach (var cell in neighbourCells)
+                    if (cell.CellColor == cell.terrainColor && cell.Elevation == cells[startCell].Elevation - 1)
+                    {
+                        tryCount = 0;
+                        startCell = IndexFromHexCoords(cell.coords.x, cell.coords.z, width);
+                    }
+                tryCount++;
+                if (tryCount == 5)
+                    return cells;
+            }
+            return cells;
+        }
 
         private HexCell[] GenerateRock(HexCell[] cells, System.Random rndSeed, int width)
         {
-            int maxCount = rndSeed.Next(200);
+            int maxCount = rndSeed.Next(10,250);
             int startCell = rndSeed.Next(cells.Length);
             int tryCount = 0;
             while (maxCount != 0)
@@ -97,8 +146,9 @@ namespace Assets.Map.WorldMap
                     tryCount = 0;
                     int index = IndexFromHexCoords(neighbourCells[nextCell].coords.x, neighbourCells[nextCell].coords.z, width);
                     cells[index].CellColor = cells[0].rockColor;
-                    int rndEvaluate = rndSeed.Next(0, 5);
+                    int rndEvaluate = rndSeed.Next(1, 4);
                     cells[index].Elevation = rndEvaluate;
+                    cells = GenerateTransition(cells, startCell, width);
                     startCell = index;
                     maxCount--;
                 }
