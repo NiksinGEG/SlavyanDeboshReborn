@@ -68,7 +68,7 @@ namespace Assets.Map.WorldMap
             //Сначала материковая часть
             cells = aboba.GenerateMainlands(cells, rndSeed, width, height);
             //Острова
-            //cells = aboba.GenerateIslands(cells, rndSeed, width);
+            cells = aboba.GenerateIslands(cells, rndSeed, width);
             //cells = aboba.GenerateRock(cells, rndSeed, width);
             //cells = aboba.SwitchBorderColors(cells, width);
 
@@ -94,7 +94,7 @@ namespace Assets.Map.WorldMap
         {
             int startCell = rndSeed.Next(cells.Length);
             while(cells[startCell].CellColor == cells[startCell].terrainColor)
-                rndSeed.Next(cells.Length);
+                startCell = rndSeed.Next(cells.Length);
             int islandsCount = rndSeed.Next(5, 10);
             
             while(islandsCount != 0)
