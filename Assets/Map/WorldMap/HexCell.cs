@@ -25,6 +25,7 @@ namespace Assets.Map.WorldMap
         [SerializeField] public Color desertColor = Color.yellow;
         [SerializeField] public Color terrainColor = Color.green;
         [SerializeField] public Color rockColor = Color.gray;
+        [SerializeField] public Color waterColor = Color.blue;
         
         //Тестовый цвет
         [SerializeField] public Color neighboorColor = Color.red;
