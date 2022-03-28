@@ -9,7 +9,7 @@ namespace Assets.Map.WorldMap
 {
     public class HexGrid : MonoBehaviour
     {
-		public int chunkCountX = 4, chunkCountZ = 3;
+		public int chunkCountX = 10, chunkCountZ = 10;
 		int cellCountX, cellCountZ;
 		//public int width;
         //public int height;
@@ -47,8 +47,10 @@ namespace Assets.Map.WorldMap
 				{
 					HexGridChunk chunk = chunks[i++] = Instantiate(chunkPrefab);
 					chunk.transform.SetParent(transform);
+					chunk.name = $"X = {x}, Y = {i}, Z = {z}";
 				}
 			}
+			Console.WriteLine();
 		}
 		void CreateCells()
 		{
@@ -70,11 +72,15 @@ namespace Assets.Map.WorldMap
 				0f,
 				z * (HexMetrics.outerRadius * 1.5f));
 			HexCell cell = cells[i] = Instantiate<HexCell>(cell_prefab);
-			//cell.transform.SetParent(transform, false);
 			cell.transform.localPosition = position;
 			cell.coords = HexCoords.FromOffset(x, z);
-			cell.CellColor = cell.terrainColor;
-			cell.CellColor = cell.terrainColor;
+			cell.CellColor = cell.waterColor;
+
+			cell.CellIndex = i;
+			cell.name = $"Index = {cell.CellIndex}";
+			cell.Elevation = 0;
+
+			AddCellToChunk(x, z, cell);
 		}
 		void AddCellToChunk(int x, int z, HexCell cell)
 		{

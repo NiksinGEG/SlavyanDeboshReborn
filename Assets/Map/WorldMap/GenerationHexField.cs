@@ -10,7 +10,7 @@ namespace Assets.Map.WorldMap
     public class GenerationHexField : MonoBehaviour
     {
         int terrainCells;
-        public List<HexCell> neighbourCells;
+        [SerializeField] List<HexCell> neighbourCells;
 
         HexCell[] GenerateTrueRock(HexCell[] cells)
         {
