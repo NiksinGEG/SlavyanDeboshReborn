@@ -23,7 +23,7 @@ namespace Assets.Map.WorldMap
 		public HexCell cell_prefab;
 
 		HexGridChunk[] chunks;
-		HexCell[] cells;
+		[SerializeField] HexCell[] cells;
 
 		[ContextMenu("Generate game field")]
 		void Awake()
@@ -36,6 +36,8 @@ namespace Assets.Map.WorldMap
 
 			CreateChunks();
 			CreateCells();
+			System.Random rndSeed = new System.Random(generationSeed);
+			cells = GenerationHexField.GenerateHexMap(cells, rndSeed, cellCountX, cellCountZ);
 		}
 		void CreateChunks()
 		{
@@ -79,7 +81,7 @@ namespace Assets.Map.WorldMap
 			cell.CellIndex = i;
 			cell.name = $"Index = {cell.CellIndex}";
 			cell.Elevation = 0;
-
+			cells[i] = cell;
 			AddCellToChunk(x, z, cell);
 		}
 		void AddCellToChunk(int x, int z, HexCell cell)
