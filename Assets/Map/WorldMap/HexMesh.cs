@@ -17,6 +17,8 @@ namespace Assets.Map.WorldMap
 		List<int> triangles;
 		List<Color> colors;
 
+		List<Vector3> centers;
+
 		public void Triangulate(HexCell[] cells, int width) //От параметра width надо будет избавиться
 		{
 			print("Triangulate start...");
@@ -26,7 +28,7 @@ namespace Assets.Map.WorldMap
 			colors.Clear();
 			for (int i = 0; i < cells.Length; i++)
 			{
-				Triangulate(cells[i]);
+					Triangulate(cells[i]);
 			}
 			TriangulateConnections(cells, width);
 			hexMesh.vertices = vertices.ToArray();
@@ -35,12 +37,18 @@ namespace Assets.Map.WorldMap
 			hexMesh.RecalculateNormals();
 
 			hexCollider.sharedMesh = hexMesh;
-			print("Triangulate end...");
+			print($"Triangulate end... {triangles.Count};{hexMesh.triangles.Length}");
 		}
 
 		void Triangulate(HexCell cell)
 		{
 			Vector3 center = cell.transform.localPosition;
+			
+			foreach (var c in centers)
+				if (c.x == center.x && c.y == center.y && c.z == center.z)
+					print($"Hui pizda. {center}");
+			centers.Add(center);
+			//print($"Center : {center}");
 			for (int i = 0; i < 6; i++)
 			{
 				AddTriangle(
@@ -99,6 +107,8 @@ namespace Assets.Map.WorldMap
 			vertices = new List<Vector3>();
 			triangles = new List<int>();
 			colors = new List<Color>();
+
+			centers = new List<Vector3>();
 		}
 
 		public List<HexCell> GetNeighbours(HexCell[] cells, int index, int width) //От параметра width надо будет избавиться

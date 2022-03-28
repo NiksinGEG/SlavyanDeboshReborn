@@ -12,7 +12,15 @@ namespace Assets.Map.WorldMap
         int terrainCells;
         public List<HexCell> neighbourCells;
 
-
+        HexCell[] GenerateTrueRock(HexCell[] cells)
+        {
+            for(int i = 0; i < cells.Length; i++)
+            {
+                if (cells[i].CellColor == cells[0].terrainColor && cells[i].Elevation != 0)
+                    cells[i].CellColor = cells[0].rockColor;
+            }
+            return cells;
+        }
         int IndexFromHexCoords(int x, int z, int mapWidth)
         {
             return x + z * mapWidth + z / 2;
@@ -96,7 +104,7 @@ namespace Assets.Map.WorldMap
             {
                 int rndElevation = rndSeed.Next(-2, 0);
                 cells[i].CellColor = cells[i].waterColor;
-                cells[i].Elevation = rndElevation;
+                cells[i].Elevation = 0;
             }
             return cells;
         }
@@ -200,7 +208,7 @@ namespace Assets.Map.WorldMap
 
         private HexCell[] GenerateRock(HexCell[] cells, System.Random rndSeed, int width)
         {
-            int maxCount = rndSeed.Next(10, terrainCells / 8);
+            int maxCount = rndSeed.Next(0, terrainCells / 20);
             int startCell = rndSeed.Next(cells.Length);
             while (cells[startCell].CellColor == cells[startCell].waterColor)
                 startCell = rndSeed.Next(cells.Length);
@@ -229,6 +237,7 @@ namespace Assets.Map.WorldMap
                         startCell = rndSeed.Next(cells.Length);
                 }               
             }
+            cells = GenerateTrueRock(cells);
             return cells;
         }
     }
