@@ -16,9 +16,41 @@ namespace Assets.Map.WorldMap
             this.localPosition = localPosition;
         }
     }
+    public enum HexDirection
+    {
+        NE, E, SE, SW, W, NW
+    }
+    public static class HexDirectionExtensions
+    {
+        public static HexDirection Opposite(this HexDirection direction)
+        {
+            return (int)direction < 3 ? (direction + 3) : (direction - 3);
+        }
+    }
 
     public class HexCell : MonoBehaviour
     {
+
+
+        [SerializeField] HexCell[] neighbours;
+        [SerializeField] int cellIndex;
+
+        public int CellIndex
+        {
+            get { return cellIndex; }
+            set { cellIndex = value; }
+        }
+
+        public HexCell GetNeighbor(HexDirection direction)
+        {
+            return neighbours[(int)direction];
+        }
+        public void SetNeighbor(HexDirection direction, HexCell cell)
+        {
+            neighbours[(int)direction] = cell;
+            cell.neighbours[(int)direction.Opposite()] = this;
+        }
+
         [SerializeField] public HexCoords coords;
 
         //Цвета клеток для дегенерации
