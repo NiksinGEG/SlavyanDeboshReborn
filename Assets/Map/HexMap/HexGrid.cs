@@ -11,8 +11,6 @@ namespace Assets.Map.WorldMap
     {
 		public int chunkCountX = 10, chunkCountZ = 10;
 		int cellCountX, cellCountZ;
-		//public int width;
-        //public int height;
 	
 		public int generationSeed; //Семя для генерации карты. Перекинем потом в хоста
 		
@@ -37,7 +35,7 @@ namespace Assets.Map.WorldMap
 			CreateChunks();
 			CreateCells();
 			System.Random rndSeed = new System.Random(generationSeed);
-			cells = HexFieldGenerator.GenerateHexMap(cells, rndSeed, cellCountX, cellCountZ);
+			cells = HexFieldGenerator.GenerateHexMap(cells, rndSeed);
 		}
 		void CreateChunks()
 		{

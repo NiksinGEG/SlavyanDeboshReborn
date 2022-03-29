@@ -112,8 +112,6 @@ namespace Assets.Map.WorldMap
         {
             for (int i = 0; i < cells.Length; i++)
                 yield return cells[i];
-            //return cells.GetEnumerator();
-            //return (IEnumerator<HexCell>)this;
         }
     }
 }
