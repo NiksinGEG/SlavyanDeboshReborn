@@ -31,8 +31,6 @@ namespace Assets.Map.WorldMap
 
         public static CellList GenerateHexMap(CellList cells, System.Random rndSeed)
         {
-            //cells = GenerateRock(cells, rndSeed);
-
             //Генерируем сначала водный рельеф
             cells = GenerateStartTerrain(cells, rndSeed);
             
@@ -46,14 +44,6 @@ namespace Assets.Map.WorldMap
             cells = GenerateRock(cells, rndSeed);
             //Немного пляжных клеток
             cells = GenerateBeachSells(cells);
-            //cells = aboba.SwitchBorderColors(cells, width);
-
-            //Тут будет всякая хрень для украшательств
-            for(int i = 0; i < cells.Length; i++)
-            {
-                //aboba.AddFeature(cells[i].transform.localPosition);
-            }
-
             return cells;
         }
         private static CellList GenerateStartTerrain(CellList cells, System.Random rndSeed)
@@ -77,6 +67,7 @@ namespace Assets.Map.WorldMap
             {
                 neighbourCells = cells.GetNeighbours(startCell);
                 int islandsCellsCount = rndSeed.Next(2, neighbourCells.Length);
+                cells[startCell].CellColor = cells[0].terrainColor;
                 for(int i = 0; i < islandsCellsCount; i++)
                 {
                     int index = neighbourCells[i].coords.MakeIndex(cells.CellCountX);
@@ -165,13 +156,11 @@ namespace Assets.Map.WorldMap
                     int index = cell.coords.MakeIndex(cells.CellCountX);
                     neighbourTerrainCells = cells.GetNeighbours(index);
                     foreach(var tCell in neighbourTerrainCells)
-                    {
                         if (tCell.Elevation < cell.Elevation && tCell.CellColor == tCell.terrainColor)
                         {
                             int tIndex = tCell.coords.MakeIndex(cells.CellCountX);
                             cells[tIndex].Elevation = indexCellElevation - 1;
                         }
-                    }
                 }
             }
             return cells;

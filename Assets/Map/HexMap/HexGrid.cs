@@ -20,7 +20,7 @@ namespace Assets.Map.WorldMap
 		public HexGridChunk chunkPrefab;
 		public HexCell cell_prefab;
 
-		HexGridChunk[] chunks;
+		public HexGridChunk[] chunks;
 		CellList cells;
 
 		[ContextMenu("Generate game field")]

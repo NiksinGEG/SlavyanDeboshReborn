@@ -7,8 +7,7 @@ namespace Assets.Map.WorldMap
 {
     public class HexGridChunk : MonoBehaviour
     {
-        //HexCell[] cells;
-        CellList cells;
+        public CellList cells;
         HexMesh hexMesh;
         public void AddCell(int index, HexCell cell)
         {
