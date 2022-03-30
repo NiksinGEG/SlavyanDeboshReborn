@@ -9,18 +9,19 @@ namespace Assets.Map.WorldMap
 {
     public class HexGrid : MonoBehaviour
     {
-        public int width;
-        public int height;
+		public int chunkCountX = 10, chunkCountZ = 10;
+		int cellCountX, cellCountZ;
 	
 		public int generationSeed; //Семя для генерации карты. Перекинем потом в хоста
 		
 		public Color defaultColor = Color.white;
 		public Color chosenColor = Color.cyan;
 
-
+		public HexGridChunk chunkPrefab;
 		public HexCell cell_prefab;
-		HexCell[] cells;
-		HexMesh hexMesh;
+
+		HexGridChunk[] chunks;
+		CellList cells;
 
 		[ContextMenu("Generate game field")]
 		void Awake()
@@ -49,20 +50,19 @@ namespace Assets.Map.WorldMap
 					chunk.name = $"X = {x}, Y = {i}, Z = {z}";
 				}
 			}
-			System.Random rndSeed = new System.Random(generationSeed);
-			cells = GenerationHexField.GenerateHexMap(cells, rndSeed, width, height);
-			Console.WriteLine("ABOBA");
+			Console.WriteLine();
 		}
-
-		void Start()
+		void CreateCells()
 		{
-			hexMesh.Triangulate(cells, width);
+			cells = new CellList(new HexCell[cellCountZ * cellCountX], cellCountX, cellCountZ);
+			for (int z = 0, i = 0; z < cellCountZ; z++)
+			{
+				for (int x = 0; x < cellCountX; x++)
+				{
+					CreateCell(x, z, i++);
+				}
+			}
 		}
-
-		void RedrawEvent(object sender, EventArgs e)
-        {
-			hexMesh.Triangulate(cells, width);
-        }
 
 		void CreateCell(int x, int z, int i)
 		{
@@ -71,22 +71,29 @@ namespace Assets.Map.WorldMap
 				0f,
 				z * (HexMetrics.outerRadius * 1.5f));
 			HexCell cell = cells[i] = Instantiate<HexCell>(cell_prefab);
-			cell.transform.SetParent(transform, false);
 			cell.transform.localPosition = position;
 			cell.coords = HexCoords.FromOffset(x, z);
-			cell.name = $"HexCell {cell.coords}, Array {i}";
-			cell.CellColor = cell.terrainColor;
-			//Код для генерации флага Украины
-			/*
-			if (z < height / 2)
-				cell.color = Color.blue;
-			else
-				cell.color = cell.desertColor;*/
+			cell.CellColor = cell.waterColor;
 
-			cell.CellColor = cell.terrainColor;
-			cell.MouseLeftClick += RedrawEvent;
+			cell.CellIndex = i;
+			cell.name = $"Index = {cell.CellIndex}";
+			cell.Elevation = 0;
+
+			cells[i] = cell;
+
+
+			AddCellToChunk(x, z, cell);
 		}
+		void AddCellToChunk(int x, int z, HexCell cell)
+		{
+			int chunkX = x / HexMetrics.chunkSizeX;
+			int chunkZ = z / HexMetrics.chunkSizeZ;
+			HexGridChunk chunk = chunks[chunkX + chunkZ * chunkCountX];
 
+			int localX = x - chunkX * HexMetrics.chunkSizeX;
+			int localZ = z - chunkZ * HexMetrics.chunkSizeZ;
+			chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
+		}
 		void Update()
 		{
 			if (Input.GetMouseButton(0))

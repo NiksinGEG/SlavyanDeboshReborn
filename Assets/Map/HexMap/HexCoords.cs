@@ -73,4 +73,9 @@ public struct HexCoords
     {
         return x == coords.x && y == coords.y && z == coords.z;
     }
+
+    public int MakeIndex(int mapWidth)
+    {
+        return x + z * mapWidth + z / 2;
+    }
 }

@@ -17,25 +17,23 @@ namespace Assets.Map.WorldMap
 		List<int> triangles;
 		List<Color> colors;
 
-		public void Triangulate(HexCell[] cells, int width) //От параметра width надо будет избавиться
+		public void Triangulate(CellList cells) //От параметра width надо будет избавиться
 		{
-			print("Triangulate start...");
 			hexMesh.Clear();
 			vertices.Clear();
 			triangles.Clear();
 			colors.Clear();
 			for (int i = 0; i < cells.Length; i++)
 			{
-				Triangulate(cells[i]);
+					Triangulate(cells[i]);
 			}
-			TriangulateConnections(cells, width);
 			hexMesh.vertices = vertices.ToArray();
 			hexMesh.triangles = triangles.ToArray();
 			hexMesh.colors = colors.ToArray();
 			hexMesh.RecalculateNormals();
 
 			hexCollider.sharedMesh = hexMesh;
-			print("Triangulate end...");
+			print($"Triangulate end... {triangles.Count};{hexMesh.triangles.Length}");
 		}
 
 		void Triangulate(HexCell cell)
@@ -52,13 +50,13 @@ namespace Assets.Map.WorldMap
 			}
 		}
 
-		void TriangulateConnections(HexCell[] cells, int width) //От параметра width надо будет избавиться
+		void TriangulateConnections(CellList cells, int width) //От параметра width надо будет избавиться
 		{
 			for(int i = 0; i < cells.Length; i++)
             {
-				foreach(var nei in GetNeighbours(cells, i, width))
+				foreach(var nei in cells.GetNeighbours(i))//GetNeighbours(cells, i, width))
                 {
-					int ind = IndexFromHexCoords(nei.coords.x, nei.coords.z, width);
+					int ind = nei.coords.MakeIndex(width);//IndexFromHexCoords(nei.coords.x, nei.coords.z, width);
 					int our_vertind = i * 18;
 					int nei_vertind = ind * 18;
 					int dir = cells[i].GetDirection(nei);
@@ -100,47 +98,5 @@ namespace Assets.Map.WorldMap
 			triangles = new List<int>();
 			colors = new List<Color>();
 		}
-
-		public List<HexCell> GetNeighbours(HexCell[] cells, int index, int width) //От параметра width надо будет избавиться
-        {
-			List<HexCell> neighbours = new List<HexCell>();
-			HexCell cur_cell = cells[index];
-			HexCoords cur_coords = cur_cell.coords;
-			for(int i = 0; i < 6; i++)
-            {
-				HexCoords nei_coords = new HexCoords(-1, -1);
-				switch(i)
-                {
-					case 0:
-						nei_coords = new HexCoords(cur_coords.x, cur_coords.z + 1);
-						break;
-					case 1:
-						nei_coords = new HexCoords(cur_coords.x + 1, cur_coords.z);
-						break;
-					case 2:
-						nei_coords = new HexCoords(cur_coords.x + 1, cur_coords.z - 1);
-						break;
-					case 3:
-						nei_coords = new HexCoords(cur_coords.x, cur_coords.z - 1);
-						break;
-					case 4:
-						nei_coords = new HexCoords(cur_coords.x - 1, cur_coords.z);
-						break;
-					case 5:
-						nei_coords = new HexCoords(cur_coords.x - 1, cur_coords.z + 1);
-						break;
-
-				}
-				int nei_index = IndexFromHexCoords(nei_coords.x, nei_coords.z, width);
-				if (nei_index >= 0 && nei_index < cells.Length)
-					neighbours.Add(cells[nei_index]);
-            }
-			return neighbours;
-		}
-
-		int IndexFromHexCoords(int x, int z, int mapWidth)
-        {
-			return x + z * mapWidth + z / 2;
-        }
 	}
 }

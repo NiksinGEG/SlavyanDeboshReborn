@@ -7,79 +7,45 @@ using UnityEngine;
 
 namespace Assets.Map.WorldMap
 {
-    public class GenerationHexField : MonoBehaviour
+    public static class HexFieldGenerator
     {
-        int terrainCells;
-        public List<HexCell> neighbourCells;
+        static int terrainCells;
+        static CellList neighbourCells;
 
-
-        int IndexFromHexCoords(int x, int z, int mapWidth)
+        static CellList GenerateTrueRock(CellList cells)
         {
-            return x + z * mapWidth + z / 2;
+            for (int i = 0; i < cells.Length; i++)
+            {
+                if (cells[i].CellColor == cells[0].terrainColor && cells[i].Elevation != 0)
+                    cells[i].CellColor = cells[0].rockColor;
+            }
+            return cells;
         }
-        void GetTerrainCellsCount(HexCell[] cells)
+        static void GetTerrainCellsCount(CellList cells)
         {
             terrainCells = 0;
             for (int i = 0; i < cells.Length; i++)
                 if (cells[i].CellColor == cells[0].terrainColor)
                     terrainCells++;
         }
-        List<HexCell> GetNeighboursCell(HexCell[] cells, int index, int width) //От параметра width надо будет избавиться
-        {
-            List<HexCell> neighbours = new List<HexCell>();
-            HexCell cur_cell = cells[index];
-            HexCoords cur_coords = cur_cell.coords;
-            for (int i = 0; i < 6; i++)
-            {
-                HexCoords nei_coords = cur_coords;
-                switch (i)
-                {
-                    case 0:
-                        nei_coords.x += 1;
-                        break;
-                    case 1:
-                        nei_coords.x -= 1;
-                        break;
-                    case 2:
-                        nei_coords.z += 1;
-                        break;
-                    case 3:
-                        nei_coords.z -= 1;
-                        break;
-                    case 4:
-                        nei_coords.x += 1;
-                        nei_coords.z -= 1;
-                        break;
-                    case 5:
-                        nei_coords.x -= 1;
-                        nei_coords.z += 1;
-                        break;
 
-                }
-                int nei_index = IndexFromHexCoords(nei_coords.x, nei_coords.z, width);
-                if (nei_index >= 0 && nei_index < cells.Length)
-                    neighbours.Add(cells[nei_index]);
-                neighbours.Add(cells[index]);
-            }
-            return neighbours;
-        }
-
-        public static HexCell[] GenerateHexMap(HexCell[] cells, System.Random rndSeed, int width, int height)
+        public static CellList GenerateHexMap(CellList cells, System.Random rndSeed)
         {
             //cells = GenerateRock(cells, rndSeed);
 
-            GenerationHexField aboba = new GenerationHexField();
             //Генерируем сначала водный рельеф
-            cells = aboba.GenerateStartTerrain(cells, rndSeed, width);
+            cells = GenerateStartTerrain(cells, rndSeed);
             
             //Генерируем остальное
             //Сначала материковая часть
-            cells = aboba.GenerateMainlands(cells, rndSeed, width, height);
+            cells = GenerateMainlands(cells, rndSeed);
             //Острова
-            cells = aboba.GenerateIslands(cells, rndSeed, width);
+            cells = GenerateIslands(cells, rndSeed);
             //Горы. Сначала нужно получить количество сгенерированных клеток terrain
-            aboba.GetTerrainCellsCount(cells);
-            cells = aboba.GenerateRock(cells, rndSeed, width);
+            GetTerrainCellsCount(cells);
+            cells = GenerateRock(cells, rndSeed);
+            //Немного пляжных клеток
+            cells = GenerateBeachSells(cells);
             //cells = aboba.SwitchBorderColors(cells, width);
 
             //Тут будет всякая хрень для украшательств
@@ -90,17 +56,17 @@ namespace Assets.Map.WorldMap
 
             return cells;
         }
-        private HexCell[] GenerateStartTerrain(HexCell[] cells, System.Random rndSeed, int width)
+        private static CellList GenerateStartTerrain(CellList cells, System.Random rndSeed)
         {
             for(int i = 0; i < cells.Length; i++)
             {
                 int rndElevation = rndSeed.Next(-2, 0);
                 cells[i].CellColor = cells[i].waterColor;
-                cells[i].Elevation = rndElevation;
+                cells[i].Elevation = 0;
             }
             return cells;
         }
-        private HexCell[] GenerateIslands(HexCell[] cells, System.Random rndSeed, int width)
+        private static CellList GenerateIslands(CellList cells, System.Random rndSeed)
         {
             int startCell = rndSeed.Next(cells.Length);
             while(cells[startCell].CellColor == cells[startCell].terrainColor)
@@ -110,11 +76,10 @@ namespace Assets.Map.WorldMap
             while(islandsCount != 0)
             {
                 neighbourCells = cells.GetNeighbours(startCell);
-                neighbourCells.Add(cells[startCell], 0, 0);
                 int islandsCellsCount = rndSeed.Next(2, neighbourCells.Length);
                 for(int i = 0; i < islandsCellsCount; i++)
                 {
-                    int index = IndexFromHexCoords(neighbourCells[i].coords.x, neighbourCells[i].coords.z, width);
+                    int index = neighbourCells[i].coords.MakeIndex(cells.CellCountX);
                     int rndEvaluate = rndSeed.Next(0, 1);
                     cells[index].CellColor = cells[index].terrainColor;
                     cells[index].Elevation = rndEvaluate;
@@ -126,27 +91,28 @@ namespace Assets.Map.WorldMap
             }
             return cells;
         }
-            private HexCell[] GenerateMainlands(HexCell[] cells, System.Random rndSeed, int width, int height)
+        private static CellList GenerateMainlands(CellList cells, System.Random rndSeed)
         {
             int mainlandCount = rndSeed.Next(2, 4);
             int startCell = rndSeed.Next(cells.Length);
             int tryCount = 0;
             for (int i = 0; i < mainlandCount; i++)
             {
-                int maxCount = rndSeed.Next(width * height - 100, width * height);
+                int maxCount = rndSeed.Next(cells.CellCountX * cells.CellCountZ - 100, cells.CellCountX * cells.CellCountZ);
                 terrainCells = maxCount;
                 while (maxCount != 0)
                 {
                     int nextCell = startCell;
-                    neighbourCells = GetNeighboursCell(cells, nextCell, width);
+                    neighbourCells = cells.GetNeighbours(nextCell);
                     nextCell = rndSeed.Next(neighbourCells.Count());
+                    
                     if (neighbourCells[nextCell].CellColor == neighbourCells[nextCell].terrainColor)
                         nextCell = rndSeed.Next(neighbourCells.Count());
                     else
                         tryCount++;
                     if(tryCount > neighbourCells.Count())
                         nextCell = rndSeed.Next(neighbourCells.Count());
-                    int index = IndexFromHexCoords(neighbourCells[nextCell].coords.x, neighbourCells[nextCell].coords.z, width);
+                    int index = neighbourCells[nextCell].coords.MakeIndex(cells.CellCountX);
                     cells[index].CellColor = cells[0].terrainColor;
                     int rndEvaluate = rndSeed.Next(0, 1);
                     cells[index].Elevation = rndEvaluate;
@@ -161,10 +127,23 @@ namespace Assets.Map.WorldMap
             }
             return cells;
         }
-
-        private HexCell[] GenerateTransition(HexCell[] cells,int startCell, int width)
+        private static CellList GenerateBeachSells(CellList cells)
         {
-            neighbourCells = GetNeighboursCell(cells, startCell, width);
+            foreach(var cell in cells)
+            {
+                if(cell.CellColor == cell.waterColor)
+                {
+                    neighbourCells = cells.GetNeighbours(cell.CellIndex);
+                    foreach (var tCell in neighbourCells)
+                        if (tCell.CellColor == tCell.terrainColor)
+                            cells[tCell.CellIndex].CellColor = tCell.desertColor;
+                }
+            }
+            return cells;
+        }
+        private static CellList GenerateTransition(CellList cells, int startCell)
+        {
+            neighbourCells = cells.GetNeighbours(startCell);
             int minRockEleation = cells[startCell].Elevation;
             foreach (var cell in neighbourCells)
                 if (cell.CellColor == cell.rockColor && minRockEleation > cell.Elevation)
@@ -173,23 +152,23 @@ namespace Assets.Map.WorldMap
             {
                 if(cell.CellColor == cell.terrainColor)
                 {
-                    int index = IndexFromHexCoords(cell.coords.x, cell.coords.z, width);
+                    int index = cell.coords.MakeIndex(cells.CellCountX);
                     cells[index].Elevation = minRockEleation - 1;
                 }
             }
-            List<HexCell> neighbourTerrainCells;
+            CellList neighbourTerrainCells;
             foreach(var cell in neighbourCells)
             {
                 if(cell.CellColor == cell.terrainColor)
                 {
                     int indexCellElevation = cell.Elevation;
-                    int index = IndexFromHexCoords(cell.coords.x, cell.coords.z, width);
-                    neighbourTerrainCells = GetNeighboursCell(cells, index, width);
+                    int index = cell.coords.MakeIndex(cells.CellCountX);
+                    neighbourTerrainCells = cells.GetNeighbours(index);
                     foreach(var tCell in neighbourTerrainCells)
                     {
                         if (tCell.Elevation < cell.Elevation && tCell.CellColor == tCell.terrainColor)
                         {
-                            int tIndex = IndexFromHexCoords(tCell.coords.x, tCell.coords.z, width);
+                            int tIndex = tCell.coords.MakeIndex(cells.CellCountX);
                             cells[tIndex].Elevation = indexCellElevation - 1;
                         }
                     }
@@ -198,9 +177,9 @@ namespace Assets.Map.WorldMap
             return cells;
         }
 
-        private HexCell[] GenerateRock(HexCell[] cells, System.Random rndSeed, int width)
+        private static CellList GenerateRock(CellList cells, System.Random rndSeed)
         {
-            int maxCount = rndSeed.Next(10, terrainCells / 8);
+            int maxCount = rndSeed.Next(0, terrainCells / 20);
             int startCell = rndSeed.Next(cells.Length);
             while (cells[startCell].CellColor == cells[startCell].waterColor)
                 startCell = rndSeed.Next(cells.Length);
@@ -208,16 +187,16 @@ namespace Assets.Map.WorldMap
             while (maxCount != 0)
             {
 
-                neighbourCells = GetNeighboursCell(cells, startCell, width);
+                neighbourCells = cells.GetNeighbours(startCell);
                 int nextCell = rndSeed.Next(neighbourCells.Count());
                 if(neighbourCells[nextCell].CellColor == cells[0].terrainColor)
                 {
                     tryCount = 0;
-                    int index = IndexFromHexCoords(neighbourCells[nextCell].coords.x, neighbourCells[nextCell].coords.z, width);
+                    int index = neighbourCells[nextCell].coords.MakeIndex(cells.CellCountX);
                     cells[index].CellColor = cells[0].rockColor;
                     int rndEvaluate = rndSeed.Next(3, 4);
                     cells[index].Elevation = rndEvaluate;
-                    cells = GenerateTransition(cells, index, width);
+                    cells = GenerateTransition(cells, index);
                     startCell = index;
                     maxCount--;
                 }
@@ -229,6 +208,7 @@ namespace Assets.Map.WorldMap
                         startCell = rndSeed.Next(cells.Length);
                 }               
             }
+            cells = GenerateTrueRock(cells);
             return cells;
         }
     }
