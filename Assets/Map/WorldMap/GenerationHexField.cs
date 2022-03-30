@@ -109,9 +109,9 @@ namespace Assets.Map.WorldMap
             
             while(islandsCount != 0)
             {
-                neighbourCells = GetNeighboursCell(cells, startCell, width);
-                neighbourCells.Add(cells[startCell]);
-                int islandsCellsCount = rndSeed.Next(2, neighbourCells.Count);
+                neighbourCells = cells.GetNeighbours(startCell);
+                neighbourCells.Add(cells[startCell], 0, 0);
+                int islandsCellsCount = rndSeed.Next(2, neighbourCells.Length);
                 for(int i = 0; i < islandsCellsCount; i++)
                 {
                     int index = IndexFromHexCoords(neighbourCells[i].coords.x, neighbourCells[i].coords.z, width);

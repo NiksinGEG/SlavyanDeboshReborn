@@ -26,14 +26,27 @@ namespace Assets.Map.WorldMap
 		void Awake()
 		{
 			System.Random rnd = new System.Random();
-			generationSeed = rnd.Next(1, 30000000);	//Семя сегенерилось
-			hexMesh = GetComponentInChildren<HexMesh>();
-			cells = new HexCell[height * width];
-			for (int z = 0, i = 0; z < height; z++)
+			generationSeed = rnd.Next(1, 30000000); //Семя сегенерилось
+
+			cellCountX = chunkCountX * HexMetrics.chunkSizeX;
+			cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
+
+			CreateChunks();
+			CreateCells();
+			System.Random rndSeed = new System.Random(generationSeed);
+			HexFieldGenerator.GenerateHexMap(cells, rndSeed);
+		}
+		void CreateChunks()
+		{
+			chunks = new HexGridChunk[chunkCountX * chunkCountZ];
+
+			for (int z = 0, i = 0; z < chunkCountZ; z++)
 			{
-				for (int x = 0; x < width; x++)
+				for (int x = 0; x < chunkCountX; x++)
 				{
-					CreateCell(x, z, i++);
+					HexGridChunk chunk = chunks[i++] = Instantiate(chunkPrefab);
+					chunk.transform.SetParent(transform);
+					chunk.name = $"X = {x}, Y = {i}, Z = {z}";
 				}
 			}
 			System.Random rndSeed = new System.Random(generationSeed);
@@ -96,19 +109,10 @@ namespace Assets.Map.WorldMap
 		void TouchCell(Vector3 position)
 		{
 			position = transform.InverseTransformPoint(position);
-			/*print("touched at " + position);
-			HexCoords coords = HexCoords.FromPosition(position);
-			print("touched cell " + coords);
-			int index = coords.x + coords.z * width + coords.z / 2;
-			HexCell tmp = cells[index];
-			tmp.color = chosenColor;
-			hexMesh.Triangulate(cells);*/
 			foreach (var cell in cells)
             {
 				if(cell.coords.EqualsTo(HexCoords.FromPosition(position)))
                 {
-					print("touched at " + position);
-					print("touched cell " + cell.coords);
 					//cell.Choose();
 					cell.MouseLeftClick.Invoke(cell, new HexCellEventArgs(position));
 					//hexMesh.Triangulate(cells);
