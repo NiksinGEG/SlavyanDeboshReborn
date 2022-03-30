@@ -30,25 +30,12 @@ namespace Assets.Map.WorldMap
 
     public class HexCell : MonoBehaviour
     {
-
-
-        [SerializeField] HexCell[] neighbours;
         [SerializeField] int cellIndex;
 
         public int CellIndex
         {
             get { return cellIndex; }
             set { cellIndex = value; }
-        }
-
-        public HexCell GetNeighbor(HexDirection direction)
-        {
-            return neighbours[(int)direction];
-        }
-        public void SetNeighbor(HexDirection direction, HexCell cell)
-        {
-            neighbours[(int)direction] = cell;
-            cell.neighbours[(int)direction.Opposite()] = this;
         }
 
         [SerializeField] public HexCoords coords;

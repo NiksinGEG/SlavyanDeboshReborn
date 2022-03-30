@@ -11,8 +11,6 @@ namespace Assets.Map.WorldMap
     {
 		public int chunkCountX = 10, chunkCountZ = 10;
 		int cellCountX, cellCountZ;
-		//public int width;
-        //public int height;
 	
 		public int generationSeed; //Семя для генерации карты. Перекинем потом в хоста
 		
@@ -23,7 +21,7 @@ namespace Assets.Map.WorldMap
 		public HexCell cell_prefab;
 
 		HexGridChunk[] chunks;
-		[SerializeField] HexCell[] cells;
+		CellList cells;
 
 		[ContextMenu("Generate game field")]
 		void Awake()
@@ -37,7 +35,7 @@ namespace Assets.Map.WorldMap
 			CreateChunks();
 			CreateCells();
 			System.Random rndSeed = new System.Random(generationSeed);
-			cells = GenerationHexField.GenerateHexMap(cells, rndSeed, cellCountX, cellCountZ);
+			cells = HexFieldGenerator.GenerateHexMap(cells, rndSeed);
 		}
 		void CreateChunks()
 		{
@@ -56,7 +54,7 @@ namespace Assets.Map.WorldMap
 		}
 		void CreateCells()
 		{
-			cells = new HexCell[cellCountZ * cellCountX];
+			cells = new CellList(new HexCell[cellCountZ * cellCountX], cellCountX, cellCountZ);
 			for (int z = 0, i = 0; z < cellCountZ; z++)
 			{
 				for (int x = 0; x < cellCountX; x++)
@@ -65,7 +63,6 @@ namespace Assets.Map.WorldMap
 				}
 			}
 		}
-
 
 		void CreateCell(int x, int z, int i)
 		{
@@ -81,7 +78,10 @@ namespace Assets.Map.WorldMap
 			cell.CellIndex = i;
 			cell.name = $"Index = {cell.CellIndex}";
 			cell.Elevation = 0;
+
 			cells[i] = cell;
+
+
 			AddCellToChunk(x, z, cell);
 		}
 		void AddCellToChunk(int x, int z, HexCell cell)
