@@ -6,5 +6,5 @@ using Assets.Map.MapResources;
 
 public class MainMap : MonoBehaviour
 {
-
+   
 }
