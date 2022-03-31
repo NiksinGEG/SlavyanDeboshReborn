@@ -6,10 +6,8 @@ using Assets.Map.MapResources;
 
 public class MainMap: MonoBehaviour
 {
-
-
     public HexGrid grid;
-    public Transform res_prefab;
+    public MapResource res_prefab;
     MapResource[] resources;
 
     private void Awake()
@@ -32,7 +30,7 @@ public class MainMap: MonoBehaviour
                     ResourceGenerator resGen = new ResourceGenerator();
 
 
-                    pos.y += obj.transform.localScale.y * 0.5f;
+                    //pos.y += obj.transform.localScale.y * 0.1f;
                     obj.transform.position = pos;
 
                     
