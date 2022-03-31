@@ -12,33 +12,68 @@ namespace Assets.Map.MapResources
     public class ResourceGenerator : MonoBehaviour
     {
         public MapResource rockPrefab;
-        private void GenerateRock(HexGrid grid, List<MapResource> additionFeatures)
+        public MapResource treePrefab;
+        private void GenerateRock(HexGrid grid, List<MapResource> additionFeatures, System.Random rndSeed)
         {
-            foreach (var chunk in grid.chunks)
+            //var prManager = new PrefabManager();
+            foreach (var cell in grid.cellList)
             {
-                foreach (var cell in chunk.cells)
+                if (cell.CellColor == cell.terrainColor || cell.CellColor == cell.rockColor)
                 {
-                    if (cell.CellColor == cell.terrainColor)
+                    int isRock = rndSeed.Next(1, 10);
+                    var nCells = grid.cellList.GetNeighbours(cell.CellIndex);
+                    bool isNearRock = false;
+                    foreach (var nCell in nCells)
+                        if (nCell.CellColor == nCell.rockColor)
+                        {
+                            isNearRock = true;
+                            isRock = 10;
+                        }
+                    if (cell.CellColor == cell.rockColor)
                     {
-                        MapResource obj = Instantiate(rockPrefab);
-                        obj.transform.SetParent(transform);
-                        Vector3 pos = cell.transform.position;
+                       isRock = 10;
+                       isNearRock = true;
+                    }
+ 
+                    if (isRock > 7)
+                    {
+                        int rockCount = rndSeed.Next(1, 10);
+                        if (isNearRock)
+                            rockCount += 5;
+                        for (int i = 0; i < rockCount; i++)
+                        {
+                            MapResource obj = Instantiate(rockPrefab);
+                            obj.transform.SetParent(transform);
+                            Vector3 pos = cell.transform.position;
+                            Quaternion rotation = cell.transform.rotation;
+                            Vector3 scaling = cell.transform.localScale;
 
-                        pos.y += obj.transform.localScale.y * 0.5f;
-                        obj.transform.position = pos;
+                            int rotate = rndSeed.Next(-180, 180);
+                            
+                            float rndElevation = UnityEngine.Random.Range(0.15f, 0.35f);
+                            pos.y += obj.transform.localScale.y * rndElevation;
+                            obj.transform.position = pos;
 
+                            rotation.x += rotate;
+                            obj.transform.rotation = rotation;
 
-                        obj.SetInnerPosition(UnityEngine.Random.Range(-1.0f, 1.0f), UnityEngine.Random.Range(-1.0f, 1.0f));
-                        
+                            scaling.x += UnityEngine.Random.Range(-1.5f, -0.5f);
+                            scaling.y += UnityEngine.Random.Range(-1.5f, -0.5f);
+                            scaling.z += UnityEngine.Random.Range(-1.5f, -0.5f);
+                            obj.transform.localScale += scaling;
+
+                            obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
+                        }
+
                     }
 
                 }
+
             }
         }
-
-        public void GenerateResource(HexGrid grid,MapResource[] resources, List<MapResource> additionFeatures, System.Random rndSeed)
+        public void GenerateResource(HexGrid grid, MapResource[] resources, List<MapResource> additionFeatures, System.Random rndSeed)
         {
-            GenerateRock(grid, additionFeatures);
+            GenerateRock(grid, additionFeatures, rndSeed);
         }
     }
 }

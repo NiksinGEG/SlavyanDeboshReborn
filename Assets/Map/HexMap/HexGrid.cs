@@ -23,6 +23,12 @@ namespace Assets.Map.WorldMap
 		public HexGridChunk[] chunks;
 		CellList cells;
 
+		public CellList cellList
+        {
+			get { return cells; }
+			set { cells = value; }
+        }
+
 		[ContextMenu("Generate game field")]
 		void Awake()
 		{

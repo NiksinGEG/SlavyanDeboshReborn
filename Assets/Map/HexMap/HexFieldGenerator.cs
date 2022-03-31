@@ -50,7 +50,6 @@ namespace Assets.Map.WorldMap
         {
             for(int i = 0; i < cells.Length; i++)
             {
-                int rndElevation = rndSeed.Next(-2, 0);
                 cells[i].CellColor = cells[i].waterColor;
                 cells[i].Elevation = 0;
             }
