@@ -11,39 +11,34 @@ namespace Assets.Map.MapResources
 {
     public class ResourceGenerator : MonoBehaviour
     {
-        [SerializeField] Transform rockPrefab_1;
-        [SerializeField] Transform rockPrefab_2;
-        [SerializeField] Transform rockPrefab_3;
-        [SerializeField] Transform rockPrefab_4;
-        [SerializeField] Transform rockPrefab_5;
-
-        Transform choosenPrefab;
-
-        public Transform ChoosenPrefab
+        public MapResource rockPrefab;
+        private void GenerateRock(HexGrid grid, List<MapResource> additionFeatures)
         {
-            get { return choosenPrefab; }
-            set { choosenPrefab = value; }
-        }
-
-        public Transform ChooseRockPrefab(System.Random rndSeed)
-        {
-            int num = rndSeed.Next(1, 5);
-            return num switch
+            foreach (var chunk in grid.chunks)
             {
-                1 => rockPrefab_1,
-                2 => rockPrefab_2,
-                3 => rockPrefab_3,
-                4 => rockPrefab_4,
-                5 => rockPrefab_5,
-                _ => rockPrefab_1,
-            };
+                foreach (var cell in chunk.cells)
+                {
+                    if (cell.CellColor == cell.terrainColor)
+                    {
+                        MapResource obj = Instantiate(rockPrefab);
+                        obj.transform.SetParent(transform);
+                        Vector3 pos = cell.transform.position;
+
+                        pos.y += obj.transform.localScale.y * 0.5f;
+                        obj.transform.position = pos;
+
+
+                        obj.SetInnerPosition(UnityEngine.Random.Range(-1.0f, 1.0f), UnityEngine.Random.Range(-1.0f, 1.0f));
+                        
+                    }
+
+                }
+            }
         }
 
-       
-
-        public void GenerateResource(HexGrid grid,MapResource resource, System.Random rndSeed)
+        public void GenerateResource(HexGrid grid,MapResource[] resources, List<MapResource> additionFeatures, System.Random rndSeed)
         {
-            
+            GenerateRock(grid, additionFeatures);
         }
     }
 }
