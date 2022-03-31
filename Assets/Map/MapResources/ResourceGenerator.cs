@@ -48,7 +48,7 @@ namespace Assets.Map.MapResources
                             Quaternion rotation = cell.transform.rotation;
                             Vector3 scaling = cell.transform.localScale;
 
-                            int rotate = rndSeed.Next(-180, 180);
+                            int rotate = rndSeed.Next(-60, 60);
                             
                             float rndElevation = UnityEngine.Random.Range(0.15f, 0.35f);
                             pos.y += obj.transform.localScale.y * rndElevation;
