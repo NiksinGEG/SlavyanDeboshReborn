@@ -97,10 +97,18 @@ namespace Assets.Map.MapResources
                                 MapResource obj = Instantiate(treePrefab_1);
                                 obj.transform.SetParent(transform);
                                 Vector3 pos = cell.transform.position;
+                                Vector3 scale = obj.transform.localScale;
 
                                 pos.y += obj.transform.localScale.y * 0.04f;
                                 obj.transform.position = pos;
 
+                                int scaling = rndSeed.Next(-10, 10);
+                                scale.x += scaling;
+                                scale.y += scaling;
+                                scale.z += scaling;
+                                obj.transform.localScale = scale;
+
+                                obj.transform.rotation = Quaternion.Euler(-90f, UnityEngine.Random.Range(-180, 180), 0f);
                                 obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
 
                                 treeList.Add(obj);
