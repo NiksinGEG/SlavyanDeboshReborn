@@ -13,6 +13,37 @@ namespace Assets.Map.MapResources
     {
         public MapResource rockPrefab;
         public MapResource treePrefab_1;
+        public MapResource treePrefab_2;
+        public MapResource treePrefab_3;
+        public MapResource treePrefab_4;
+        public MapResource treePrefab_5;
+        public MapResource treePrefab_6;
+        public MapResource treePrefab_7;
+
+        private MapResource ChooseTreePrefab(System.Random rndSeed)
+        {
+            int prefNum = rndSeed.Next(1,4);
+            return prefNum switch
+            {
+                1 => treePrefab_1,
+                2 => treePrefab_2,
+                3 => treePrefab_3,
+                4 => treePrefab_4,
+                5 => treePrefab_5,
+                6 => treePrefab_6,
+                7 => treePrefab_7,
+                _ => treePrefab_1,
+            };
+        }
+
+        private int GetTerrainCellsCount(HexGrid grid)
+        {
+            int count = 0;
+            foreach (var cell in grid.cellList)
+                if (cell.CellColor == cell.terrainColor)
+                    count++;
+            return count;
+        }
         private void GenerateRock(HexGrid grid, System.Random rndSeed)
         {
             foreach (var cell in grid.cellList)
@@ -73,8 +104,8 @@ namespace Assets.Map.MapResources
             int startCell = rndSeed.Next(grid.cellList.Length);
             while(grid.cellList[startCell].CellColor != grid.cellList[0].terrainColor)
                 startCell = rndSeed.Next(grid.cellList.Length);
-            int treeCellCount = rndSeed.Next(50, 100);
-            while(treeCellCount >= 0)
+            int treeChunkCount = rndSeed.Next(GetTerrainCellsCount(grid) - 100, GetTerrainCellsCount(grid));
+            while(treeChunkCount >= 0)
             {
                 if(grid.cellList[startCell].CellColor == grid.cellList[0].terrainColor)
                 {
@@ -91,10 +122,10 @@ namespace Assets.Map.MapResources
                             if (isRock)
                                 treeCountOnCell = rndSeed.Next(0,1);
                             else
-                                treeCountOnCell = rndSeed.Next(2,4);
+                                treeCountOnCell = rndSeed.Next(4,6);
                             for(int i = 0; i < treeCountOnCell; i++)
                             {
-                                MapResource obj = Instantiate(treePrefab_1);
+                                MapResource obj = Instantiate(ChooseTreePrefab(rndSeed));
                                 obj.transform.SetParent(transform);
                                 Vector3 pos = cell.transform.position;
                                 Vector3 scale = obj.transform.localScale;
@@ -102,7 +133,7 @@ namespace Assets.Map.MapResources
                                 pos.y += obj.transform.localScale.y * 0.04f;
                                 obj.transform.position = pos;
 
-                                int scaling = rndSeed.Next(-10, 10);
+                                int scaling = rndSeed.Next(-1, 1);
                                 scale.x += scaling;
                                 scale.y += scaling;
                                 scale.z += scaling;
@@ -112,7 +143,7 @@ namespace Assets.Map.MapResources
                                 obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
 
                                 treeList.Add(obj);
-                                treeCellCount--;
+                                treeChunkCount--;
                             }
 
                         }
