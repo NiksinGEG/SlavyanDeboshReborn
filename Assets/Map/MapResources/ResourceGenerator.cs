@@ -12,12 +12,10 @@ namespace Assets.Map.MapResources
     public class ResourceGenerator : MonoBehaviour
     {
         public MapResource rockPrefab;
-        public MapResource treePrefab;
-        private void GenerateRock(HexGrid grid, List<MapResource> additionFeatures, System.Random rndSeed)
+        public MapResource treePrefab_1;
+        private void GenerateRock(HexGrid grid, System.Random rndSeed)
         {
-            //var prManager = new PrefabManager();
             foreach (var cell in grid.cellList)
-            {
                 if (cell.CellColor == cell.terrainColor || cell.CellColor == cell.rockColor)
                 {
                     int isRock = rndSeed.Next(1, 10);
@@ -68,12 +66,60 @@ namespace Assets.Map.MapResources
                     }
 
                 }
+        }
 
+        public void GenerateTree(HexGrid grid, List<MapResource> treeList, System.Random rndSeed)
+        {
+            int startCell = rndSeed.Next(grid.cellList.Length);
+            while(grid.cellList[startCell].CellColor != grid.cellList[0].terrainColor)
+                startCell = rndSeed.Next(grid.cellList.Length);
+            int treeCellCount = rndSeed.Next(50, 100);
+            while(treeCellCount >= 0)
+            {
+                if(grid.cellList[startCell].CellColor == grid.cellList[0].terrainColor)
+                {
+                    CellList neigboursCells = grid.cellList.GetNeighbours(startCell);
+                    bool isRock = false;
+                    foreach(var cell in neigboursCells)
+                        if(cell.CellColor == cell.rockColor)
+                            isRock = true;
+                    foreach(var cell in neigboursCells)
+                    {
+                        if(cell.CellColor == cell.terrainColor)
+                        {
+                            int treeCountOnCell = 0;
+                            if (isRock)
+                                treeCountOnCell = rndSeed.Next(0,1);
+                            else
+                                treeCountOnCell = rndSeed.Next(2,4);
+                            for(int i = 0; i < treeCountOnCell; i++)
+                            {
+                                MapResource obj = Instantiate(treePrefab_1);
+                                obj.transform.SetParent(transform);
+                                Vector3 pos = cell.transform.position;
+
+                                pos.y += obj.transform.localScale.y * 0.04f;
+                                obj.transform.position = pos;
+
+                                obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
+
+                                treeList.Add(obj);
+                                treeCellCount--;
+                            }
+
+                        }
+                    }
+                }
+                startCell = rndSeed.Next(grid.cellList.Length);
+                while (grid.cellList[startCell].CellColor != grid.cellList[0].terrainColor)
+                    startCell = rndSeed.Next(grid.cellList.Length);
             }
         }
-        public void GenerateResource(HexGrid grid, MapResource[] resources, List<MapResource> additionFeatures, System.Random rndSeed)
+
+        public void GenerateResource(HexGrid grid, MapResource[] resources, List<MapResource> treeList, System.Random rndSeed)
         {
-            GenerateRock(grid, additionFeatures, rndSeed);
+            GenerateRock(grid, rndSeed);
+            GenerateTree(grid, treeList, rndSeed);
         }
     }
 }
