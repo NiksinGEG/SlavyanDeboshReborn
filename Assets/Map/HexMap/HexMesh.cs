@@ -90,7 +90,6 @@ namespace Assets.Map.WorldMap
 			HexCell prevNeighbor = neighbourCells[(int)direction.Previous()] ?? cell;
 			HexCell nextNeighbor = neighbourCells[(int)direction.Next()] ?? cell;
 
-			Color edgeColor = (cell.CellColor + neighbour.CellColor) * 0.5f;
 			AddQuadColor(cell.CellColor, (cell.CellColor + neighbour.CellColor) * 0.5f);
 
 			Color bridgeColor = (cell.CellColor + neighbour.CellColor) * 0.5f;

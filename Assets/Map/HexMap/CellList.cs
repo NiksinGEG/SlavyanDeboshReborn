@@ -34,20 +34,28 @@ namespace Assets.Map.WorldMap
                 switch (i)
                 {
                     case 0:
-                        nei_coords.x += 1;
+                        nei_coords.z += 1;
+                        //nei_coords.x += 1;
                         break;
                     case 1:
-                        nei_coords.x -= 1;
+                        nei_coords.x += 1;
+
+                        //nei_coords.x -= 1;
                         break;
                     case 2:
-                        nei_coords.z += 1;
+                        nei_coords.x += 1;
+                        nei_coords.z -= 1;
+
+                        //nei_coords.z += 1;
                         break;
                     case 3:
                         nei_coords.z -= 1;
                         break;
                     case 4:
-                        nei_coords.x += 1;
-                        nei_coords.z -= 1;
+                        nei_coords.x -= 1;
+
+                        //nei_coords.x += 1;
+                        //nei_coords.z -= 1;
                         break;
                     case 5:
                         nei_coords.x -= 1;
