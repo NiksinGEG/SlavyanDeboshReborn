@@ -16,8 +16,12 @@ namespace Assets.Map.WorldMap
         {
             for (int i = 0; i < cells.Length; i++)
             {
-                if (cells[i].CellColor == cells[0].terrainColor && cells[i].Elevation != 0)
-                    cells[i].CellColor = cells[0].rockColor;
+                if (cells[i].CellType == HexCell.CellTypes.terrain && cells[i].Elevation != 0)
+                {
+                    cells[i].CellColor = Color.gray;
+                    cells[i].CellType = HexCell.CellTypes.rock;
+                }
+
             }
             return cells;
         }
@@ -25,7 +29,7 @@ namespace Assets.Map.WorldMap
         {
             terrainCells = 0;
             for (int i = 0; i < cells.Length; i++)
-                if (cells[i].CellColor == cells[0].terrainColor)
+                if (cells[i].CellType == HexCell.CellTypes.terrain)
                     terrainCells++;
         }
 
@@ -41,6 +45,9 @@ namespace Assets.Map.WorldMap
             cells = GenerateIslands(cells, rndSeed);
             //Горы. Сначала нужно получить количество сгенерированных клеток terrain
             GetTerrainCellsCount(cells);
+            //Перепады высот внутри материков-островов
+
+
             cells = GenerateRock(cells, rndSeed);
             //Немного пляжных клеток
             cells = GenerateBeachSells(cells);
@@ -50,15 +57,17 @@ namespace Assets.Map.WorldMap
         {
             for(int i = 0; i < cells.Length; i++)
             {
-                cells[i].CellColor = cells[i].waterColor;
+                cells[i].CellType = HexCell.CellTypes.water;
+                cells[i].CellColor = Color.blue;
                 cells[i].Elevation = 0;
             }
             return cells;
         }
+
         private static CellList GenerateIslands(CellList cells, System.Random rndSeed)
         {
             int startCell = rndSeed.Next(cells.Length);
-            while(cells[startCell].CellColor == cells[startCell].terrainColor)
+            while(cells[startCell].CellType == HexCell.CellTypes.terrain)
                 startCell = rndSeed.Next(cells.Length);
             int islandsCount = rndSeed.Next(5, 10);
             
@@ -66,16 +75,18 @@ namespace Assets.Map.WorldMap
             {
                 neighbourCells = cells.GetNeighbours(startCell);
                 int islandsCellsCount = rndSeed.Next(2, neighbourCells.Length);
-                cells[startCell].CellColor = cells[0].terrainColor;
-                for(int i = 0; i < islandsCellsCount; i++)
+                cells[startCell].CellColor = Color.green;
+                cells[startCell].CellType = HexCell.CellTypes.terrain;
+                for (int i = 0; i < islandsCellsCount; i++)
                 {
                     int index = neighbourCells[i].coords.MakeIndex(cells.CellCountX);
                     int rndEvaluate = rndSeed.Next(0, 1);
-                    cells[index].CellColor = cells[index].terrainColor;
+                    cells[index].CellColor = Color.green;
+                    cells[index].CellType = HexCell.CellTypes.terrain;
                     cells[index].Elevation = rndEvaluate;
                 }
                 startCell = rndSeed.Next(cells.Length);
-                while (cells[startCell].CellColor == cells[startCell].terrainColor)
+                while (cells[startCell].CellType == HexCell.CellTypes.terrain)
                     startCell = rndSeed.Next(cells.Length);
                 islandsCount--;
             }
@@ -96,14 +107,15 @@ namespace Assets.Map.WorldMap
                     neighbourCells = cells.GetNeighbours(nextCell);
                     nextCell = rndSeed.Next(neighbourCells.Count());
                     
-                    if (neighbourCells[nextCell].CellColor == neighbourCells[nextCell].terrainColor)
+                    if (neighbourCells[nextCell].CellType == HexCell.CellTypes.terrain)
                         nextCell = rndSeed.Next(neighbourCells.Count());
                     else
                         tryCount++;
                     if(tryCount > neighbourCells.Count())
                         nextCell = rndSeed.Next(neighbourCells.Count());
                     int index = neighbourCells[nextCell].coords.MakeIndex(cells.CellCountX);
-                    cells[index].CellColor = cells[0].terrainColor;
+                    cells[index].CellColor = Color.green;
+                    cells[index].CellType = HexCell.CellTypes.terrain;
                     int rndEvaluate = rndSeed.Next(0, 1);
                     cells[index].Elevation = rndEvaluate;
                     startCell = index;
@@ -111,7 +123,7 @@ namespace Assets.Map.WorldMap
                     if (tryCount == 3)
                         startCell = rndSeed.Next(cells.Length);
                 }
-                while(cells[startCell].CellColor == cells[startCell].terrainColor)
+                while(cells[startCell].CellType == HexCell.CellTypes.terrain)
                     startCell = rndSeed.Next(cells.Length);
 
             }
@@ -121,12 +133,16 @@ namespace Assets.Map.WorldMap
         {
             foreach(var cell in cells)
             {
-                if(cell.CellColor == cell.waterColor)
+                if(cell.CellType == HexCell.CellTypes.water)
                 {
                     neighbourCells = cells.GetNeighbours(cell.CellIndex);
                     foreach (var tCell in neighbourCells)
-                        if (tCell.CellColor == tCell.terrainColor)
-                            cells[tCell.CellIndex].CellColor = tCell.desertColor;
+                        if (tCell.CellType == HexCell.CellTypes.terrain)
+                        {
+                            cells[tCell.CellIndex].CellColor = Color.yellow;
+                            cells[tCell.CellIndex].CellType = HexCell.CellTypes.sand;
+                        }
+
                 }
             }
             return cells;
@@ -136,11 +152,11 @@ namespace Assets.Map.WorldMap
             neighbourCells = cells.GetNeighbours(startCell);
             int minRockEleation = cells[startCell].Elevation;
             foreach (var cell in neighbourCells)
-                if (cell.CellColor == cell.rockColor && minRockEleation > cell.Elevation)
+                if (cell.CellType == HexCell.CellTypes.rock && minRockEleation > cell.Elevation)
                     minRockEleation = cell.Elevation;
             foreach (var cell in neighbourCells)
             {
-                if(cell.CellColor == cell.terrainColor)
+                if(cell.CellType == HexCell.CellTypes.terrain)
                 {
                     int index = cell.coords.MakeIndex(cells.CellCountX);
                     cells[index].Elevation = minRockEleation - 1;
@@ -149,13 +165,13 @@ namespace Assets.Map.WorldMap
             CellList neighbourTerrainCells;
             foreach(var cell in neighbourCells)
             {
-                if(cell.CellColor == cell.terrainColor)
+                if(cell.CellType == HexCell.CellTypes.terrain)
                 {
                     int indexCellElevation = cell.Elevation;
                     int index = cell.coords.MakeIndex(cells.CellCountX);
                     neighbourTerrainCells = cells.GetNeighbours(index);
                     foreach(var tCell in neighbourTerrainCells)
-                        if (tCell.Elevation < cell.Elevation && tCell.CellColor == tCell.terrainColor)
+                        if (tCell.Elevation < cell.Elevation && tCell.CellType == HexCell.CellTypes.terrain)
                         {
                             int tIndex = tCell.coords.MakeIndex(cells.CellCountX);
                             cells[tIndex].Elevation = indexCellElevation - 1;
@@ -169,7 +185,7 @@ namespace Assets.Map.WorldMap
         {
             int maxCount = rndSeed.Next(0, terrainCells / 20);
             int startCell = rndSeed.Next(cells.Length);
-            while (cells[startCell].CellColor == cells[startCell].waterColor)
+            while (cells[startCell].CellType == HexCell.CellTypes.water)
                 startCell = rndSeed.Next(cells.Length);
             int tryCount = 0;
             while (maxCount != 0)
@@ -177,11 +193,12 @@ namespace Assets.Map.WorldMap
 
                 neighbourCells = cells.GetNeighbours(startCell);
                 int nextCell = rndSeed.Next(neighbourCells.Count());
-                if(neighbourCells[nextCell].CellColor == cells[0].terrainColor)
+                if(neighbourCells[nextCell].CellType == HexCell.CellTypes.terrain)
                 {
                     tryCount = 0;
                     int index = neighbourCells[nextCell].coords.MakeIndex(cells.CellCountX);
-                    cells[index].CellColor = cells[0].rockColor;
+                    cells[index].CellColor = Color.gray;
+                    cells[index].CellType = HexCell.CellTypes.rock;
                     int rndEvaluate = rndSeed.Next(3, 4);
                     cells[index].Elevation = rndEvaluate;
                     cells = GenerateTransition(cells, index);
@@ -192,7 +209,7 @@ namespace Assets.Map.WorldMap
                 if (tryCount == 3)
                 {
                     startCell = rndSeed.Next(cells.Length);
-                    while (cells[startCell].CellColor == cells[startCell].waterColor)
+                    while (cells[startCell].CellType == HexCell.CellTypes.water)
                         startCell = rndSeed.Next(cells.Length);
                 }               
             }

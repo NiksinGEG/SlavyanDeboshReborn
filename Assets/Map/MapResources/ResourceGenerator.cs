@@ -65,25 +65,20 @@ namespace Assets.Map.MapResources
         {
             int count = 0;
             foreach (var cell in grid.cellList)
-                if (cell.CellColor == cell.terrainColor)
+                if (cell.CellType == HexCell.CellTypes.terrain)
                     count++;
             return count;
         }
         private void GenerateRock(HexGrid grid, System.Random rndSeed)
         {
             foreach (var cell in grid.cellList)
-                if (cell.CellColor == cell.terrainColor || cell.CellColor == cell.rockColor)
+                if (cell.CellType == HexCell.CellTypes.terrain || cell.CellType == HexCell.CellTypes.rock)
                 {
                     int isRock = rndSeed.Next(1, 10);
                     var nCells = grid.cellList.GetNeighbours(cell.CellIndex);
                     bool isNearRock = false;
                     foreach (var nCell in nCells)
-                        if (nCell.CellColor == nCell.rockColor)
-                        {
-                            isNearRock = true;
-                            isRock = 10;
-                        }
-                    if (cell.CellColor == cell.rockColor)
+                    if (cell.CellType == HexCell.CellTypes.rock)
                     {
                        isRock = 10;
                        isNearRock = true;
@@ -127,21 +122,21 @@ namespace Assets.Map.MapResources
         public void GenerateTree(HexGrid grid, List<MapResource> treeList, System.Random rndSeed)
         {
             int startCell = rndSeed.Next(grid.cellList.Length);
-            while(grid.cellList[startCell].CellColor != grid.cellList[0].terrainColor)
+            while(grid.cellList[startCell].CellType != HexCell.CellTypes.terrain)
                 startCell = rndSeed.Next(grid.cellList.Length);
             int treeChunkCount = rndSeed.Next(GetTerrainCellsCount(grid) - 100, GetTerrainCellsCount(grid));
             while(treeChunkCount >= 0)
             {
-                if(grid.cellList[startCell].CellColor == grid.cellList[0].terrainColor)
+                if(grid.cellList[startCell].CellType == HexCell.CellTypes.terrain)
                 {
                     CellList neigboursCells = grid.cellList.GetNeighbours(startCell);
                     bool isRock = false;
                     foreach(var cell in neigboursCells)
-                        if(cell.CellColor == cell.rockColor)
+                        if(cell.CellType == HexCell.CellTypes.rock)
                             isRock = true;
                     foreach(var cell in neigboursCells)
                     {
-                        if(cell.CellColor == cell.terrainColor)
+                        if(cell.CellType == HexCell.CellTypes.terrain)
                         {
                             int treeCountOnCell = 0;
                             if (isRock)
@@ -175,7 +170,7 @@ namespace Assets.Map.MapResources
                     }
                 }
                 startCell = rndSeed.Next(grid.cellList.Length);
-                while (grid.cellList[startCell].CellColor != grid.cellList[0].terrainColor)
+                while (grid.cellList[startCell].CellType != HexCell.CellTypes.terrain)
                     startCell = rndSeed.Next(grid.cellList.Length);
             }
         }
@@ -183,7 +178,7 @@ namespace Assets.Map.MapResources
         private void GenerateGrass(HexGrid grid, System.Random rndSeed)
         {
             foreach(var cell in grid.cellList)
-                if(cell.CellColor == cell.terrainColor)
+                if(cell.CellType == HexCell.CellTypes.terrain)
                 {
                     int spawnChance = rndSeed.Next(0, 10);
                     if (spawnChance > 5)

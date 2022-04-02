@@ -32,18 +32,26 @@ namespace Assets.Map.WorldMap
     {
         [SerializeField] int cellIndex;
 
+        public enum CellTypes { water, terrain, rock, sand }
+        private CellTypes cellType;
+        public CellTypes CellType { get; set; }
+        
+
         public List<Vector3> vertices;
 
         public int CellIndex { get; set; }
 
         [SerializeField] public HexCoords coords;
 
+        /*
         //Цвета клеток для дегенерации
         [SerializeField] public Color desertColor = Color.yellow;
         [SerializeField] public Color terrainColor = Color.green;
         [SerializeField] public Color rockColor = Color.gray;
         [SerializeField] public Color waterColor = Color.blue;
-        
+        */
+
+
         //Тестовый цвет
         [SerializeField] public Color neighboorColor = Color.red;
 

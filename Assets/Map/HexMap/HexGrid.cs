@@ -35,6 +35,9 @@ namespace Assets.Map.WorldMap
 			System.Random rnd = new System.Random();
 			generationSeed = rnd.Next(1, 30000000); //Семя сегенерилось
 
+			chunkCountX = 10;//35
+			chunkCountZ = 10;//35
+
 			cellCountX = chunkCountX * HexMetrics.chunkSizeX;
 			cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
 
@@ -86,7 +89,8 @@ namespace Assets.Map.WorldMap
 			HexCell cell = cells[i] = Instantiate<HexCell>(cell_prefab);
 			cell.transform.localPosition = position;
 			cell.coords = HexCoords.FromOffset(x, z);
-			cell.CellColor = cell.waterColor;
+			cell.CellColor = Color.blue;
+			cell.CellType = HexCell.CellTypes.water;
 
 			cell.CellIndex = i;
 			cell.name = $"Index = {cell.CellIndex}";
