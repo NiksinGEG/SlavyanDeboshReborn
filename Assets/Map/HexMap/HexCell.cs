@@ -32,11 +32,9 @@ namespace Assets.Map.WorldMap
     {
         [SerializeField] int cellIndex;
 
-        public int CellIndex
-        {
-            get { return cellIndex; }
-            set { cellIndex = value; }
-        }
+        public List<Vector3> vertices;
+
+        public int CellIndex { get; set; }
 
         [SerializeField] public HexCoords coords;
 
@@ -71,7 +69,7 @@ namespace Assets.Map.WorldMap
             }
         }
 
-        public HexCell() { MouseLeftClick += Choose; }
+        public HexCell() { MouseLeftClick += Choose; vertices = new List<Vector3>(); }
 
         public void Choose(object sender, HexCellEventArgs e)
         {

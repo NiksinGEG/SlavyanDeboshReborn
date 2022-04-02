@@ -40,8 +40,14 @@ namespace Assets.Map.WorldMap
 
 			CreateChunks();
 			CreateCells();
+
 			System.Random rndSeed = new System.Random(generationSeed);
 			HexFieldGenerator.GenerateHexMap(cells, rndSeed);
+			foreach (var ch in chunks)
+			{
+				//ch.hexMesh.Triangulate(ch.cells);
+				ch.hexMesh.TriangulateConnections(cells);
+			}
 		}
 		void CreateChunks()
 		{
@@ -56,6 +62,7 @@ namespace Assets.Map.WorldMap
 					chunk.name = $"X = {x}, Y = {i}, Z = {z}";
 				}
 			}
+
 			Console.WriteLine();
 		}
 		void CreateCells()
