@@ -7,6 +7,10 @@ namespace Assets.Map.WorldMap
 {
     public class HexGridChunk : MonoBehaviour
     {
+        static Color color1 = new Color(1f, 0f, 0f);
+        static Color color2 = new Color(0f, 1f, 0f);
+        static Color color3 = new Color(0f, 0f, 1f);
+
         public CellList cells;
         public HexMesh hexMesh;
         public void AddCell(int index, HexCell cell)

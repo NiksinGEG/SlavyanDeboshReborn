@@ -89,7 +89,7 @@ namespace Assets.Map.WorldMap
 			HexCell cell = cells[i] = Instantiate<HexCell>(cell_prefab);
 			cell.transform.localPosition = position;
 			cell.coords = HexCoords.FromOffset(x, z);
-			cell.CellColor = Color.blue;
+			//cell.CellColor = Color.blue;
 			cell.CellType = HexCell.CellTypes.water;
 
 			cell.CellIndex = i;
