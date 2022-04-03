@@ -84,27 +84,26 @@ namespace Assets.Map.WorldMap
 
 			AddQuad(v1, v2, v3, v4);
 
-			CellList neighbourCells = cells.GetNeighbours(cell.CellIndex);
-			HexCell neighbour = neighbourCells[(int)direction] ?? cell;
-			//HexCell prevNeighbor = neighbourCells[(int)direction.Previous()] ?? cell;
-			//HexCell nextNeighbor = neighbourCells[(int)direction.Next()] ?? cell;
+			HexCell neighbour = cell.GetNeighbour((int)direction) ?? cell;
+			HexCell prevNeighbour = cell.GetNeighbour((int)direction - 1 < 0 ? (int)HexDirection.NW : (int)direction - 1) ?? cell;
+			HexCell nextNeighbour = cell.GetNeighbour((int)direction + 1 > 5 ? (int)HexDirection.NE : (int)direction + 1) ?? cell;
 
-			AddQuadColor(cell.CellColor, (cell.CellColor + neighbour.CellColor) * 0.5f);
-			/*Color bridgeColor = (cell.CellColor + neighbour.CellColor) * 0.5f;
+			//AddQuadColor(cell.CellColor, (cell.CellColor + neighbour.CellColor) * 0.5f);
+			Color bridgeColor = (cell.CellColor + neighbour.CellColor) * 0.5f;
 			AddQuadColor(cell.CellColor, bridgeColor);
 
 			AddTriangle(v1, center + HexMetrics.GetFirstCorner(direction), v3);
 			AddTriangleColor(
 				cell.CellColor,
-				(cell.CellColor + prevNeighbor.CellColor + neighbour.CellColor) / 3f,
+				(cell.CellColor + prevNeighbour.CellColor + neighbour.CellColor) / 3f,
 				bridgeColor
 			);
 			AddTriangle(v2, v4, center + HexMetrics.GetSecondCorner(direction));
 			AddTriangleColor(
 				cell.CellColor,
 				bridgeColor,
-				(cell.CellColor + neighbour.CellColor + nextNeighbor.CellColor) / 3f
-			);*/
+				(cell.CellColor + neighbour.CellColor + nextNeighbour.CellColor) / 3f
+			);
 		}
 
 		void AddQuad(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4)

@@ -43,14 +43,11 @@ namespace Assets.Map.WorldMap
 
 			CreateChunks();
 			CreateCells();
+			for (int i = 0; i < cells.Length; i++)
+				cells[i].neighbours = cells.GetNeighbours(i);
 
 			System.Random rndSeed = new System.Random(generationSeed);
 			HexFieldGenerator.GenerateHexMap(cells, rndSeed);
-			foreach (var ch in chunks)
-			{
-				//ch.hexMesh.Triangulate(ch.cells);
-				ch.hexMesh.TriangulateConnections(cells);
-			}
 		}
 		void CreateChunks()
 		{

@@ -110,5 +110,38 @@ namespace Assets.Map.WorldMap
                 return 5;
             return -1;
         }
+
+        public HexCell GetNeighbour(int direction)
+        {
+            HexCoords nei_coords = coords;
+            switch (direction)
+            {
+                case 0:
+                    nei_coords.x += 1;
+                    break;
+                case 1:
+                    nei_coords.z += 1;
+                    break;
+                case 2:
+                    nei_coords.x -= 1;
+                    nei_coords.z += 1;
+                    break;
+                case 3:
+                    nei_coords.x -= 1;
+                    break;
+                case 4:
+                    nei_coords.z -= 1;
+                    break;
+                case 5:
+                    nei_coords.x += 1;
+                    nei_coords.z -= 1;
+                    break;
+
+            }
+            foreach (var nei in neighbours)
+                if (nei.coords.EqualsTo(nei_coords))
+                    return nei;
+            return null;
+        }
     }
 }
