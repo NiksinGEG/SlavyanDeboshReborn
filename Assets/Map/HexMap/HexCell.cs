@@ -66,11 +66,7 @@ namespace Assets.Map.WorldMap
         public EventHandler<HexCellEventArgs> MouseLeftClick;
 
         private Color cellColor;
-        public Color CellColor
-        {
-            get { return cellColor; }
-            set { cellColor = value; }
-        }
+        public Color CellColor { get; set; }
 
         private int elevation;
         public int Elevation
