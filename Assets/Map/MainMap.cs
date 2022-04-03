@@ -12,6 +12,7 @@ public class MainMap : MonoBehaviour
     private void Awake()
     {
         grid = Instantiate(grid);
+        grid.transform.position = Vector3.zero;
         grid.transform.SetParent(transform);
         System.Random rndSeed = new System.Random(300);
 

@@ -84,7 +84,8 @@ namespace Assets.Map.WorldMap
 				0f,
 				z * (HexMetrics.outerRadius * 1.5f));
 			HexCell cell = cells[i] = Instantiate<HexCell>(cell_prefab);
-			cell.transform.localPosition = position;
+			//cell.transform.localPosition = position;
+			cell.transform.position = position;
 			cell.coords = HexCoords.FromOffset(x, z);
 			//cell.CellColor = Color.blue;
 			cell.CellType = HexCell.CellTypes.water;

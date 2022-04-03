@@ -51,6 +51,12 @@ namespace Assets.Map.WorldMap
             cells = GenerateRock(cells, rndSeed);
             //Немного пляжных клеток
             cells = GenerateBeachSells(cells);
+
+            //Короч чтобы все "подводные клетки" были под водой, опускаем их на один уровень
+            foreach (var cell in cells)
+                if (cell.CellType == HexCell.CellTypes.water)
+                    cell.Elevation = -1;
+
             return cells;
         }
         private static CellList GenerateStartTerrain(CellList cells, System.Random rndSeed)
