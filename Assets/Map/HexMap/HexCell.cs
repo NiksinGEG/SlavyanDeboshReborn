@@ -113,31 +113,7 @@ namespace Assets.Map.WorldMap
 
         public HexCell GetNeighbour(int direction)
         {
-            HexCoords nei_coords = coords;
-            switch (direction)
-            {
-                case 0:
-                    nei_coords.z += 1;
-                    break;
-                case 1:
-                    nei_coords.x += 1;
-                    break;
-                case 2:
-                    nei_coords.x += 1;
-                    nei_coords.z -= 1;
-                    break;
-                case 3:
-                    nei_coords.z -= 1;
-                    break;
-                case 4:
-                    nei_coords.x -= 1;
-                    break;
-                case 5:
-                    nei_coords.x -= 1;
-                    nei_coords.z += 1;
-                    break;
-
-            }
+            HexCoords nei_coords = coords.GetNeighbourCoords(direction);
             foreach (var nei in neighbours)
                 if (nei.coords.EqualsTo(nei_coords))
                     return nei;

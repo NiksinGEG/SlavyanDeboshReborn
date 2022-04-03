@@ -78,4 +78,35 @@ public struct HexCoords
     {
         return x + z * mapWidth + z / 2;
     }
+
+    public HexCoords GetNeighbourCoords(int direction)
+    {
+        HexCoords nei_coords = new HexCoords();
+        nei_coords.x = x;
+        nei_coords.z = z;
+        switch (direction)
+        {
+            case 0:
+                nei_coords.z += 1;
+                break;
+            case 1:
+                nei_coords.x += 1;
+                break;
+            case 2:
+                nei_coords.x += 1;
+                nei_coords.z -= 1;
+                break;
+            case 3:
+                nei_coords.z -= 1;
+                break;
+            case 4:
+                nei_coords.x -= 1;
+                break;
+            case 5:
+                nei_coords.x -= 1;
+                nei_coords.z += 1;
+                break;
+        }
+        return nei_coords;
+    }
 }

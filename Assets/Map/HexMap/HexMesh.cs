@@ -78,27 +78,37 @@ namespace Assets.Map.WorldMap
 			AddTriangle(center, v1, v2);
 			AddTriangleColor(cell.CellColor);
 
-			Vector3 bridge = HexMetrics.GetBridge(direction);
-			Vector3 v3 = v1 + bridge;
-			Vector3 v4 = v2 + bridge;
-
-			AddQuad(v1, v2, v3, v4);
-
 			HexCell neighbour = cell.GetNeighbour((int)direction) ?? cell;
 			HexCell prevNeighbour = cell.GetNeighbour((int)direction - 1 < 0 ? (int)HexDirection.NW : (int)direction - 1) ?? cell;
 			HexCell nextNeighbour = cell.GetNeighbour((int)direction + 1 > 5 ? (int)HexDirection.NE : (int)direction + 1) ?? cell;
 
-			//AddQuadColor(cell.CellColor, (cell.CellColor + neighbour.CellColor) * 0.5f);
+			Vector3 bridge = HexMetrics.GetBridge(direction);
+			Vector3 v3 = v1 + bridge;
+			Vector3 v4 = v2 + bridge;
+
+			/*Поднятие "мостов"*/
+			v3.y -= (cell.Elevation * HexMetrics.elevationStep - neighbour.Elevation * HexMetrics.elevationStep) * 0.5f;
+			v4.y -= (cell.Elevation * HexMetrics.elevationStep - neighbour.Elevation * HexMetrics.elevationStep) * 0.5f;
+
+			AddQuad(v1, v2, v3, v4);
+
 			Color bridgeColor = (cell.CellColor + neighbour.CellColor) * 0.5f;
 			AddQuadColor(cell.CellColor, bridgeColor);
 
-			AddTriangle(v1, center + HexMetrics.GetFirstCorner(direction), v3);
+			Vector3 v5 = center + HexMetrics.GetFirstCorner(direction);
+			v5.y -= ((cell.Elevation * HexMetrics.elevationStep - neighbour.Elevation * HexMetrics.elevationStep) * 0.5f + (cell.Elevation * HexMetrics.elevationStep - prevNeighbour.Elevation * HexMetrics.elevationStep) * 0.5f) * 0.5f;
+			v3.y = v5.y;
+			Vector3 v6 = center + HexMetrics.GetSecondCorner(direction);
+			v6.y -= ((cell.Elevation * HexMetrics.elevationStep - neighbour.Elevation * HexMetrics.elevationStep) * 0.5f + (cell.Elevation * HexMetrics.elevationStep - nextNeighbour.Elevation * HexMetrics.elevationStep) * 0.5f) * 0.5f;
+			v4.y = v6.y;
+
+			AddTriangle(v1, v5, v3);
 			AddTriangleColor(
 				cell.CellColor,
 				(cell.CellColor + prevNeighbour.CellColor + neighbour.CellColor) / 3f,
 				bridgeColor
 			);
-			AddTriangle(v2, v4, center + HexMetrics.GetSecondCorner(direction));
+			AddTriangle(v2, v4, v6);
 			AddTriangleColor(
 				cell.CellColor,
 				bridgeColor,
