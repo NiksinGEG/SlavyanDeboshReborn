@@ -22,6 +22,6 @@ public class MainMap : MonoBehaviour
         System.Random rndSeed = new System.Random(300);
 
         var resGen = FindObjectOfType(typeof(ResourceGenerator)) as ResourceGenerator;
-        //resGen.GenerateResource(grid, resources, treeList, rndSeed);
+        resGen.GenerateResource(grid, resources, treeList, rndSeed);
     }
 }

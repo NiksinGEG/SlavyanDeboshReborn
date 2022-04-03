@@ -14,8 +14,8 @@ public class MapResource : MonoBehaviour
     public void SetInnerPosition(float x, float z)
     {
         Vector3 pos = transform.position;
-        pos.x += x * HexMetrics.innerRadius;
-        pos.z += z * HexMetrics.innerRadius;
+        pos.x += x * HexMetrics.innerRadius * HexMetrics.solidFactor;
+        pos.z += z * HexMetrics.innerRadius * HexMetrics.solidFactor;
         transform.position = pos;
     }
     private void Awake()
