@@ -87,7 +87,6 @@ namespace Assets.Map.WorldMap
 			//cell.transform.localPosition = position;
 			cell.transform.position = position;
 			cell.coords = HexCoords.FromOffset(x, z);
-			//cell.CellColor = Color.blue;
 			cell.CellType = HexCell.CellTypes.water;
 
 			cell.CellIndex = i;

@@ -522,7 +522,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1972515489}
-  - component: {fileID: 1972515491}
   - component: {fileID: 1972515490}
   m_Layer: 0
   m_Name: PrefabManager
@@ -576,15 +575,3 @@ MonoBehaviour:
   - {fileID: 7369817279931839038, guid: 393df6f010007dc4291532d4b0620836, type: 3}
   - {fileID: 262603720723948015, guid: 30982add2a5bc64439ab2866a9e7f7a4, type: 3}
   - {fileID: 5108406323057116258, guid: af685f6a8165b47479fdf060cfb30d1d, type: 3}
---- !u!114 &1972515491
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1972515488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87643d1b5c2a9864690ce89a9f35e862, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

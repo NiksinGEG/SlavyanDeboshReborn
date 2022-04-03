@@ -64,7 +64,7 @@ namespace Assets.Map.WorldMap
             for(int i = 0; i < cells.Length; i++)
             {
                 cells[i].CellType = HexCell.CellTypes.water;
-                cells[i].CellColor = Color.blue;
+                cells[i].CellColor = Color.yellow;
                 cells[i].Elevation = 0;
             }
             return cells;

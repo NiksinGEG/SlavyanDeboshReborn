@@ -19,7 +19,6 @@ namespace Assets.Map.WorldMap
 
 		public struct EdgeVertices
 		{
-
 			public Vector3 v1, v2, v3, v4;
 			public EdgeVertices(Vector3 corner1, Vector3 corner2)
 			{
@@ -58,7 +57,7 @@ namespace Assets.Map.WorldMap
 			hexMesh.RecalculateNormals();
 
 			hexCollider.sharedMesh = hexMesh;
-			print($"Triangulate end... {triangles.Count};{hexMesh.triangles.Length}");
+			print($"Triangulate end...");
 		}
 
 		void Triangulate(HexCell cell, CellList cells)
@@ -144,40 +143,6 @@ namespace Assets.Map.WorldMap
 			colors.Add(c2);
 			colors.Add(c2);
 		}
-
-		public void TriangulateConnections(CellList cells) 
-		{
-			for(int i = 0; i < cells.Length; i++)
-            {
-				foreach(var nei in cells.GetNeighbours(i))
-                {
-					/*int ind = nei.coords.MakeIndex(cells.CellCountX);
-					int our_vertind = i * 18;
-					int nei_vertind = ind * 18;
-					int dir = cells[i].GetDirection(nei);
-					if (dir == -1)
-						continue;
-					Vector3 v1 = vertices[1 + (dir * 3) + our_vertind];
-					int antidir = nei.GetDirection(cells[i]);
-					Vector3 v2 = vertices[1 + (antidir * 3) + nei_vertind];
-					Vector3 v3 = vertices[2 + (antidir * 3) + nei_vertind];
-					AddTriangle(v1, v2, v3);
-					AddTriangleColor(Color.yellow);*/
-					var our_vertices = cells[i].vertices;
-					var nei_vertices = nei.vertices;
-					int dir = cells[i].GetDirection(nei);
-					int antidir = nei.GetDirection(cells[i]);
-					if (dir == -1 || antidir == -1)
-						continue;
-
-					var v1 = our_vertices[1 + (dir * 3)];
-					var v2 = nei_vertices[1 + (antidir * 3)];
-					var v3 = nei_vertices[2 + (antidir * 3)];
-					AddTriangle(v1, v2, v3);
-					//AddTriangleColor(Color.yellow);
-				}
-            }
-        }
 
 		void AddTriangle(Vector3 v1, Vector3 v2, Vector3 v3)
 		{

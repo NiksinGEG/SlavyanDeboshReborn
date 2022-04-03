@@ -20,19 +20,27 @@ namespace Assets.Map.MapResources
 
         private MapResource ChooseTreePrefab(System.Random rndSeed)
         {
+            if (manager == null)
+                Awake();
             int prefNum = rndSeed.Next(manager.tree_prefabs.Length - 1);
             return manager.tree_prefabs[prefNum];
         }
 
         private MapResource ChooseGrassPrefab(System.Random rndSeed)
         {
+            if (manager == null)
+                Awake();
             int prefNum = rndSeed.Next(manager.grass_prefabs.Length - 1);
+            
             return manager.grass_prefabs[prefNum];
         }
 
         private MapResource ChooseRockPrefab(System.Random rndSeed)
         {
+            if (manager == null)
+                Awake();
             int prefNum = rndSeed.Next(manager.rock_prefabs.Length - 1);
+            
             return manager.rock_prefabs[prefNum];
         }
 
