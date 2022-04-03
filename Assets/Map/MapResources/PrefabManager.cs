@@ -4,14 +4,10 @@ using UnityEngine;
 
 public class PrefabManager : MonoBehaviour 
 {
-    public MapResource rockPrefab;
-    public MapResource TreePrefab;
-    //public .....
-
-    public MapResource RockPrefab
-    {
-        get { return rockPrefab; }
-        set { rockPrefab = value; }
-    }
-
+    [SerializeField] 
+    public MapResource[] tree_prefabs;
+    [SerializeField]
+    public MapResource[] rock_prefabs;
+    [SerializeField]
+    public MapResource[] grass_prefabs;
 }
