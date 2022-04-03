@@ -84,15 +84,14 @@ namespace Assets.Map.WorldMap
 
 			AddQuad(v1, v2, v3, v4);
 
-
-			CellList neighbourCells = new CellList(cells, 0, 0);
+			CellList aboba = new CellList(cells, 0, 0);
+			CellList neighbourCells = aboba.GetNeighbours(cell.CellIndex);
 			HexCell neighbour = neighbourCells[(int)direction] ?? cell;
 			HexCell prevNeighbor = neighbourCells[(int)direction.Previous()] ?? cell;
 			HexCell nextNeighbor = neighbourCells[(int)direction.Next()] ?? cell;
 
 			AddQuadColor(cell.CellColor, (cell.CellColor + neighbour.CellColor) * 0.5f);
-
-			Color bridgeColor = (cell.CellColor + neighbour.CellColor) * 0.5f;
+			/*Color bridgeColor = (cell.CellColor + neighbour.CellColor) * 0.5f;
 			AddQuadColor(cell.CellColor, bridgeColor);
 
 			AddTriangle(v1, center + HexMetrics.GetFirstCorner(direction), v3);
@@ -106,7 +105,7 @@ namespace Assets.Map.WorldMap
 				cell.CellColor,
 				bridgeColor,
 				(cell.CellColor + neighbour.CellColor + nextNeighbor.CellColor) / 3f
-			);
+			);*/
 		}
 
 		void AddQuad(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4)

@@ -46,6 +46,7 @@ namespace Assets.Map.WorldMap
         
 
         public List<Vector3> vertices;
+        //public CellList neighbours;
 
         public int CellIndex { get; set; }
 
