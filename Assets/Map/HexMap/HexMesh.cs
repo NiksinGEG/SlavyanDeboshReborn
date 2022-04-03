@@ -41,7 +41,7 @@ namespace Assets.Map.WorldMap
 			AddTriangleColor(color);
 		}*/
 
-		public void Triangulate(CellList cells) //От параметра width надо будет избавиться
+		public void Triangulate(CellList cells) 
 		{
 			hexMesh.Clear();
 			vertices.Clear();
@@ -65,11 +65,11 @@ namespace Assets.Map.WorldMap
 		{
 			for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
 			{
-				Triangulate(d, cell, cells.cells);
+				Triangulate(d, cell, cells);
 			}
 		}
 
-		void Triangulate(HexDirection direction, HexCell cell, HexCell[] cells)
+		void Triangulate(HexDirection direction, HexCell cell, CellList cells)
 		{
 			Vector3 center = cell.transform.localPosition;
 			Vector3 v1 = center + HexMetrics.GetFirstSolidCorner(direction);
@@ -84,11 +84,10 @@ namespace Assets.Map.WorldMap
 
 			AddQuad(v1, v2, v3, v4);
 
-			CellList aboba = new CellList(cells, 0, 0);
-			CellList neighbourCells = aboba.GetNeighbours(cell.CellIndex);
+			CellList neighbourCells = cells.GetNeighbours(cell.CellIndex);
 			HexCell neighbour = neighbourCells[(int)direction] ?? cell;
-			HexCell prevNeighbor = neighbourCells[(int)direction.Previous()] ?? cell;
-			HexCell nextNeighbor = neighbourCells[(int)direction.Next()] ?? cell;
+			//HexCell prevNeighbor = neighbourCells[(int)direction.Previous()] ?? cell;
+			//HexCell nextNeighbor = neighbourCells[(int)direction.Next()] ?? cell;
 
 			AddQuadColor(cell.CellColor, (cell.CellColor + neighbour.CellColor) * 0.5f);
 			/*Color bridgeColor = (cell.CellColor + neighbour.CellColor) * 0.5f;

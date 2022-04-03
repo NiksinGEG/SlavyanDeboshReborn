@@ -59,7 +59,7 @@ namespace Assets.Map.WorldMap
                 if (nei_index >= 0 && nei_index < cells.Length)
                     neighbours.Add(cells[nei_index]);
             }
-            neighbours.Add(cells[cellIndex]);
+            //neighbours.Add(cells[cellIndex]);
             HexCell[] tmp = new HexCell[neighbours.Count];
             neighbours.CopyTo(tmp);
             return new CellList(tmp, CellCountX, CellCountZ);
@@ -78,7 +78,16 @@ namespace Assets.Map.WorldMap
 
         public HexCell this[int i]
         {
-            get { return cells[i]; }
+            get {
+                try
+                {
+                    return cells[i] ;
+                }
+                catch
+                {
+                    return null;
+                }
+ }
             set { cells[i] = value; }
         }
 
