@@ -95,12 +95,11 @@ namespace Assets.Map.WorldMap
 			Color bridgeColor = (cell.CellColor + neighbour.CellColor) * 0.5f;
 			AddQuadColor(cell.CellColor, bridgeColor);
 
-			Vector3 v5 = center + HexMetrics.GetFirstCorner(direction);
-			v5.y -= ((cell.Elevation * HexMetrics.elevationStep - neighbour.Elevation * HexMetrics.elevationStep) * 0.5f + (cell.Elevation * HexMetrics.elevationStep - prevNeighbour.Elevation * HexMetrics.elevationStep) * 0.5f) * 0.5f;
-			v3.y = v5.y;
+            Vector3 v5 = center + HexMetrics.GetFirstCorner(direction);
+			//Это я сам высчитал, вахуе что это сработало, ебать я математег
+            v5.y = (cell.Elevation * HexMetrics.elevationStep + neighbour.Elevation * HexMetrics.elevationStep + prevNeighbour.Elevation * HexMetrics.elevationStep) / 3f;
 			Vector3 v6 = center + HexMetrics.GetSecondCorner(direction);
-			v6.y -= ((cell.Elevation * HexMetrics.elevationStep - neighbour.Elevation * HexMetrics.elevationStep) * 0.5f + (cell.Elevation * HexMetrics.elevationStep - nextNeighbour.Elevation * HexMetrics.elevationStep) * 0.5f) * 0.5f;
-			v4.y = v6.y;
+			v6.y = (cell.Elevation * HexMetrics.elevationStep + neighbour.Elevation * HexMetrics.elevationStep + nextNeighbour.Elevation * HexMetrics.elevationStep) / 3f;
 
 			AddTriangle(v1, v5, v3);
 			AddTriangleColor(
