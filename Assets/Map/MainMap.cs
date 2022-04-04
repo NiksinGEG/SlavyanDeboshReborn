@@ -21,7 +21,7 @@ public class MainMap : MonoBehaviour
         resources = new MapResource[HexMetrics.chunkSizeX * grid.chunkCountX * HexMetrics.chunkSizeZ * grid.chunkCountZ];
         System.Random rndSeed = new System.Random(300);
 
-        //var resGen = FindObjectOfType(typeof(ResourceGenerator)) as ResourceGenerator;
-        //resGen.GenerateResource(grid, resources, treeList, rndSeed);
+        var resGen = FindObjectOfType(typeof(ResourceGenerator)) as ResourceGenerator;
+        resGen.GenerateResource(grid, resources, treeList, rndSeed);
     }
 }

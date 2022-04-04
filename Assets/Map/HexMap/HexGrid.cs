@@ -35,8 +35,8 @@ namespace Assets.Map.WorldMap
 			System.Random rnd = new System.Random();
 			generationSeed = rnd.Next(1, 30000000); //Семя сегенерилось
 
-			chunkCountX = 10;//35
-			chunkCountZ = 10;//35
+			chunkCountX = 35;//35
+			chunkCountZ = 35;//35
 
 			cellCountX = chunkCountX * HexMetrics.chunkSizeX;
 			cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
