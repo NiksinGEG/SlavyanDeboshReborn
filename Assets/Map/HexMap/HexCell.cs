@@ -47,6 +47,9 @@ namespace Assets.Map.WorldMap
 
         public List<Vector3> vertices;
         public CellList neighbours;
+        public bool[] Bridges = new bool[6];
+
+        public int[] Triangles = new int[6];
 
         public int CellIndex { get; set; }
 
@@ -82,7 +85,14 @@ namespace Assets.Map.WorldMap
             }
         }
 
-        public HexCell() { MouseLeftClick += Choose; vertices = new List<Vector3>(); }
+        public HexCell() 
+        { 
+            MouseLeftClick += Choose; 
+            vertices = new List<Vector3>();
+            Bridges = new bool[6];
+            for (int i = 0; i < Bridges.Length; i++)
+                Bridges[i] = false;
+        }
 
         public void Choose(object sender, HexCellEventArgs e)
         {
