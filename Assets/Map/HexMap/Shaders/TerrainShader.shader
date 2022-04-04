@@ -37,7 +37,7 @@ Shader "Custom/TerrainShader"
         float4 GetTerrainColor(Input IN, int index) {
             float3 uvw = float3(IN.worldPos.xz * 0.02, IN.terrain[index]);
             float4 c = UNITY_SAMPLE_TEX2DARRAY(_MainTex, uvw);
-            return IN.color;// * IN.color;//c * IN.color[index]; //Если тут ни на что не умножать - вернётся чисто цвет текстурки
+            return IN.color;//c * IN.color[index];// * IN.color;//c * IN.color[index]; //Если тут ни на что не умножать - вернётся чисто цвет текстурки
         }
 
         half _Glossiness;

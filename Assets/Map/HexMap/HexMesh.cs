@@ -132,35 +132,64 @@ namespace Assets.Map.WorldMap
 			);*/
 
 			if(cell.Triangles.Length == 0)
-            {
 				cell.Triangles = new int[6];
-            }
 			if (neighbour.Triangles.Length == 0)
 				neighbour.Triangles = new int[6];
 			if (prevNeighbour.Triangles.Length == 0)
 				prevNeighbour.Triangles = new int[6];
 			if (nextNeighbour.Triangles.Length == 0)
 				nextNeighbour.Triangles = new int[6];
-			if (cell.Triangles[(int)direction] == 0)
+
+			Vector3 type3;
+			Vector3 type4;
+
+			if((int)direction % 2 == 0)
             {
-				AddTriangleColor(SplatColor1, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f, (SplatColor1 + SplatColor2) / 2.0f);
-            }
-			else if(cell.Triangles[(int)direction] == 1)
-            {
-				AddTriangleColor(SplatColor2, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f, (SplatColor2 + SplatColor3) / 2.0f);
+				if (cell.Triangles[(int)direction] < 2)
+				{
+					AddTriangleColor(SplatColor1, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f, (SplatColor1 + SplatColor3) / 2.0f);
+					type3 = new Vector3((float)cell.CellType, (float)prevNeighbour.CellType, (float)neighbour.CellType);
+				}
+				else if (cell.Triangles[(int)direction] < 4)
+				{
+					AddTriangleColor(SplatColor2, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f, (SplatColor2 + SplatColor1) / 2.0f);
+					type3 = new Vector3((float)neighbour.CellType, (float)prevNeighbour.CellType, (float)cell.CellType);
+				}
+				else
+				{
+					AddTriangleColor(SplatColor3, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f, (SplatColor3 + SplatColor2) / 2.0f);
+					type3 = new Vector3((float)prevNeighbour.CellType, (float)cell.CellType, (float)neighbour.CellType);
+				}
 			}
 			else
             {
-				AddTriangleColor(SplatColor3, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f, (SplatColor1 + SplatColor3) / 2.0f);
+				if (cell.Triangles[(int)direction] < 2)
+				{
+					AddTriangleColor(SplatColor1, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f, (SplatColor1 + SplatColor2) / 2.0f);
+					type3 = new Vector3((float)cell.CellType, (float)prevNeighbour.CellType, (float)neighbour.CellType);
+				}
+				else if (cell.Triangles[(int)direction] < 4)
+				{
+					AddTriangleColor(SplatColor2, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f, (SplatColor2 + SplatColor3) / 2.0f);
+					type3 = new Vector3((float)neighbour.CellType, (float)prevNeighbour.CellType, (float)cell.CellType);
+				}
+				else
+				{
+					AddTriangleColor(SplatColor3, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f, (SplatColor3 + SplatColor1) / 2.0f);
+					type3 = new Vector3((float)prevNeighbour.CellType, (float)cell.CellType, (float)neighbour.CellType);
+				}
 			}
+			
 
 			cell.Triangles[(int)direction] += 1;
-			neighbour.Triangles[neighbour.GetDirection(cell)] += 1;
-			prevNeighbour.Triangles[prevNeighbour.GetDirection(cell)] += 1;
+			if(neighbour.GetDirection(cell) != -1)
+				neighbour.Triangles[neighbour.GetDirection(cell)] += 1;
+			if(prevNeighbour.GetDirection(cell) != -1)
+				prevNeighbour.Triangles[prevNeighbour.GetDirection(cell)] += 1;
 
 			//AddTriangleColor(SplatColor1, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f, (SplatColor1 + SplatColor2) / 2.0f);
 
-			var type3 = new Vector3((float)cell.CellType, (float)prevNeighbour.CellType, (float)neighbour.CellType);
+			//type3 = new Vector3((float)cell.CellType, (float)prevNeighbour.CellType, (float)neighbour.CellType);
 			AddTriangleType(type3);
 
 			AddTriangle(v2, v4, v6);
@@ -169,9 +198,53 @@ namespace Assets.Map.WorldMap
 				bridgeColor,
 				(cell.CellColor + neighbour.CellColor + nextNeighbour.CellColor) / 3f
 			);*/
-			AddTriangleColor(SplatColor1, (SplatColor1 + SplatColor2) / 2.0f, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f);
+			if((int)direction % 2 == 0)
+            {
+				if (cell.Triangles[((int)direction + 1) % 6] < 2)
+				{
+					AddTriangleColor(SplatColor1, (SplatColor1 + SplatColor3) / 2.0f, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f);
+					type4 = new Vector3((float)cell.CellType, (float)neighbour.CellType, (float)nextNeighbour.CellType);
+				}
+				else if (cell.Triangles[((int)direction + 1) % 6] < 4)
+				{
+					AddTriangleColor(SplatColor2, (SplatColor2 + SplatColor1) / 2.0f, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f);
+					type4 = new Vector3((float)neighbour.CellType, (float)cell.CellType, (float)nextNeighbour.CellType);
+				}
+				else
+				{
+					AddTriangleColor(SplatColor3, (SplatColor3 + SplatColor2) / 2.0f, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f);
+					type4 = new Vector3((float)nextNeighbour.CellType, (float)neighbour.CellType, (float)cell.CellType);
+				}
+			}
+			else
+            {
+				if (cell.Triangles[((int)direction + 1) % 6] < 2)
+				{
+					AddTriangleColor(SplatColor1, (SplatColor1 + SplatColor2) / 2.0f, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f);
+					type4 = new Vector3((float)cell.CellType, (float)neighbour.CellType, (float)nextNeighbour.CellType);
+				}
+				else if (cell.Triangles[((int)direction + 1) % 6] < 4)
+				{
+					AddTriangleColor(SplatColor2, (SplatColor2 + SplatColor3) / 2.0f, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f);
+					type4 = new Vector3((float)neighbour.CellType, (float)cell.CellType, (float)nextNeighbour.CellType);
+				}
+				else
+				{
+					AddTriangleColor(SplatColor3, (SplatColor3 + SplatColor1) / 2.0f, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f);
+					type4 = new Vector3((float)nextNeighbour.CellType, (float)neighbour.CellType, (float)cell.CellType);
+				}
+			}
+			
 
-			var type4 = new Vector3((float)cell.CellType, (float)neighbour.CellType, (float)nextNeighbour.CellType);
+			cell.Triangles[((int)direction + 1) % 6] += 1;
+			if (neighbour.GetDirection(cell) != -1)
+				neighbour.Triangles[(neighbour.GetDirection(cell) + 1) % 6] += 1;
+			if (nextNeighbour.GetDirection(cell) != -1)
+				nextNeighbour.Triangles[(nextNeighbour.GetDirection(cell) + 1) % 6] += 1;
+
+			//AddTriangleColor(SplatColor1, (SplatColor1 + SplatColor2) / 2.0f, (SplatColor1 + SplatColor2 + SplatColor3) / 3.0f);
+
+			//type4 = new Vector3((float)cell.CellType, (float)neighbour.CellType, (float)nextNeighbour.CellType);
 			AddTriangleType(type4);
 		}
 
