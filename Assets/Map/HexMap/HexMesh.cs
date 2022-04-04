@@ -17,6 +17,8 @@ namespace Assets.Map.WorldMap
 		List<int> triangles;
 		List<Color> colors;
 
+		List<Vector3> types; //Да-да, именно лист флоатских векторов, именно с ними и только с ними работает шейдер 
+
 		public struct EdgeVertices
 		{
 			public Vector3 v1, v2, v3, v4;
@@ -29,31 +31,21 @@ namespace Assets.Map.WorldMap
 			}
 		}
 
-
-		/*void TriangulateEdgeFan(Vector3 center, EdgeVertices edge, Color color)
-		{
-			AddTriangle(center, edge.v1, edge.v2);
-			AddTriangleColor(color);
-			AddTriangle(center, edge.v2, edge.v3);
-			AddTriangleColor(color);
-			AddTriangle(center, edge.v3, edge.v4);
-			AddTriangleColor(color);
-		}*/
-
 		public void Triangulate(CellList cells) 
 		{
 			hexMesh.Clear();
 			vertices.Clear();
 			triangles.Clear();
 			colors.Clear();
+			types.Clear();
 			for (int i = 0; i < cells.Length; i++)
-			{
-					Triangulate(cells[i], cells);
-			}
-			//TriangulateConnections(cells);
+				Triangulate(cells[i], cells);
 			hexMesh.vertices = vertices.ToArray();
 			hexMesh.triangles = triangles.ToArray();
 			hexMesh.colors = colors.ToArray();
+			
+			hexMesh.SetUVs(2, types); //Передача типов текстур шейдеру (тип текстуры == её индекс в массиве текстур)
+			
 			hexMesh.RecalculateNormals();
 
 			hexCollider.sharedMesh = hexMesh;
@@ -77,6 +69,9 @@ namespace Assets.Map.WorldMap
 			AddTriangle(center, v1, v2);
 			AddTriangleColor(cell.CellColor);
 
+			Vector3 cell_type = new Vector3((float)cell.CellType, (float)cell.CellType, (float)cell.CellType);
+			AddTriangleType(cell_type);
+
 			HexCell neighbour = cell.GetNeighbour((int)direction) ?? cell;
 			HexCell prevNeighbour = cell.GetNeighbour((int)direction - 1 < 0 ? (int)HexDirection.NW : (int)direction - 1) ?? cell;
 			HexCell nextNeighbour = cell.GetNeighbour((int)direction + 1 > 5 ? (int)HexDirection.NE : (int)direction + 1) ?? cell;
@@ -94,6 +89,9 @@ namespace Assets.Map.WorldMap
 			Color bridgeColor = (cell.CellColor + neighbour.CellColor) * 0.5f;
 			AddQuadColor(cell.CellColor, bridgeColor);
 
+			cell_type.y = (float)neighbour.CellType;
+			AddQuadType(cell_type);
+
             Vector3 v5 = center + HexMetrics.GetFirstCorner(direction);
 			//Это я сам высчитал, вахуе что это сработало, ебать я математег
             v5.y = (cell.Elevation * HexMetrics.elevationStep + neighbour.Elevation * HexMetrics.elevationStep + prevNeighbour.Elevation * HexMetrics.elevationStep) / 3f;
@@ -106,12 +104,36 @@ namespace Assets.Map.WorldMap
 				(cell.CellColor + prevNeighbour.CellColor + neighbour.CellColor) / 3f,
 				bridgeColor
 			);
+
+			cell_type.y = (float)prevNeighbour.CellType;
+			cell_type.z = (float)neighbour.CellType;
+			AddTriangleType(cell_type);
+
 			AddTriangle(v2, v4, v6);
 			AddTriangleColor(
 				cell.CellColor,
 				bridgeColor,
 				(cell.CellColor + neighbour.CellColor + nextNeighbour.CellColor) / 3f
 			);
+
+			cell_type.y = (float)neighbour.CellType;
+			cell_type.z = (float)nextNeighbour.CellType;
+			AddTriangleType(cell_type);
+		}
+
+		void AddTriangleType(Vector3 type_vec)
+        {
+			types.Add(type_vec);
+			types.Add(type_vec);
+			types.Add(type_vec);
+        }
+
+		void AddQuadType(Vector3 type_vec)
+        {
+			types.Add(type_vec);
+			types.Add(type_vec);
+			types.Add(type_vec);
+			types.Add(type_vec);
 		}
 
 		void AddQuad(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4)
@@ -176,6 +198,8 @@ namespace Assets.Map.WorldMap
 			vertices = new List<Vector3>();
 			triangles = new List<int>();
 			colors = new List<Color>();
+
+			types = new List<Vector3>();
 		}
 	}
 }
