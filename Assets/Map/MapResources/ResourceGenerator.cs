@@ -59,6 +59,7 @@ namespace Assets.Map.MapResources
                 {
                     int isRock = rndSeed.Next(1, 10);
                     var nCells = grid.cellList.GetNeighbours(cell.CellIndex);
+                    //nCells.Add(cell, 0, 0);
                     bool isNearRock = false;
                     foreach (var nCell in nCells)
                     if (cell.CellType == HexCell.CellTypes.rock)
@@ -94,7 +95,7 @@ namespace Assets.Map.MapResources
                             scaling.z += UnityEngine.Random.Range(-1.5f, -0.5f);
                             obj.transform.localScale += scaling;
 
-                            obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
+                            obj.SetInnerPosition(UnityEngine.Random.Range(-0.7f, 0.7f), UnityEngine.Random.Range(-0.7f, 0.7f));
                         }
 
                     }
@@ -113,6 +114,7 @@ namespace Assets.Map.MapResources
                 if(grid.cellList[startCell].CellType == HexCell.CellTypes.terrain)
                 {
                     CellList neigboursCells = grid.cellList.GetNeighbours(startCell);
+                    neigboursCells.Add(grid.cellList[startCell], 0, 0);
                     bool isRock = false;
                     foreach(var cell in neigboursCells)
                         if(cell.CellType == HexCell.CellTypes.rock)
