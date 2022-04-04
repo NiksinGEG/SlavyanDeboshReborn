@@ -80,6 +80,7 @@ namespace Assets.Map.WorldMap
             while(islandsCount != 0)
             {
                 neighbourCells = cells.GetNeighbours(startCell);
+                neighbourCells.Add(cells[startCell], 0, 0);
                 int islandsCellsCount = rndSeed.Next(2, neighbourCells.Length);
                 cells[startCell].CellColor = Color.green;
                 cells[startCell].CellType = HexCell.CellTypes.terrain;
@@ -111,6 +112,7 @@ namespace Assets.Map.WorldMap
                 {
                     int nextCell = startCell;
                     neighbourCells = cells.GetNeighbours(nextCell);
+                    neighbourCells.Add(cells[startCell], 0, 0);
                     nextCell = rndSeed.Next(neighbourCells.Count());
                     
                     if (neighbourCells[nextCell].CellType == HexCell.CellTypes.terrain)
@@ -142,6 +144,7 @@ namespace Assets.Map.WorldMap
                 if(cell.CellType == HexCell.CellTypes.water)
                 {
                     neighbourCells = cells.GetNeighbours(cell.CellIndex);
+                    neighbourCells.Add(cell, 0, 0);
                     foreach (var tCell in neighbourCells)
                         if (tCell.CellType == HexCell.CellTypes.terrain)
                         {
@@ -198,6 +201,7 @@ namespace Assets.Map.WorldMap
             {
 
                 neighbourCells = cells.GetNeighbours(startCell);
+                neighbourCells.Add(cells[startCell], 0, 0);
                 int nextCell = rndSeed.Next(neighbourCells.Count());
                 if(neighbourCells[nextCell].CellType == HexCell.CellTypes.terrain)
                 {
