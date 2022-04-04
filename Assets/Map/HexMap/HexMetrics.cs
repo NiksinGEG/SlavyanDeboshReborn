@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Map.WorldMap;
 
-public class HexMetrics : MonoBehaviour
+public static class HexMetrics
 {
     public const float outerRadius = 10f;   //Внешний радиус шестиугольника
     public const float innerRadius = outerRadius * 0.866025404f;    //Внутренний радиус шестиугольника

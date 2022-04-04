@@ -51,6 +51,12 @@ namespace Assets.Map.WorldMap
             cells = GenerateRock(cells, rndSeed);
             //Немного пляжных клеток
             cells = GenerateBeachSells(cells);
+
+            //Короч чтобы все "подводные клетки" были под водой, опускаем их на один уровень
+            foreach (var cell in cells)
+                if (cell.CellType == HexCell.CellTypes.water)
+                    cell.Elevation = -1;
+
             return cells;
         }
         private static CellList GenerateStartTerrain(CellList cells, System.Random rndSeed)
@@ -58,7 +64,7 @@ namespace Assets.Map.WorldMap
             for(int i = 0; i < cells.Length; i++)
             {
                 cells[i].CellType = HexCell.CellTypes.water;
-                cells[i].CellColor = Color.blue;
+                cells[i].CellColor = Color.yellow;
                 cells[i].Elevation = 0;
             }
             return cells;
@@ -74,6 +80,7 @@ namespace Assets.Map.WorldMap
             while(islandsCount != 0)
             {
                 neighbourCells = cells.GetNeighbours(startCell);
+                neighbourCells.Add(cells[startCell], 0, 0);
                 int islandsCellsCount = rndSeed.Next(2, neighbourCells.Length);
                 cells[startCell].CellColor = Color.green;
                 cells[startCell].CellType = HexCell.CellTypes.terrain;
@@ -105,6 +112,7 @@ namespace Assets.Map.WorldMap
                 {
                     int nextCell = startCell;
                     neighbourCells = cells.GetNeighbours(nextCell);
+                    neighbourCells.Add(cells[startCell], 0, 0);
                     nextCell = rndSeed.Next(neighbourCells.Count());
                     
                     if (neighbourCells[nextCell].CellType == HexCell.CellTypes.terrain)
@@ -136,6 +144,7 @@ namespace Assets.Map.WorldMap
                 if(cell.CellType == HexCell.CellTypes.water)
                 {
                     neighbourCells = cells.GetNeighbours(cell.CellIndex);
+                    neighbourCells.Add(cell, 0, 0);
                     foreach (var tCell in neighbourCells)
                         if (tCell.CellType == HexCell.CellTypes.terrain)
                         {
@@ -192,6 +201,7 @@ namespace Assets.Map.WorldMap
             {
 
                 neighbourCells = cells.GetNeighbours(startCell);
+                neighbourCells.Add(cells[startCell], 0, 0);
                 int nextCell = rndSeed.Next(neighbourCells.Count());
                 if(neighbourCells[nextCell].CellType == HexCell.CellTypes.terrain)
                 {

@@ -47,6 +47,9 @@ namespace Assets.Map.WorldMap
 
         public List<Vector3> vertices;
         public CellList neighbours;
+        public bool[] Bridges = new bool[6];
+
+        public int[] Triangles = new int[6];
 
         public int CellIndex { get; set; }
 
@@ -82,7 +85,14 @@ namespace Assets.Map.WorldMap
             }
         }
 
-        public HexCell() { MouseLeftClick += Choose; vertices = new List<Vector3>(); }
+        public HexCell() 
+        { 
+            MouseLeftClick += Choose; 
+            vertices = new List<Vector3>();
+            Bridges = new bool[6];
+            for (int i = 0; i < Bridges.Length; i++)
+                Bridges[i] = false;
+        }
 
         public void Choose(object sender, HexCellEventArgs e)
         {
@@ -113,31 +123,7 @@ namespace Assets.Map.WorldMap
 
         public HexCell GetNeighbour(int direction)
         {
-            HexCoords nei_coords = coords;
-            switch (direction)
-            {
-                case 0:
-                    nei_coords.z += 1;
-                    break;
-                case 1:
-                    nei_coords.x += 1;
-                    break;
-                case 2:
-                    nei_coords.x += 1;
-                    nei_coords.z -= 1;
-                    break;
-                case 3:
-                    nei_coords.z -= 1;
-                    break;
-                case 4:
-                    nei_coords.x -= 1;
-                    break;
-                case 5:
-                    nei_coords.x -= 1;
-                    nei_coords.z += 1;
-                    break;
-
-            }
+            HexCoords nei_coords = coords.GetNeighbourCoords(direction);
             foreach (var nei in neighbours)
                 if (nei.coords.EqualsTo(nei_coords))
                     return nei;

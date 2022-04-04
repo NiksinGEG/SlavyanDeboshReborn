@@ -26,43 +26,14 @@ namespace Assets.Map.WorldMap
         public CellList GetNeighbours(int cellIndex)
         {
             List<HexCell> neighbours = new List<HexCell>();
-            HexCell cur_cell = cells[cellIndex];
-            HexCoords cur_coords = cur_cell.coords;
             for (int i = 0; i < 6; i++)
             {
-                HexCoords nei_coords = cur_coords;
-                switch (i)
-                {
-                    case 0:
-                        nei_coords.z += 1;
-                        break;
-                    case 1:
-                        nei_coords.x += 1;
-                        break;
-                    case 2:
-                        nei_coords.x += 1;
-                        nei_coords.z -= 1;
-                        break;
-                    case 3:
-                        nei_coords.z -= 1;
-                        break;
-                    case 4:
-                        nei_coords.x -= 1;
-                        break;
-                    case 5:
-                        nei_coords.x -= 1;
-                        nei_coords.z += 1;
-                        break;
-
-                }
+                HexCoords nei_coords = cells[cellIndex].coords.GetNeighbourCoords(i);
                 int nei_index = nei_coords.MakeIndex(CellCountX);
                 if (nei_index >= 0 && nei_index < cells.Length)
                     neighbours.Add(cells[nei_index]);
             }
-            //neighbours.Add(cells[cellIndex]);
-            HexCell[] tmp = new HexCell[neighbours.Count];
-            neighbours.CopyTo(tmp);
-            return new CellList(tmp, CellCountX, CellCountZ);
+            return new CellList(neighbours.ToArray(), CellCountX, CellCountZ);
         }
 
         public void Add(HexCell cell, int deltaX, int deltaZ)

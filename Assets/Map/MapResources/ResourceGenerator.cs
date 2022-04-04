@@ -11,54 +11,37 @@ namespace Assets.Map.MapResources
 {
     public class ResourceGenerator : MonoBehaviour
     {
-        public MapResource rockPrefab;
-        public MapResource treePrefab_1;
-        public MapResource treePrefab_2;
-        public MapResource treePrefab_3;
-        public MapResource treePrefab_4;
-        public MapResource treePrefab_5;
-        public MapResource treePrefab_6;
-        public MapResource treePrefab_7;
+        PrefabManager manager;
+
+        private void Awake()
+        {
+            manager = FindObjectOfType<PrefabManager>();
+        }
 
         private MapResource ChooseTreePrefab(System.Random rndSeed)
         {
-            int prefNum = rndSeed.Next(1,7);
-            return prefNum switch
-            {
-                1 => treePrefab_1,
-                2 => treePrefab_2,
-                3 => treePrefab_3,
-                4 => treePrefab_4,
-                5 => treePrefab_5,
-                6 => treePrefab_6,
-                7 => treePrefab_7,
-                _ => treePrefab_1,
-            };
+            if (manager == null)
+                Awake();
+            int prefNum = rndSeed.Next(manager.tree_prefabs.Length - 1);
+            return manager.tree_prefabs[prefNum];
         }
-
-        public MapResource grassPrefab_1;
-        public MapResource grassPrefab_2;
-        public MapResource grassPrefab_3;
-        public MapResource grassPrefab_4;
-        public MapResource grassPrefab_5;
-        public MapResource grassPrefab_6;
-        public MapResource grassPrefab_7;
-        public MapResource grassPrefab_8;
 
         private MapResource ChooseGrassPrefab(System.Random rndSeed)
         {
-            int prefNum = rndSeed.Next(1, 8);
-            return prefNum switch
-            {
-                1 => grassPrefab_1,
-                2 => grassPrefab_2,
-                3 => grassPrefab_3,
-                4 => grassPrefab_4,
-                5 => grassPrefab_5,
-                6 => grassPrefab_6,
-                7 => grassPrefab_7,
-                _ => grassPrefab_1,
-            };
+            if (manager == null)
+                Awake();
+            int prefNum = rndSeed.Next(manager.grass_prefabs.Length - 1);
+            
+            return manager.grass_prefabs[prefNum];
+        }
+
+        private MapResource ChooseRockPrefab(System.Random rndSeed)
+        {
+            if (manager == null)
+                Awake();
+            int prefNum = rndSeed.Next(manager.rock_prefabs.Length - 1);
+            
+            return manager.rock_prefabs[prefNum];
         }
 
         private int GetTerrainCellsCount(HexGrid grid)
@@ -71,15 +54,18 @@ namespace Assets.Map.MapResources
         }
         private void GenerateRock(HexGrid grid, System.Random rndSeed)
         {
+            float rndCoeff = 0.8f;
             foreach (var cell in grid.cellList)
                 if (cell.CellType == HexCell.CellTypes.terrain || cell.CellType == HexCell.CellTypes.rock)
                 {
                     int isRock = rndSeed.Next(1, 10);
                     var nCells = grid.cellList.GetNeighbours(cell.CellIndex);
+                    nCells.Add(cell, 0, 0);
                     bool isNearRock = false;
                     foreach (var nCell in nCells)
                     if (cell.CellType == HexCell.CellTypes.rock)
                     {
+                       rndCoeff = 0.7f;
                        isRock = 10;
                        isNearRock = true;
                     }
@@ -91,7 +77,7 @@ namespace Assets.Map.MapResources
                             rockCount += 5;
                         for (int i = 0; i < rockCount; i++)
                         {
-                            MapResource obj = Instantiate(rockPrefab);
+                            MapResource obj = Instantiate(ChooseRockPrefab(rndSeed));
                             obj.transform.SetParent(transform);
                             Vector3 pos = cell.transform.position;
                             Quaternion rotation = cell.transform.rotation;
@@ -111,7 +97,7 @@ namespace Assets.Map.MapResources
                             scaling.z += UnityEngine.Random.Range(-1.5f, -0.5f);
                             obj.transform.localScale += scaling;
 
-                            obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
+                            obj.SetInnerPosition(UnityEngine.Random.Range(-1.0f * rndCoeff, rndCoeff), UnityEngine.Random.Range(-1.0f * rndCoeff, rndCoeff));
                         }
 
                     }
@@ -119,7 +105,7 @@ namespace Assets.Map.MapResources
                 }
         }
 
-        public void GenerateTree(HexGrid grid, List<MapResource> treeList, System.Random rndSeed)
+        public void GenerateTree(HexGrid grid, System.Random rndSeed)
         {
             int startCell = rndSeed.Next(grid.cellList.Length);
             while(grid.cellList[startCell].CellType != HexCell.CellTypes.terrain)
@@ -130,6 +116,7 @@ namespace Assets.Map.MapResources
                 if(grid.cellList[startCell].CellType == HexCell.CellTypes.terrain)
                 {
                     CellList neigboursCells = grid.cellList.GetNeighbours(startCell);
+                    neigboursCells.Add(grid.cellList[startCell], 0, 0);
                     bool isRock = false;
                     foreach(var cell in neigboursCells)
                         if(cell.CellType == HexCell.CellTypes.rock)
@@ -162,7 +149,8 @@ namespace Assets.Map.MapResources
                                 obj.transform.rotation = Quaternion.Euler(-90f, UnityEngine.Random.Range(-180, 180), 0f);
                                 obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
 
-                                treeList.Add(obj);
+                                //treeList.Add(obj);  ??? начем, а главное захуя 
+                                //А затем, что нужно будет как то проверить где деревья находятся при постановке к примеру лесопилки
                                 treeChunkCount--;
                             }
 
@@ -209,10 +197,10 @@ namespace Assets.Map.MapResources
                 }
         }
 
-        public void GenerateResource(HexGrid grid, MapResource[] resources, List<MapResource> treeList, System.Random rndSeed)
+        public void GenerateResource(HexGrid grid, System.Random rndSeed)
         {
             GenerateRock(grid, rndSeed);
-            GenerateTree(grid, treeList, rndSeed);
+            GenerateTree(grid, rndSeed);
             GenerateGrass(grid, rndSeed);
         }
     }
