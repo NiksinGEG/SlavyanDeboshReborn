@@ -54,16 +54,18 @@ namespace Assets.Map.MapResources
         }
         private void GenerateRock(HexGrid grid, System.Random rndSeed)
         {
+            float rndCoeff = 0.8f;
             foreach (var cell in grid.cellList)
                 if (cell.CellType == HexCell.CellTypes.terrain || cell.CellType == HexCell.CellTypes.rock)
                 {
                     int isRock = rndSeed.Next(1, 10);
                     var nCells = grid.cellList.GetNeighbours(cell.CellIndex);
-                    //nCells.Add(cell, 0, 0);
+                    nCells.Add(cell, 0, 0);
                     bool isNearRock = false;
                     foreach (var nCell in nCells)
                     if (cell.CellType == HexCell.CellTypes.rock)
                     {
+                       rndCoeff = 0.7f;
                        isRock = 10;
                        isNearRock = true;
                     }
@@ -95,7 +97,7 @@ namespace Assets.Map.MapResources
                             scaling.z += UnityEngine.Random.Range(-1.5f, -0.5f);
                             obj.transform.localScale += scaling;
 
-                            obj.SetInnerPosition(UnityEngine.Random.Range(-0.7f, 0.7f), UnityEngine.Random.Range(-0.7f, 0.7f));
+                            obj.SetInnerPosition(UnityEngine.Random.Range(-1.0f * rndCoeff, rndCoeff), UnityEngine.Random.Range(-1.0f * rndCoeff, rndCoeff));
                         }
 
                     }
@@ -147,7 +149,8 @@ namespace Assets.Map.MapResources
                                 obj.transform.rotation = Quaternion.Euler(-90f, UnityEngine.Random.Range(-180, 180), 0f);
                                 obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
 
-                                //treeList.Add(obj);  ??? начем, а главное захуя
+                                //treeList.Add(obj);  ??? начем, а главное захуя 
+                                //А затем, что нужно будет как то проверить где деревья находятся при постановке к примеру лесопилки
                                 treeChunkCount--;
                             }
 
