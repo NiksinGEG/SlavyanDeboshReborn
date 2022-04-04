@@ -10,6 +10,10 @@ namespace Assets.Map.WorldMap
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class HexMesh : MonoBehaviour
     {
+		static Color SplatColor1 = new Color(1f, 0f, 0f);
+		static Color SplatColor2 = new Color(0f, 1f, 0f);
+		static Color SplatColor3 = new Color(0f, 0f, 1f);
+
 		Mesh hexMesh;
 		MeshCollider hexCollider;
 
@@ -67,10 +71,11 @@ namespace Assets.Map.WorldMap
 			Vector3 v2 = center + HexMetrics.GetSecondSolidCorner(direction);
 
 			AddTriangle(center, v1, v2);
-			AddTriangleColor(cell.CellColor);
+			//AddTriangleColor(cell.CellColor);
+			AddTriangleColor(SplatColor1);
 
-			Vector3 cell_type = new Vector3((float)cell.CellType, (float)cell.CellType, (float)cell.CellType);
-			AddTriangleType(cell_type);
+			Vector3 type1 = new Vector3((float)cell.CellType, (float)cell.CellType, (float)cell.CellType);
+			AddTriangleType(type1);
 
 			HexCell neighbour = cell.GetNeighbour((int)direction) ?? cell;
 			HexCell prevNeighbour = cell.GetNeighbour((int)direction - 1 < 0 ? (int)HexDirection.NW : (int)direction - 1) ?? cell;
@@ -87,10 +92,11 @@ namespace Assets.Map.WorldMap
 			AddQuad(v1, v2, v3, v4);
 
 			Color bridgeColor = (cell.CellColor + neighbour.CellColor) * 0.5f;
-			AddQuadColor(cell.CellColor, bridgeColor);
+			//AddQuadColor(cell.CellColor, bridgeColor);
+			AddQuadColor(SplatColor1, SplatColor2);
 
-			cell_type.y = (float)neighbour.CellType;
-			AddQuadType(cell_type);
+			var type2 = new Vector3((float)cell.CellType, (float)neighbour.CellType, (float)cell.CellType); 
+			AddQuadType(type2);
 
             Vector3 v5 = center + HexMetrics.GetFirstCorner(direction);
 			//Это я сам высчитал, вахуе что это сработало, ебать я математег
@@ -99,26 +105,26 @@ namespace Assets.Map.WorldMap
 			v6.y = (cell.Elevation * HexMetrics.elevationStep + neighbour.Elevation * HexMetrics.elevationStep + nextNeighbour.Elevation * HexMetrics.elevationStep) / 3f;
 
 			AddTriangle(v1, v5, v3);
-			AddTriangleColor(
+			/*AddTriangleColor(
 				cell.CellColor,
 				(cell.CellColor + prevNeighbour.CellColor + neighbour.CellColor) / 3f,
 				bridgeColor
-			);
+			);*/
+			AddTriangleColor(SplatColor1, SplatColor2, SplatColor3);
 
-			cell_type.y = (float)prevNeighbour.CellType;
-			cell_type.z = (float)neighbour.CellType;
-			AddTriangleType(cell_type);
+			var type3 = new Vector3((float)cell.CellType, (float)prevNeighbour.CellType, (float)neighbour.CellType);
+			AddTriangleType(type3);
 
 			AddTriangle(v2, v4, v6);
-			AddTriangleColor(
+			/*AddTriangleColor(
 				cell.CellColor,
 				bridgeColor,
 				(cell.CellColor + neighbour.CellColor + nextNeighbour.CellColor) / 3f
-			);
+			);*/
+			AddTriangleColor(SplatColor1, SplatColor2, SplatColor3);
 
-			cell_type.y = (float)neighbour.CellType;
-			cell_type.z = (float)nextNeighbour.CellType;
-			AddTriangleType(cell_type);
+			var type4 = new Vector3((float)cell.CellType, (float)neighbour.CellType, (float)nextNeighbour.CellType);
+			AddTriangleType(type4);
 		}
 
 		void AddTriangleType(Vector3 type_vec)
