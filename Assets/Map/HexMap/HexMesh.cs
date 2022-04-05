@@ -53,7 +53,7 @@ namespace Assets.Map.WorldMap
 			hexMesh.RecalculateNormals();
 
 			hexCollider.sharedMesh = hexMesh;
-			print($"Triangulate end...");
+			//print($"Triangulate end...");
 		}
 
 		void Triangulate(HexCell cell, CellList cells)
@@ -81,7 +81,6 @@ namespace Assets.Map.WorldMap
 			Vector3 v2 = center + HexMetrics.GetSecondSolidCorner(direction);
 
 			AddTriangle(center, v1, v2);
-			//AddTriangleColor(cell.CellColor);
 			AddTriangleColor(SplatColor1);
 
 			Vector3 type1 = new Vector3((float)cell.CellType, (float)cell.CellType, (float)cell.CellType);

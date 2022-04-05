@@ -23,7 +23,6 @@ Shader "Custom/TerrainShader"
 
         struct Input
         {
-            //float2 uv_MainTex;
             float4 color : COLOR;
             float3 worldPos;
             float3 terrain;
@@ -37,7 +36,7 @@ Shader "Custom/TerrainShader"
         float4 GetTerrainColor(Input IN, int index) {
             float3 uvw = float3(IN.worldPos.xz * 0.02, IN.terrain[index]);
             float4 c = UNITY_SAMPLE_TEX2DARRAY(_MainTex, uvw);
-            return c * IN.color[index];// * IN.color;//c * IN.color[index]; //Если тут ни на что не умножать - вернётся чисто цвет текстурки
+            return c * IN.color[index];//Если тут ни на что не умножать - вернётся чисто цвет текстурки
         }
 
         half _Glossiness;
@@ -48,24 +47,15 @@ Shader "Custom/TerrainShader"
         {
             //IN.color - Цвет вершины (который задаётся в триангуляции)
             //_Color - Цвет, который задаётся в материале
-            //IN.color[index] - хуй его знает, где-то чёрный, где-то белый, на горах - серый. Херня какая-то.
-            //c - итоговый цвет
+            //IN.color[index] - компонента цвета (красная, синяя или зелёная), по сути, число от 0 до 1.
+            //c - будет итоговый цвет
             //UNITY_SAMPLE_TEX2DARRAY(...) - Берёт текстуру из массива (индекс текстуры - третья координата второго аргумента), и преобразует её в цвет (ну точнее, в массив цветов для каждого пикселя, как я понимаю)
-            /*fixed4 c =
-                (GetTerrainColor(IN, 0) +
-                GetTerrainColor(IN, 1) +
-                GetTerrainColor(IN, 2)) / 3.0;*/
+            
             fixed4 c =
                     GetTerrainColor(IN, 0) +
                     GetTerrainColor(IN, 1) +
                     GetTerrainColor(IN, 2);
-            o.Albedo = c.rgb;// *_Color;
-            /*o.Metallic = _Metallic;
-            o.Smoothness = _Glossiness;
-            o.Alpha = c.a;*/
-            //float2 uv = IN.worldPos.xz * 0.02;
-            //fixed4 c = UNITY_SAMPLE_TEX2DARRAY(_MainTex, float3(uv, 0)) * _Color;// * IN.color; //IN.color - Цвет вершины (который задаётся в триангуляции)
-            //o.Albedo = c.rgb;// * _Color;
+            o.Albedo = c.rgb * _Color;
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
             o.Alpha = c.a;
