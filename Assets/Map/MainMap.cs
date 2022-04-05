@@ -15,5 +15,8 @@ public class MainMap : MonoBehaviour
         grid.transform.position = Vector3.zero;
         grid.transform.SetParent(transform);
         System.Random rndSeed = new System.Random(300);
+
+        resGen = FindObjectOfType<ResourceGenerator>();
+        resGen.GenerateResource(grid, rndSeed);
     }
 }
