@@ -12,10 +12,30 @@ namespace Assets.Map.MapResources
     public class ResourceGenerator : MonoBehaviour
     {
         PrefabManager manager;
+        [SerializeField] List<MapResource> grassList;
+        [SerializeField] List<MapResource> tmp;
 
+        MeshFilter meshFilter;
+        List<MeshFilter> meshFilters;
         private void Awake()
         {
             manager = FindObjectOfType<PrefabManager>();
+            meshFilter = GetComponent<MeshFilter>();
+            meshFilters = new List<MeshFilter>();
+        }
+
+        public void CombineMeshes()
+        {
+            CombineInstance[] combines = new CombineInstance[meshFilters.Count];
+            for (int i = 0; i < meshFilters.Count; i++)
+            {
+                combines[i].mesh = meshFilters[i].sharedMesh;
+                combines[i].transform = meshFilters[i].transform.localToWorldMatrix;
+                meshFilters[i].gameObject.SetActive(false);
+            }
+            meshFilter.mesh.CombineMeshes(combines);
+            GetComponent<MeshCollider>().sharedMesh = meshFilter.mesh;
+            gameObject.SetActive(true);  
         }
 
         private MapResource ChooseTreePrefab(System.Random rndSeed)
@@ -43,7 +63,14 @@ namespace Assets.Map.MapResources
             
             return manager.rock_prefabs[prefNum];
         }
+        private MapResource ChooseForestPrefab(System.Random rndSeed)
+        {
+            if (manager == null)
+                Awake();
+            int prefNum = rndSeed.Next(manager.forest_prefabs.Length - 1);
 
+            return manager.forest_prefabs[prefNum];
+        }
         private int GetTerrainCellsCount(HexGrid grid)
         {
             int count = 0;
@@ -78,6 +105,9 @@ namespace Assets.Map.MapResources
                         for (int i = 0; i < rockCount; i++)
                         {
                             MapResource obj = Instantiate(ChooseRockPrefab(rndSeed));
+                            
+                            meshFilters.Add(obj.GetComponent<MeshFilter>());
+                            
                             obj.transform.SetParent(transform);
                             Vector3 pos = cell.transform.position;
                             Quaternion rotation = cell.transform.rotation;
@@ -123,13 +153,17 @@ namespace Assets.Map.MapResources
                             isRock = true;
                     foreach(var cell in neigboursCells)
                     {
-                        if(cell.CellType == HexCell.CellTypes.terrain)
+                        if (cell.CellType == HexCell.CellTypes.terrain)
                         {
                             int treeCountOnCell = 0;
                             if (isRock)
-                                treeCountOnCell = rndSeed.Next(0,1);
+                                treeCountOnCell = rndSeed.Next(0, 1);
                             else
+                            {
                                 treeCountOnCell = rndSeed.Next(4,6);
+                                cell.CellType = HexCell.CellTypes.dirt;
+                            }
+
                             for(int i = 0; i < treeCountOnCell; i++)
                             {
                                 MapResource obj = Instantiate(ChooseTreePrefab(rndSeed));
@@ -162,11 +196,41 @@ namespace Assets.Map.MapResources
                     startCell = rndSeed.Next(grid.cellList.Length);
             }
         }
-
-        private void GenerateGrass(HexGrid grid, System.Random rndSeed)
+        private void GenerateForest(HexGrid grid, System.Random rndSeed)
         {
             foreach(var cell in grid.cellList)
-                if(cell.CellType == HexCell.CellTypes.terrain)
+            {
+                if(cell.CellType == HexCell.CellTypes.dirt)
+                {
+                    int grassCount = rndSeed.Next(1, 5);
+                    while(grassCount >= 0)
+                    {
+                        MapResource obj = Instantiate(ChooseForestPrefab(rndSeed));
+                        obj.transform.SetParent(transform);
+                        Vector3 pos = cell.transform.position;
+                        Vector3 scale = obj.transform.localScale;
+
+                        pos.y += obj.transform.localScale.y * 0.02f;
+                        obj.transform.position = pos;
+
+                        float scaling = UnityEngine.Random.Range(-0.3f, 0.3f);
+                        scale.x += scaling;
+                        scale.y += scaling;
+                        scale.z += scaling;
+                        obj.transform.localScale = scale;
+
+                        obj.transform.rotation = Quaternion.Euler(0f, UnityEngine.Random.Range(-180, 180), 0f);
+                        obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
+                        grassCount--;
+                    }
+                }
+            }
+        }
+
+        private void GenerateBush(HexGrid grid, System.Random rndSeed)
+        {
+            foreach(var cell in grid.cellList)
+                if(cell.CellType == HexCell.CellTypes.terrain || cell.CellType == HexCell.CellTypes.dirt)
                 {
                     int spawnChance = rndSeed.Next(0, 10);
                     if (spawnChance > 5)
@@ -197,11 +261,23 @@ namespace Assets.Map.MapResources
                 }
         }
 
+        private void GenerateGrass(HexGrid grid, System.Random rndSeed)
+        {
+            foreach(var cell in grid.cellList)
+            {
+                if(cell.CellType == HexCell.CellTypes.terrain || cell.CellType == HexCell.CellTypes.dirt)
+                {
+
+                }
+            }
+        }
+
         public void GenerateResource(HexGrid grid, System.Random rndSeed)
         {
             GenerateRock(grid, rndSeed);
             GenerateTree(grid, rndSeed);
-            GenerateGrass(grid, rndSeed);
+            GenerateBush(grid, rndSeed);
+            GenerateForest(grid, rndSeed);
         }
     }
 }

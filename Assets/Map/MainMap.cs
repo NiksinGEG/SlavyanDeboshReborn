@@ -18,5 +18,6 @@ public class MainMap : MonoBehaviour
 
         resGen = FindObjectOfType<ResourceGenerator>();
         resGen.GenerateResource(grid, rndSeed);
+        //resGen.CombineMeshes();
     }
 }

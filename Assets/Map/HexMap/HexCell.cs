@@ -40,7 +40,7 @@ namespace Assets.Map.WorldMap
     {
         [SerializeField] int cellIndex;
 
-        public enum CellTypes { water, terrain, rock, sand }
+        public enum CellTypes { water, terrain, rock, sand, dirt }
         private CellTypes cellType;
         public CellTypes CellType { get; set; }
         
@@ -48,8 +48,6 @@ namespace Assets.Map.WorldMap
         public List<Vector3> vertices;
         public CellList neighbours;
         public bool[] Bridges = new bool[6];
-
-        public int[] Triangles = new int[6];
 
         public int CellIndex { get; set; }
 

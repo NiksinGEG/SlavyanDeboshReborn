@@ -14,7 +14,7 @@ public class MainCamScript : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         Vector3 pos = gameObject.transform.position;
         Vector3 newPos = pos;
