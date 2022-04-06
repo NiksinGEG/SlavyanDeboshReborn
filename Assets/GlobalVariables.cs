@@ -4,5 +4,6 @@ using UnityEngine;
 
 public static class GlobalVariables
 {
-    public static System.Random Seed;
+    public static int Seed;
+    public static int Port = 1849;
 }
