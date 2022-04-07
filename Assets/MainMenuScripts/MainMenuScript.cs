@@ -43,7 +43,7 @@ public class MainMenuScript : MonoBehaviour
         //IPHostEntry entry = Dns.GetHostEntry(Dns.GetHostName());
         //IPAddress host_addr;// = entry.AddressList[0];
 
-        Address_text.text = "Your address: 127.0.0.1";// + GlobalVariables.HostAddress.ToString();
+        Address_text.text = "Your address: ?";// + GlobalVariables.HostAddress.ToString();
 
         ShowMenu("Creation");
     }
@@ -69,9 +69,9 @@ public class MainMenuScript : MonoBehaviour
             GlobalVariables.Seed = new System.Random().Next(3000000);
         }
         Host_output.text = $"Genered seed {GlobalVariables.Seed}...";
-        IPHostEntry entry = Dns.GetHostEntry(Dns.GetHostName());
-        IPAddress host_addr = IPAddress.Parse("127.0.0.1");//entry.AddressList[0];
-        TcpListener listener = new TcpListener(host_addr, GlobalVariables.Port);
+        //IPHostEntry entry = Dns.GetHostEntry(Dns.GetHostName());
+        //IPAddress host_addr = IPAddress.Parse("127.0.0.1");//entry.AddressList[0];
+        TcpListener listener = new TcpListener(IPAddress.Any, GlobalVariables.Port);
         listener.Start();
         TcpClient cli = listener.AcceptTcpClient();
         NetworkStream stream = cli.GetStream();
