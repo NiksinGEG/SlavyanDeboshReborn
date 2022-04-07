@@ -32,9 +32,6 @@ namespace Assets.Map.WorldMap
 		[ContextMenu("Generate game field")]
 		void Awake()
 		{
-			System.Random rnd = new System.Random();
-			generationSeed = rnd.Next(1, 30000000); //Семя сегенерилось
-
 			chunkCountX = 35;//35
 			chunkCountZ = 35;//35
 
@@ -46,8 +43,7 @@ namespace Assets.Map.WorldMap
 			for (int i = 0; i < cells.Length; i++)
 				cells[i].neighbours = cells.GetNeighbours(i);
 
-			System.Random rndSeed = new System.Random(generationSeed);
-			HexFieldGenerator.GenerateHexMap(cells, rndSeed);
+			HexFieldGenerator.GenerateHexMap(cells);
 		}
 		void CreateChunks()
 		{

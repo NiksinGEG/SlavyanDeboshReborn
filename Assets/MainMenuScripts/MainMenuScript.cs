@@ -36,7 +36,8 @@ public class MainMenuScript : MonoBehaviour
     public void StartBtnPressed()
     {
         System.Random rnd = new System.Random();
-        GlobalVariables.Seed = rnd.Next(1000);
+        GlobalVariables.Seed = rnd.Next(10000000);
+        UnityEngine.Random.InitState(GlobalVariables.Seed);
         var creating_menu = Resources.FindObjectsOfTypeAll<Menu>()[0];
         seed_field.text = GlobalVariables.Seed.ToString();
 
