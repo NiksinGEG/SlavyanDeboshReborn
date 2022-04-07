@@ -13,6 +13,9 @@ public class MainMenuScript : MonoBehaviour
     public Text Address_text;
     public InputField host_addr_field;
 
+    public Text Client_output;
+    public Text Host_output;
+
     private void Awake()
     {
         ShowMenu("Main");
@@ -37,9 +40,10 @@ public class MainMenuScript : MonoBehaviour
         var creating_menu = Resources.FindObjectsOfTypeAll<Menu>()[0];
         seed_field.text = GlobalVariables.Seed.ToString();
 
-        IPHostEntry entry = Dns.GetHostEntry(Dns.GetHostName());
-        IPAddress host_addr = entry.AddressList[0];
-        Address_text.text = "Your address: " + host_addr.ToString();
+        //IPHostEntry entry = Dns.GetHostEntry(Dns.GetHostName());
+        //IPAddress host_addr;// = entry.AddressList[0];
+
+        Address_text.text = "Your address: 127.0.0.1";// + GlobalVariables.HostAddress.ToString();
 
         ShowMenu("Creation");
     }
@@ -64,18 +68,14 @@ public class MainMenuScript : MonoBehaviour
         {
             GlobalVariables.Seed = new System.Random().Next(1000);
         }
-
+        Host_output.text = $"Genered seed {GlobalVariables.Seed}...";
         IPHostEntry entry = Dns.GetHostEntry(Dns.GetHostName());
-        IPAddress host_addr = entry.AddressList[0];
+        IPAddress host_addr = IPAddress.Parse("127.0.0.1");//entry.AddressList[0];
         TcpListener listener = new TcpListener(host_addr, GlobalVariables.Port);
         listener.Start();
-        print("Waiting connection");
         TcpClient cli = listener.AcceptTcpClient();
         NetworkStream stream = cli.GetStream();
         byte[] query = System.BitConverter.GetBytes(GlobalVariables.Seed);
-        if (System.BitConverter.IsLittleEndian)
-            System.Array.Reverse(query);
-        //byte[] query = new byte[] { (byte)GlobalVariables.Seed };
         stream.Write(query, 0, query.Length);
         listener.Stop();
         SceneManager.LoadScene("SampleScene");
@@ -91,15 +91,20 @@ public class MainMenuScript : MonoBehaviour
         string addr = host_addr_field.text;
 
         TcpClient client = new TcpClient();
-        IPHostEntry entry = Dns.GetHostEntry(addr);
-        IPAddress host_addr = entry.AddressList[0];
-        print("Connecting...");
-        client.Connect(host_addr, GlobalVariables.Port);
+        //IPHostEntry entry = Dns.GetHostEntry(addr);
+        //IPAddress host_addr = entry.AddressList[0];
+        Client_output.text = "Connecting...";
+        //client.Connect(host_addr, GlobalVariables.Port);
+        client.Connect(addr, GlobalVariables.Port);
+        Client_output.text = "Connected! Reading seed...";
         NetworkStream stream = client.GetStream();
-        byte[] resp = new byte[4];
-        stream.Read(resp, 0, 4);
-        GlobalVariables.Seed = System.Convert.ToInt32(resp);
-        print($"Readed seed {GlobalVariables.Seed}!");
+        Client_output.text = "Got stream...";
+        byte[] resp = new byte[sizeof(int)];
+        stream.Read(resp, 0, sizeof(int));
+        Client_output.text = $"Recieved response...";
+        GlobalVariables.Seed = System.BitConverter.ToInt32(resp, 0);
+
+        Client_output.text = $"Readed seed {GlobalVariables.Seed}!";
 
         SceneManager.LoadScene("SampleScene");
     }
