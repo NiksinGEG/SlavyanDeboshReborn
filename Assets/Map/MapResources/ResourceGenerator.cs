@@ -38,36 +38,36 @@ namespace Assets.Map.MapResources
             gameObject.SetActive(true);  
         }
 
-        private MapResource ChooseTreePrefab(System.Random rndSeed)
+        private MapResource ChooseTreePrefab()
         {
             if (manager == null)
                 Awake();
-            int prefNum = rndSeed.Next(manager.tree_prefabs.Length - 1);
+            int prefNum = UnityEngine.Random.Range(0, manager.tree_prefabs.Length - 1);
             return manager.tree_prefabs[prefNum];
         }
 
-        private MapResource ChooseGrassPrefab(System.Random rndSeed)
+        private MapResource ChooseGrassPrefab()
         {
             if (manager == null)
                 Awake();
-            int prefNum = rndSeed.Next(manager.grass_prefabs.Length - 1);
+            int prefNum = UnityEngine.Random.Range(0, manager.grass_prefabs.Length - 1);
             
             return manager.grass_prefabs[prefNum];
         }
 
-        private MapResource ChooseRockPrefab(System.Random rndSeed)
+        private MapResource ChooseRockPrefab()
         {
             if (manager == null)
                 Awake();
-            int prefNum = rndSeed.Next(manager.rock_prefabs.Length - 1);
+            int prefNum = UnityEngine.Random.Range(0, manager.rock_prefabs.Length - 1);
             
             return manager.rock_prefabs[prefNum];
         }
-        private MapResource ChooseForestPrefab(System.Random rndSeed)
+        private MapResource ChooseForestPrefab()
         {
             if (manager == null)
                 Awake();
-            int prefNum = rndSeed.Next(manager.forest_prefabs.Length - 1);
+            int prefNum = UnityEngine.Random.Range(0, manager.forest_prefabs.Length - 1);
 
             return manager.forest_prefabs[prefNum];
         }
@@ -79,13 +79,13 @@ namespace Assets.Map.MapResources
                     count++;
             return count;
         }
-        private void GenerateRock(HexGrid grid, System.Random rndSeed)
+        private void GenerateRock(HexGrid grid)
         {
             float rndCoeff = 0.8f;
             foreach (var cell in grid.cellList)
                 if (cell.CellType == HexCell.CellTypes.terrain || cell.CellType == HexCell.CellTypes.rock)
                 {
-                    int isRock = rndSeed.Next(1, 10);
+                    int isRock = UnityEngine.Random.Range(1, 10);
                     var nCells = grid.cellList.GetNeighbours(cell.CellIndex);
                     nCells.Add(cell, 0, 0);
                     bool isNearRock = false;
@@ -99,12 +99,12 @@ namespace Assets.Map.MapResources
  
                     if (isRock > 7)
                     {
-                        int rockCount = rndSeed.Next(1, 10);
+                        int rockCount = UnityEngine.Random.Range(1, 10);
                         if (isNearRock)
                             rockCount += 5;
                         for (int i = 0; i < rockCount; i++)
                         {
-                            MapResource obj = Instantiate(ChooseRockPrefab(rndSeed));
+                            MapResource obj = Instantiate(ChooseRockPrefab());
                             
                             meshFilters.Add(obj.GetComponent<MeshFilter>());
                             
@@ -113,7 +113,7 @@ namespace Assets.Map.MapResources
                             Quaternion rotation = cell.transform.rotation;
                             Vector3 scaling = cell.transform.localScale;
 
-                            int rotate = rndSeed.Next(-60, 60);
+                            int rotate = UnityEngine.Random.Range(-60, 60);
                             
                             float rndElevation = UnityEngine.Random.Range(0.15f, 0.35f);
                             pos.y += obj.transform.localScale.y * rndElevation;
@@ -135,12 +135,12 @@ namespace Assets.Map.MapResources
                 }
         }
 
-        public void GenerateTree(HexGrid grid, System.Random rndSeed)
+        public void GenerateTree(HexGrid grid)
         {
-            int startCell = rndSeed.Next(grid.cellList.Length);
+            int startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
             while(grid.cellList[startCell].CellType != HexCell.CellTypes.terrain)
-                startCell = rndSeed.Next(grid.cellList.Length);
-            int treeChunkCount = rndSeed.Next(GetTerrainCellsCount(grid) - 100, GetTerrainCellsCount(grid));
+                startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
+            int treeChunkCount = UnityEngine.Random.Range(GetTerrainCellsCount(grid) - 100, GetTerrainCellsCount(grid));
             while(treeChunkCount >= 0)
             {
                 if(grid.cellList[startCell].CellType == HexCell.CellTypes.terrain)
@@ -157,16 +157,16 @@ namespace Assets.Map.MapResources
                         {
                             int treeCountOnCell = 0;
                             if (isRock)
-                                treeCountOnCell = rndSeed.Next(0, 1);
+                                treeCountOnCell = UnityEngine.Random.Range(0, 1);
                             else
                             {
-                                treeCountOnCell = rndSeed.Next(4,6);
+                                treeCountOnCell = UnityEngine.Random.Range(4,6);
                                 cell.CellType = HexCell.CellTypes.dirt;
                             }
 
                             for(int i = 0; i < treeCountOnCell; i++)
                             {
-                                MapResource obj = Instantiate(ChooseTreePrefab(rndSeed));
+                                MapResource obj = Instantiate(ChooseTreePrefab());
                                 obj.transform.SetParent(transform);
                                 Vector3 pos = cell.transform.position;
                                 Vector3 scale = obj.transform.localScale;
@@ -191,21 +191,21 @@ namespace Assets.Map.MapResources
                         }
                     }
                 }
-                startCell = rndSeed.Next(grid.cellList.Length);
+                startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
                 while (grid.cellList[startCell].CellType != HexCell.CellTypes.terrain)
-                    startCell = rndSeed.Next(grid.cellList.Length);
+                    startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
             }
         }
-        private void GenerateForest(HexGrid grid, System.Random rndSeed)
+        private void GenerateForest(HexGrid grid)
         {
             foreach(var cell in grid.cellList)
             {
                 if(cell.CellType == HexCell.CellTypes.dirt)
                 {
-                    int grassCount = rndSeed.Next(1, 5);
+                    int grassCount = UnityEngine.Random.Range(1, 5);
                     while(grassCount >= 0)
                     {
-                        MapResource obj = Instantiate(ChooseForestPrefab(rndSeed));
+                        MapResource obj = Instantiate(ChooseForestPrefab());
                         obj.transform.SetParent(transform);
                         Vector3 pos = cell.transform.position;
                         Vector3 scale = obj.transform.localScale;
@@ -227,18 +227,18 @@ namespace Assets.Map.MapResources
             }
         }
 
-        private void GenerateBush(HexGrid grid, System.Random rndSeed)
+        private void GenerateBush(HexGrid grid)
         {
             foreach(var cell in grid.cellList)
                 if(cell.CellType == HexCell.CellTypes.terrain || cell.CellType == HexCell.CellTypes.dirt)
                 {
-                    int spawnChance = rndSeed.Next(0, 10);
+                    int spawnChance = UnityEngine.Random.Range(0, 10);
                     if (spawnChance > 5)
                     {
-                        int grassCount = rndSeed.Next(1, 5);
+                        int grassCount = UnityEngine.Random.Range(1, 5);
                         while(grassCount != 0)
                         {
-                            MapResource obj = Instantiate(ChooseGrassPrefab(rndSeed));
+                            MapResource obj = Instantiate(ChooseGrassPrefab());
                             obj.transform.SetParent(transform);
                             Vector3 pos = cell.transform.position;
                             Vector3 scale = obj.transform.localScale;
@@ -261,7 +261,7 @@ namespace Assets.Map.MapResources
                 }
         }
 
-        private void GenerateGrass(HexGrid grid, System.Random rndSeed)
+        private void GenerateGrass(HexGrid grid)
         {
             foreach(var cell in grid.cellList)
             {
@@ -272,12 +272,13 @@ namespace Assets.Map.MapResources
             }
         }
 
-        public void GenerateResource(HexGrid grid, System.Random rndSeed)
+        public void GenerateResource(HexGrid grid)
         {
-            GenerateRock(grid, rndSeed);
-            GenerateTree(grid, rndSeed);
-            GenerateBush(grid, rndSeed);
-            GenerateForest(grid, rndSeed);
+
+            GenerateRock(grid);
+            GenerateTree(grid);
+            GenerateBush(grid);
+            GenerateForest(grid);
         }
     }
 }
