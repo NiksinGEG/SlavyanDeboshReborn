@@ -101,7 +101,7 @@ namespace Assets.Map.WorldMap
         }
         private static CellList GenerateMainlands(CellList cells)
         {
-            int mainlandCount = UnityEngine.Random.Range(0, 4);
+            int mainlandCount = UnityEngine.Random.Range(2, 4);
             int startCell = UnityEngine.Random.Range(0, cells.Length);
             int tryCount = 0;
             for (int i = 0; i < mainlandCount; i++)
