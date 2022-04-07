@@ -11,6 +11,7 @@ public class MainMap : MonoBehaviour
 
     private void Awake()
     {
+        UnityEngine.Random.InitState(GlobalVariables.Seed);
         grid = Instantiate(grid);
         grid.transform.position = Vector3.zero;
         grid.transform.SetParent(transform);
