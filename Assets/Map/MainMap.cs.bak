@@ -1,0 +1,26 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Assets.Map.WorldMap;
+using Assets.Map.MapResources;
+
+public class MainMap : MonoBehaviour
+{
+    public HexGrid grid;
+    public ResourceGenerator resGen;
+
+    private void Awake()
+    {
+        grid = Instantiate(grid);
+        grid.transform.position = Vector3.zero;
+        grid.transform.SetParent(transform);
+        System.Random rndSeed = new System.Random(300);
+
+<<<<<<< HEAD
+        var resGen = FindObjectOfType(typeof(ResourceGenerator)) as ResourceGenerator;
+        resGen.GenerateResource(grid, resources, treeList, rndSeed);
+=======
+        resGen.GenerateResource(grid, rndSeed);
+>>>>>>> 582df42ea8b4f04395d1c9c7175d9b52eb6931a3
+    }
+}
