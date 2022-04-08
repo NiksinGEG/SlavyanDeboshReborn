@@ -33,6 +33,25 @@ namespace Assets.Map.WorldMap
                     terrainCells++;
         }
 
+        static CellList DeleteShit(CellList cells)
+        {
+            foreach(var cell in cells)
+                if(cell.CellType == HexCell.CellTypes.water)
+                {
+                    int count = 0;
+                    var neighbourCells = cells.GetNeighbours(cell.CellIndex);
+                    foreach (var nCell in neighbourCells)
+                       if (nCell.CellType == HexCell.CellTypes.terrain)
+                           count++;
+                    if(count == 6 || count == 5)
+                    {
+                        cell.CellType = HexCell.CellTypes.terrain;
+                        int rndEvaluate = UnityEngine.Random.Range(0, 1);
+                        cell.Elevation = rndEvaluate;
+                    }
+                }
+            return cells;
+        }
         public static CellList GenerateHexMap(CellList cells)
         {
             //Генерируем сначала водный рельеф
@@ -43,10 +62,9 @@ namespace Assets.Map.WorldMap
             cells = GenerateMainlands(cells);
             //Острова
             cells = GenerateIslands(cells);
+            cells = DeleteShit(cells);
             //Горы. Сначала нужно получить количество сгенерированных клеток terrain
             GetTerrainCellsCount(cells);
-            //Перепады высот внутри материков-островов
-
 
             cells = GenerateRock(cells);
             //Немного пляжных клеток
