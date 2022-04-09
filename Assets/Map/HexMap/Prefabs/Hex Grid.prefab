@@ -15,7 +15,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &2687388613062906480
 Transform:
@@ -50,3 +50,4 @@ MonoBehaviour:
   chosenColor: {r: 0, g: 1, b: 1, a: 1}
   chunkPrefab: {fileID: 8299372282015669305, guid: 5e8ccdf49d96187498995532c858480d, type: 3}
   cell_prefab: {fileID: 6727222155889160639, guid: 097b37a673760624fa33d83ff0032fcf, type: 3}
+  chunks: []
