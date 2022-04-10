@@ -21,17 +21,6 @@ public class MapResource : MonoBehaviour
     {
         centerPos = transform.position;
     }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void Select()
     {
@@ -42,7 +31,7 @@ public class MapResource : MonoBehaviour
     {
         Material mat = gameObject.GetComponent<Renderer>().material;
         float o_width = mat.GetFloat("_Outline");
-        if (o_width < 0.5f)
+        if (o_width < 0.3f)
             o_width += 0.05f;
         mat.SetFloat("_Outline", o_width);
     }
