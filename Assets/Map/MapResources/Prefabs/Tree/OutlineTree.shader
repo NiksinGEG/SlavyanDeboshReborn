@@ -78,13 +78,13 @@ Shader "Custom/OutlineTree"
                 v2f vert(appdata v) {
                     v2f o;
 
-                    //float3 normal = normalize(v.normal);
-                    //float3 o_offset = normal * _Outline;
-                    //float3 pos = v.vertex + o_offset;
-                    //o.pos = UnityObjectToClipPos(pos);
+                    float3 normal = normalize(v.normal);
+                    float3 o_offset = normal * _Outline;
+                    float3 pos = v.vertex + o_offset;
+                    o.pos = UnityObjectToClipPos(pos);
 
-                    v.vertex *= (1 + _Outline);
-                    o.pos = UnityObjectToClipPos(v.vertex);
+                    //v.vertex *= (1 + _Outline);
+                    //o.pos = UnityObjectToClipPos(v.vertex);
                     return o;
                 }
 

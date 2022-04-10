@@ -5,9 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Entities.Components
+public class SpawnComponent : IECSComponent
 {
-    internal class SpawnComponent
-    {
-    }
+
 }
