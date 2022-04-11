@@ -20,11 +20,13 @@ public class SpawnSystem : IECSSystem
         foreach (var c in components)
         {
             SpawnComponent aboba = (SpawnComponent)c;
-        }
-        //Ну или соответственно
-        foreach (var c in components)
-        {
-            SpawnComponent aboba = c as SpawnComponent;
+            if(aboba.spawn)
+            {
+                MonoBehaviour.Instantiate(aboba.gameObject);
+                aboba.obj.transform.localPosition = aboba.pos;
+                aboba.spawn = false;
+            }
+
         }
     }
 }

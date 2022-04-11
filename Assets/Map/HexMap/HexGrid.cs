@@ -10,7 +10,8 @@ namespace Assets.Map.WorldMap
     public class HexGrid : MonoBehaviour
     {
 		public int chunkCountX = 100, chunkCountZ = 100;
-		int cellCountX, cellCountZ;
+		public int cellCountX, cellCountZ;
+		
 	
 		public int generationSeed; //Семя для генерации карты. Перекинем потом в хоста
 		

@@ -29,6 +29,7 @@ public class ECSService : MonoBehaviour
         /*днаюбкърэ гдеяэ*/
         _systems.Add(new InputSystem(this));
         _systems.Add(new SelectionSystem(this));
+        _systems.Add(new SpawnSystem(this));
 
         foreach (var s in _systems)
             s.Init();

@@ -13,6 +13,7 @@ public class SelectionSystem : IECSSystem
         foreach(var _c in components)
         {
             Selectable c = (Selectable)_c;
+            Debug.Log(c.name);
             if (c.IsSelected)
                 c.WhileSelected.Invoke();
             else

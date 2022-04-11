@@ -183,7 +183,7 @@ namespace Assets.Map.MapResources
                                 obj.transform.rotation = Quaternion.Euler(-90f, UnityEngine.Random.Range(-180, 180), 0f);
                                 obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
 
-                                //treeList.Add(obj);  ??? начем, а главное захуя 
+                                //treeList.Add(obj);  //??? начем, а главное захуя 
                                 //А затем, что нужно будет как то проверить где деревья находятся при постановке к примеру лесопилки
                                 treeChunkCount--;
                             }
