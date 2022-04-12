@@ -16,10 +16,12 @@ public class MainMap : MonoBehaviour
         grid.transform.position = Vector3.zero;
         grid.transform.SetParent(transform);
 
-        resGen = FindObjectOfType<ResourceGenerator>();
-        resGen.GenerateResource(grid);
 
-        var startUnits = FindObjectsOfType<Unit>();
+
+        //resGen = FindObjectOfType<ResourceGenerator>();
+        //resGen.GenerateResource(grid);
+
+        /*var startUnits = FindObjectsOfType<Unit>();
         foreach(var cell in grid.cellList)
         {
             if (cell.CellType == HexCell.CellTypes.sand)
@@ -29,9 +31,40 @@ public class MainMap : MonoBehaviour
         {
             if (grid.cellList[i].CellType == HexCell.CellTypes.sand)
                 startUnits[1].transform.localPosition = grid.cellList[i].transform.localPosition;
-        }
+        }*/
 
 
         //resGen.CombineMeshes();
+        GenerateWay(grid);
+    }
+
+    public void GenerateWay(HexGrid grid)
+    {
+        int startCell = 18;
+        int endCell = 81;
+
+
+
+
+        //Господи, помоги
+        Vector3 endCoords = grid.cellList[endCell].transform.position;
+        while (startCell != endCell)
+            {
+            var neighbourCells = grid.cellList.GetNeighbours(startCell);
+            Vector3 nCellCoords = neighbourCells[0].transform.position;
+            float globalMin = Mathf.Sqrt(Mathf.Pow(endCoords.x - nCellCoords.x, 2) + Mathf.Pow(endCoords.x - nCellCoords.x, 2) + Mathf.Pow(endCoords.x - nCellCoords.x, 2));
+            foreach(var nCell in neighbourCells)
+            {
+                nCellCoords = nCell.transform.position;
+                float min = Mathf.Sqrt(Mathf.Pow(endCoords.x - nCellCoords.x, 2) + Mathf.Pow(endCoords.x - nCellCoords.x, 2) + Mathf.Pow(endCoords.x - nCellCoords.x, 2));
+                if (min < globalMin)
+                {
+                    globalMin = min;
+                    startCell = nCell.CellIndex;
+                }
+            }
+            grid.cellList[startCell].CellType = HexCell.CellTypes.sand;
+        }
+
     }
 }
