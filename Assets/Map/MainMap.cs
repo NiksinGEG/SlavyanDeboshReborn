@@ -40,29 +40,26 @@ public class MainMap : MonoBehaviour
 
     public void GenerateWay(HexGrid grid)
     {
-        int startCell = 18;
-        int endCell = 81;
+        int startCell = 0;
+        int endCell = 899;
 
-
-
-
-        //Господи, помоги
         Vector3 endCoords = grid.cellList[endCell].transform.position;
         while (startCell != endCell)
-            {
+        {
             var neighbourCells = grid.cellList.GetNeighbours(startCell);
             Vector3 nCellCoords = neighbourCells[0].transform.position;
-            float globalMin = Mathf.Sqrt(Mathf.Pow(endCoords.x - nCellCoords.x, 2) + Mathf.Pow(endCoords.x - nCellCoords.x, 2) + Mathf.Pow(endCoords.x - nCellCoords.x, 2));
-            foreach(var nCell in neighbourCells)
+            float globalMin = Mathf.Sqrt(Mathf.Pow(endCoords.x - nCellCoords.x, 2)  + Mathf.Pow(endCoords.z - nCellCoords.z, 2));
+            startCell = neighbourCells[0].CellIndex;
+            foreach (var nCell in neighbourCells)
             {
                 nCellCoords = nCell.transform.position;
-                float min = Mathf.Sqrt(Mathf.Pow(endCoords.x - nCellCoords.x, 2) + Mathf.Pow(endCoords.x - nCellCoords.x, 2) + Mathf.Pow(endCoords.x - nCellCoords.x, 2));
+                float min = Mathf.Sqrt(Mathf.Pow(endCoords.x - nCellCoords.x, 2) + Mathf.Pow(endCoords.z - nCellCoords.z, 2));
                 if (min < globalMin)
                 {
                     globalMin = min;
                     startCell = nCell.CellIndex;
                 }
-            }
+            } 
             grid.cellList[startCell].CellType = HexCell.CellTypes.sand;
         }
 
