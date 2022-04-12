@@ -35,7 +35,7 @@ public class MainMap : MonoBehaviour
 
 
         //resGen.CombineMeshes();
-        GenerateWay(grid);
+        //GenerateWay(grid);
     }
 
     public void GenerateWay(HexGrid grid)
@@ -47,16 +47,32 @@ public class MainMap : MonoBehaviour
 
 
         //Господи, помоги
+        Vector3 startVecCoords;
+        Vector3 startCoords = grid.cellList[startCell].transform.position;
         Vector3 endCoords = grid.cellList[endCell].transform.position;
+        startVecCoords.x = endCoords.x - startCoords.x;
+        startVecCoords.z = endCoords.z - startCoords.z;
+
         while (startCell != endCell)
-            {
+        {
             var neighbourCells = grid.cellList.GetNeighbours(startCell);
             Vector3 nCellCoords = neighbourCells[0].transform.position;
-            float globalMin = Mathf.Sqrt(Mathf.Pow(endCoords.x - nCellCoords.x, 2) + Mathf.Pow(endCoords.x - nCellCoords.x, 2) + Mathf.Pow(endCoords.x - nCellCoords.x, 2));
+            Vector3 neigVectorCoords;
+
+            neigVectorCoords.x = nCellCoords.x - startCoords.x;
+            neigVectorCoords.z = nCellCoords.z - startCoords.z;
+
+            float scale = (neigVectorCoords.x * startVecCoords.x)+(neigVectorCoords.z * startVecCoords.z);
+            float CosF = (scale)/((Mathf.Sqrt(Mathf.Pow(startVecCoords.x, 2) * Mathf.Pow(startVecCoords.z, 2)))*
+                (Mathf.Pow(neigVectorCoords.x, 2) * Mathf.Pow(neigVectorCoords.z, 2)));
+
+
+
+            //float globalMin = Mathf.Sqrt(Mathf.Pow(endCoords.x - nCellCoords.x, 2) + Mathf.Pow(endCoords.y - nCellCoords.y, 2) + Mathf.Pow(endCoords.z - nCellCoords.z, 2));
             foreach(var nCell in neighbourCells)
             {
                 nCellCoords = nCell.transform.position;
-                float min = Mathf.Sqrt(Mathf.Pow(endCoords.x - nCellCoords.x, 2) + Mathf.Pow(endCoords.x - nCellCoords.x, 2) + Mathf.Pow(endCoords.x - nCellCoords.x, 2));
+                float min = Mathf.Sqrt(Mathf.Pow(endCoords.x - nCellCoords.x, 2) + Mathf.Pow(endCoords.y - nCellCoords.y, 2) + Mathf.Pow(endCoords.z - nCellCoords.z, 2));
                 if (min < globalMin)
                 {
                     globalMin = min;
