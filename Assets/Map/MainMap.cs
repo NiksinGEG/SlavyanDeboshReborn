@@ -18,10 +18,10 @@ public class MainMap : MonoBehaviour
 
 
 
-        //resGen = FindObjectOfType<ResourceGenerator>();
-        //resGen.GenerateResource(grid);
+        resGen = FindObjectOfType<ResourceGenerator>();
+        resGen.GenerateResource(grid);
 
-        /*var startUnits = FindObjectsOfType<Unit>();
+        var startUnits = FindObjectsOfType<Unit>();
         foreach(var cell in grid.cellList)
         {
             if (cell.CellType == HexCell.CellTypes.sand)
@@ -31,7 +31,7 @@ public class MainMap : MonoBehaviour
         {
             if (grid.cellList[i].CellType == HexCell.CellTypes.sand)
                 startUnits[1].transform.localPosition = grid.cellList[i].transform.localPosition;
-        }*/
+        }
 
 
         //resGen.CombineMeshes();
@@ -43,14 +43,14 @@ public class MainMap : MonoBehaviour
         int startCell = 0;
         int endCell = 899;
 
-
+        /*
                 if (min < globalMin)
                 {
                     globalMin = min;
                     startCell = nCell.CellIndex;
                 }
             grid.cellList[startCell].CellType = HexCell.CellTypes.sand;
-        
+        */
 
     }
 }
