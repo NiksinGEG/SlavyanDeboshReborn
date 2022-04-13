@@ -18,6 +18,7 @@ public class SelectionSystem : IECSSystem
                 c.WhileSelected.Invoke();
             else
                 c.WhileDeselected.Invoke();
+            
         }
     }
 

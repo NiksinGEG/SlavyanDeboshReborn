@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public void Select()
     {
-        
+        GetComponent<Selectable>().IsSelected = !GetComponent<Selectable>().IsSelected;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }
