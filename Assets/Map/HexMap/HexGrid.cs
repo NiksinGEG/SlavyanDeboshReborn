@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Map.WorldMap
@@ -56,7 +52,8 @@ namespace Assets.Map.WorldMap
 				{
 					HexGridChunk chunk = chunks[i++] = Instantiate(chunkPrefab);
 					chunk.transform.SetParent(transform);
-					chunk.name = $"X = {x}, Y = {i}, Z = {z}";
+					chunk.ChunkIndex = i - 1;
+					chunk.name = $"Index = {chunk.ChunkIndex}";
 				}
 			}
 

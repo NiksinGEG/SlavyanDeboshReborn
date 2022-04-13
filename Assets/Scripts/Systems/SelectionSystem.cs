@@ -15,7 +15,14 @@ public class SelectionSystem : IECSSystem
             Selectable c = (Selectable)_c;
             //Debug.Log(c.name);
             if (c.IsSelected)
+            {
                 c.WhileSelected.Invoke();
+                if (Input.GetMouseButton(0))
+                    c.MouseLKM.Invoke();
+                if (Input.GetMouseButton(1))
+                    c.MouseRKM.Invoke();
+            }
+
             else
                 c.WhileDeselected.Invoke();
             
