@@ -38,7 +38,9 @@ public class MainMap : MonoBehaviour
         //GenerateWay(grid);
     }
 
-    public void GenerateWay(HexGrid grid)
+    //public void GenerateWay
+
+    public void GenerateWayPerpend(HexGrid grid)
     {
         int startCell = 18;
         int endCell = 81;

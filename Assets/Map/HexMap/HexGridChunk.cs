@@ -13,6 +13,8 @@ namespace Assets.Map.WorldMap
 
         public CellList cells;
         public HexMesh hexMesh;
+        int chunkIndex;
+        public int ChunkIndex { get; set; }
         public void AddCell(int index, HexCell cell)
         {
             cells[index] = cell;

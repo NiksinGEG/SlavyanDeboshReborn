@@ -15,7 +15,11 @@ GameObject:
   - component: {fileID: -5486502582265186072}
   - component: {fileID: -5558155294354845861}
   - component: {fileID: -1974254080449806185}
+<<<<<<< Updated upstream
   - component: {fileID: -1370386229558028318}
+=======
+  - component: {fileID: 4917082717339912436}
+>>>>>>> Stashed changes
   m_Layer: 0
   m_Name: Unit
   m_TagString: Untagged
@@ -114,9 +118,9 @@ MonoBehaviour:
   MouseLKM:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -5558155294354845861}
-        m_TargetAssemblyTypeName: SpawnComponent, Assembly-CSharp
-        m_MethodName: _Spawn
+      - m_Target: {fileID: -1974254080449806185}
+        m_TargetAssemblyTypeName: Unit, Assembly-CSharp
+        m_MethodName: Select
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -166,7 +170,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f18524094e236144fa9b5c61e3e4e866, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< Updated upstream
 --- !u!114 &-1370386229558028318
+=======
+--- !u!114 &4917082717339912436
+>>>>>>> Stashed changes
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -190,3 +198,24 @@ MonoBehaviour:
   WhileDeselected:
     m_PersistentCalls:
       m_Calls: []
+<<<<<<< Updated upstream
+=======
+  MouseLKM:
+    m_PersistentCalls:
+      m_Calls: []
+  MouseRKM:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: -1974254080449806185}
+        m_TargetAssemblyTypeName: Unit, Assembly-CSharp
+        m_MethodName: SetCoords
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+>>>>>>> Stashed changes
