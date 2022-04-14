@@ -39,4 +39,8 @@ public class Selectable : IECSComponent
     /// Выполняется каждый кадр пока IsSelected == false
     /// </summary>
     public UnityEvent WhileDeselected;
+
+    public UnityEvent MouseLKM;
+
+    public UnityEvent MouseRKM;
 }
