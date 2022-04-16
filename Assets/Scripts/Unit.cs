@@ -10,10 +10,7 @@ public class Unit : MonoBehaviour
     {
         GetComponent<Selectable>().IsSelected = !GetComponent<Selectable>().IsSelected;
     }
-<<<<<<< Updated upstream
 
-
-=======
     public void SetCoords()
     {
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -21,7 +18,7 @@ public class Unit : MonoBehaviour
         if (Physics.Raycast(inputRay, out hit))
         { 
             //transform.localPosition = hit.point;
-            //transform.localPosition = hit.transform.parent.transform.localPosition;
+            //transform.localPosition = hit.transform.parent.transform.localPosition
             var choosenChunk = hit.transform.gameObject.GetComponentInParent<HexGridChunk>();
             HexCoords tmp = HexCoords.FromPosition(hit.point);
             Vector3 coords;
@@ -30,6 +27,4 @@ public class Unit : MonoBehaviour
         }
             
     }
-    
->>>>>>> Stashed changes
 }
