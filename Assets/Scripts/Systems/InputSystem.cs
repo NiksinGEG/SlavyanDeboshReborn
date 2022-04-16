@@ -7,7 +7,6 @@ public class InputSystem : IECSSystem
     public InputSystem(ECSService service) : base(service) { }
 
     private float LastClickTime = 0f;
-
     public const float ClickDelay = 0.3f;
 
     private void Select(Selectable comp)
@@ -17,34 +16,30 @@ public class InputSystem : IECSSystem
 
     public override void Run()
     {
-        try
-        {
-            if (Input.GetMouseButton(0)
-            && Time.realtimeSinceStartup - LastClickTime > ClickDelay)
-            {
-                LastClickTime = Time.realtimeSinceStartup;
-                Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
-                ECSFilter filter = new ECSFilter(Service);
-                List<IECSComponent> components = filter.GetComponents<InputHandler>();
+        if (Input.GetMouseButton(0))
+            HandleMouseLKM();
+    }
 
-                if (Physics.Raycast(inputRay, out hit))
+    private void HandleMouseLKM()
+    {
+        if (Time.realtimeSinceStartup - LastClickTime < ClickDelay)
+            return;
+        LastClickTime = Time.realtimeSinceStartup;
+        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        ECSFilter filter = new ECSFilter(Service);
+        List<IECSComponent> components = filter.GetComponents<InputHandler>();
+
+        if (Physics.Raycast(inputRay, out hit))
+        {
+            foreach (var c in components)
+                if (hit.transform.gameObject == c.gameObject)
                 {
-                    foreach (var c in components)
-                        if (hit.transform.gameObject == c.gameObject)
-                        {
-                            Selectable sel_comp = c.gameObject.GetComponent<Selectable>();
-                            if (sel_comp != null)
-                                Select(sel_comp);
-                        }
-
+                    Selectable sel_comp = c.gameObject.GetComponent<Selectable>();
+                    if (sel_comp != null)
+                        Select(sel_comp);
                 }
-            }
+
         }
-        catch
-        {
-            Debug.Log("GOVNO");
-        }
-        
     }
 }
