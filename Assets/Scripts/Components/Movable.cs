@@ -9,5 +9,4 @@ public class Movable : IECSComponent
 {
     public Vector3 position;
     [SerializeField] public float movSpeed = 1.0f;
-    public bool isChoosen = false;
 }

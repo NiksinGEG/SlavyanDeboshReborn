@@ -17,6 +17,33 @@ public class SelectionSystem : IECSSystem
         }
     }
 
+    private void WhileSelected(Selectable component)
+    {
+        try
+        {
+            Material mat = component.gameObject.GetComponent<Renderer>().material;
+            float o_width = mat.GetFloat("_Outline");
+            if (o_width < 0.3f)
+                o_width += 0.05f;
+            mat.SetFloat("_Outline", o_width);
+        }
+        catch { }
+        
+    }
+
+    private void WhileDeselected(Selectable component)
+    {
+        try
+        {
+            Material mat = component.gameObject.GetComponent<Renderer>().material;
+            float o_width = mat.GetFloat("_Outline");
+            if (o_width > 0f)
+                o_width -= 0.05f;
+            mat.SetFloat("_Outline", o_width);
+        }
+        catch { }
+    }
+
     public override void Run()
     {
         ECSFilter f = new ECSFilter(Service);
@@ -24,10 +51,9 @@ public class SelectionSystem : IECSSystem
         foreach(var _c in components)
         {
             Selectable c = (Selectable)_c;
-            //Debug.Log(c.name);
             if (c.IsSelected)
             {
-                c.WhileSelected.Invoke();
+                WhileSelected(c);
                 if (Input.GetMouseButton(0))
                     c.MouseLKM.Invoke();
                 if (Input.GetMouseButton(1))
@@ -36,15 +62,12 @@ public class SelectionSystem : IECSSystem
                     if (mov_c != null)
                     {
                         SetCoords(mov_c);
-                        mov_c.isChoosen = !mov_c.isChoosen;
                     }
 
                 }
             }
-
             else
-                c.WhileDeselected.Invoke();
-            
+                WhileDeselected(c);
         }
     }
 
