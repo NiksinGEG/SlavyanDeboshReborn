@@ -40,14 +40,7 @@ public class ECSService : MonoBehaviour
     {
         foreach (var s in _systems)
         {
-            try
-            {
-                s.Run();
-            }
-            catch
-            {
-                Debug.Log($"GOVNO at {s.GetType()}");
-            }
+            s.Run();
         }
             
     }

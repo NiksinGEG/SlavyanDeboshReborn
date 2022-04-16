@@ -52,7 +52,6 @@ public class MoveSystem : IECSSystem
         foreach(var _c in components)
         {
             Movable c = (Movable)_c;
-            //Vector3 pos = c.gameObject.GetComponent<Transform>().position;
             if(c.gameObject.GetComponent<Transform>().position != c.position)
                 c.gameObject.GetComponent<Transform>().position = Vector3.Lerp(c.gameObject.GetComponent<Transform>().position, c.position, 0.15f);
         }

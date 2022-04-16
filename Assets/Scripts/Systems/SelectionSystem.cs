@@ -13,7 +13,8 @@ public class SelectionSystem : IECSSystem
         RaycastHit hit;
         if (Physics.Raycast(inputRay, out hit))
         {
-            comp.position = HexCoords.FromHitToCoords(hit);
+            if(hit.transform.gameObject.GetComponentInParent<HexGridChunk>() != null) //if clicked at cell of a map
+                comp.position = HexCoords.FromHitToCoords(hit);
         }
     }
 
@@ -64,9 +65,7 @@ public class SelectionSystem : IECSSystem
                 {
                     Movable mov_c = c.gameObject.GetComponent<Movable>();
                     if (mov_c != null)
-                    {
                         SetCoords(mov_c);
-                    }
 
                 }
             }
