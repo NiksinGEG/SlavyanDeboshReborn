@@ -10,12 +10,13 @@ public class MoveSystem : IECSSystem
 {
     public MoveSystem(ECSService s) : base(s) { }
 
-    private List<HexCell> GenerateWay(HexCell startCell, HexCell endCell)
+    private List<HexCell> Travel(Movable c)
     {
         List<HexCell> way = new List<HexCell>();
-        way.Add(startCell);
-        HexCell current = startCell;
-        while(current != endCell)
+        way.Add(HexCoords.FromPositionToCell(c.gameObject.GetComponent<Transform>().position));
+        HexCell current = HexCoords.FromPositionToCell(c.gameObject.GetComponent<Transform>().position);
+        HexCell endCell = HexCoords.FromPositionToCell(c.position);
+        while (current != endCell)
         {
             var neighbours = current.neighbours;
             current = neighbours[0];
@@ -52,9 +53,18 @@ public class MoveSystem : IECSSystem
         foreach(var _c in components)
         {
             Movable c = (Movable)_c;
-            //Vector3 pos = c.gameObject.GetComponent<Transform>().position;
-            if(c.gameObject.GetComponent<Transform>().position != c.position)
-                c.gameObject.GetComponent<Transform>().position = Vector3.Lerp(c.gameObject.GetComponent<Transform>().position, c.position, 0.15f);
+            if (c.isSelected)
+            {
+                List<HexCell> travel = Travel(c);
+                float eps = 0.01f;
+                //Vector3 pos = c.gameObject.GetComponent<Transform>().position;
+                foreach (var cell in travel)
+                {
+                    if (c.gameObject.GetComponent<Transform>().position.x - cell.transform.position.x > eps || c.gameObject.GetComponent<Transform>().position.z - cell.transform.position.z > eps)
+                        c.gameObject.GetComponent<Transform>().position = Vector3.Lerp(c.gameObject.GetComponent<Transform>().position, c.position, 0.15f);
+                }
+                c.isSelected = !c.isSelected;
+            }
         }
     }
 }

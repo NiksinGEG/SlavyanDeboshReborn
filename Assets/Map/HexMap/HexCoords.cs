@@ -96,6 +96,26 @@ public struct HexCoords
         }
         return coords;
     }
+
+    public static HexCell FromPositionToCell(Vector3 pos)
+    {
+        HexCell retCell = new HexCell();
+        RaycastHit hit = new RaycastHit();
+        hit.transform.position = pos;
+        var choosenChunk = hit.transform.gameObject.GetComponentInParent<HexGridChunk>();
+        float globalMin = Mathf.Sqrt(Mathf.Pow(hit.point.x - choosenChunk.cells[0].transform.position.x, 2) + Mathf.Pow(hit.point.z - choosenChunk.cells[0].transform.position.z, 2));
+        foreach (var cell in choosenChunk.cells)
+        {
+            float min = Mathf.Sqrt(Mathf.Pow(hit.point.x - cell.transform.position.x, 2) + Mathf.Pow(hit.point.z - cell.transform.position.z, 2));
+            if (min < globalMin)
+            {
+                globalMin = min;
+                retCell = cell;
+            }
+        }
+        return retCell;
+    }
+
     public HexCoords GetNeighbourCoords(int direction)
     {
         HexCoords nei_coords = new HexCoords();

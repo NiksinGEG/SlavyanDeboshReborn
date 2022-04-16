@@ -66,6 +66,7 @@ public class SelectionSystem : IECSSystem
                     if (mov_c != null)
                     {
                         SetCoords(mov_c);
+                        mov_c.isSelected = !mov_c.isSelected;
                     }
 
                 }
