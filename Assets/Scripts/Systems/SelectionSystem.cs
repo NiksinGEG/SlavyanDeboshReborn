@@ -65,6 +65,7 @@ public class SelectionSystem : IECSSystem
                 {
                     Movable mov_c = c.gameObject.GetComponent<Movable>();
                     if (mov_c != null)
+                    {     
                         SetCoords(mov_c);
                         mov_c.isSelected = !mov_c.isSelected;
                     }

@@ -100,8 +100,12 @@ public struct HexCoords
     public static HexCell FromPositionToCell(Vector3 pos)
     {
         HexCell retCell = new HexCell();
-        RaycastHit hit = new RaycastHit();
-        hit.transform.position = pos;
+        Ray inputRay = new Ray(pos, pos * 0.5f);
+        RaycastHit hit;
+        Debug.DrawRay(pos, Vector3.forward, Color.red);
+        Physics.Raycast(inputRay, out hit);
+
+        //hit.point = pos;
         var choosenChunk = hit.transform.gameObject.GetComponentInParent<HexGridChunk>();
         float globalMin = Mathf.Sqrt(Mathf.Pow(hit.point.x - choosenChunk.cells[0].transform.position.x, 2) + Mathf.Pow(hit.point.z - choosenChunk.cells[0].transform.position.z, 2));
         foreach (var cell in choosenChunk.cells)

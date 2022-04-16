@@ -56,12 +56,14 @@ public class MoveSystem : IECSSystem
             if (c.isSelected)
             {
                 List<HexCell> travel = Travel(c);
-                float eps = 0.01f;
+                float eps = 0.1f;
                 //Vector3 pos = c.gameObject.GetComponent<Transform>().position;
                 foreach (var cell in travel)
                 {
-                    if (c.gameObject.GetComponent<Transform>().position.x - cell.transform.position.x > eps || c.gameObject.GetComponent<Transform>().position.z - cell.transform.position.z > eps)
-                        c.gameObject.GetComponent<Transform>().position = Vector3.Lerp(c.gameObject.GetComponent<Transform>().position, c.position, 0.15f);
+                    /*
+                   if(c.gameObject.GetComponent<Transform>().position != cell.transform.position)                       
+                   while (Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - cell.transform.position.x) > eps || Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - cell.transform.position.z) > eps)
+                        c.gameObject.GetComponent<Transform>().position = Vector3.Lerp(c.gameObject.GetComponent<Transform>().position, c.position, 0.15f);*/
                 }
                 c.isSelected = !c.isSelected;
             }
