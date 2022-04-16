@@ -30,6 +30,7 @@ public class ECSService : MonoBehaviour
         _systems.Add(new InputSystem(this));
         _systems.Add(new SelectionSystem(this));
         _systems.Add(new SpawnSystem(this));
+        _systems.Add(new MoveSystem(this));
 
         foreach (var s in _systems)
             s.Init();
@@ -38,6 +39,16 @@ public class ECSService : MonoBehaviour
     void Update()
     {
         foreach (var s in _systems)
-            s.Run();
+        {
+            try
+            {
+                s.Run();
+            }
+            catch
+            {
+                Debug.Log($"GOVNO at {s.GetType()}");
+            }
+        }
+            
     }
 }

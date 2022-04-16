@@ -1,10 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets.Map.WorldMap;
 
 public class SelectionSystem : IECSSystem
 {
     public SelectionSystem(ECSService s) : base(s) { }
+
+    private void SetCoords(Movable comp)
+    {
+        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(inputRay, out hit))
+        {
+            comp.position = HexCoords.FromHitToCoords(hit);
+        }
+    }
 
     public override void Run()
     {
@@ -20,7 +31,15 @@ public class SelectionSystem : IECSSystem
                 if (Input.GetMouseButton(0))
                     c.MouseLKM.Invoke();
                 if (Input.GetMouseButton(1))
-                    c.MouseRKM.Invoke();
+                {
+                    Movable mov_c = c.gameObject.GetComponent<Movable>();
+                    if (mov_c != null)
+                    {
+                        SetCoords(mov_c);
+                        mov_c.isChoosen = !mov_c.isChoosen;
+                    }
+
+                }
             }
 
             else

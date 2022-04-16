@@ -10,23 +10,41 @@ public class InputSystem : IECSSystem
 
     public const float ClickDelay = 0.3f;
 
-    public override void Run()
-    { 
-        if (Input.GetMouseButton(0) 
-            && Time.realtimeSinceStartup - LastClickTime > ClickDelay)
-        {
-            LastClickTime = Time.realtimeSinceStartup;
-            Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            ECSFilter filter = new ECSFilter(Service);
-            List<IECSComponent> components = filter.GetComponents<InputHandler>();
+    private void Select(Selectable comp)
+    {
+        comp.IsSelected = !comp.IsSelected;
+    }
 
-            if (Physics.Raycast(inputRay, out hit))
+    public override void Run()
+    {
+        try
+        {
+            if (Input.GetMouseButton(0)
+            && Time.realtimeSinceStartup - LastClickTime > ClickDelay)
             {
-                foreach (var c in components)
-                    if (hit.transform.gameObject == c.gameObject)
-                        ((InputHandler)c).MouseLKM.Invoke();
+                LastClickTime = Time.realtimeSinceStartup;
+                Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                ECSFilter filter = new ECSFilter(Service);
+                List<IECSComponent> components = filter.GetComponents<InputHandler>();
+
+                if (Physics.Raycast(inputRay, out hit))
+                {
+                    foreach (var c in components)
+                        if (hit.transform.gameObject == c.gameObject)
+                        {
+                            Selectable sel_comp = c.gameObject.GetComponent<Selectable>();
+                            if (sel_comp != null)
+                                Select(sel_comp);
+                        }
+
+                }
             }
         }
+        catch
+        {
+            Debug.Log("GOVNO");
+        }
+        
     }
 }
