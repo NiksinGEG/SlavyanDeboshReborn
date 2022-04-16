@@ -27,7 +27,9 @@ public class SelectionSystem : IECSSystem
                 o_width += 0.05f;
             mat.SetFloat("_Outline", o_width);
         }
-        catch { }
+        catch {
+            Debug.Log($"Error via object {component.gameObject.name}");
+        }
         
     }
 
@@ -41,7 +43,9 @@ public class SelectionSystem : IECSSystem
                 o_width -= 0.05f;
             mat.SetFloat("_Outline", o_width);
         }
-        catch { }
+        catch { 
+            Debug.Log($"Error via object {component.gameObject.name}"); 
+        }
     }
 
     public override void Run()

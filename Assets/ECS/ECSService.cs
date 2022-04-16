@@ -22,7 +22,7 @@ public class ECSService : MonoBehaviour
     void Start()
     {
         AllComponents = new List<IECSComponent>();
-        AllComponents.AddRange(Resources.FindObjectsOfTypeAll<IECSComponent>());
+        AllComponents.AddRange(FindObjectsOfType<IECSComponent>());
 
         _systems = new List<IECSSystem>();
         
