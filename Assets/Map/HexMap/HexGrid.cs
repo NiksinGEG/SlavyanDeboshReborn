@@ -135,5 +135,11 @@ namespace Assets.Map.WorldMap
                 }
 			}
 		}
+
+		public HexCell GetByPosition(Vector3 pos)
+        {
+			int ind = HexCoords.FromPosition(pos).MakeIndex(cellCountX);
+			return cells[ind];
+        }
 	}
 }

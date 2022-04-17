@@ -17,8 +17,26 @@ public class SelectionSystem : IECSSystem
         if (Physics.Raycast(inputRay, out hit))
         {
             if(hit.transform.gameObject.GetComponentInParent<HexGridChunk>() != null) //if clicked at cell of a map
+            {
                 comp.position = HexCoords.FromHitToCoords(hit);
+                //Just for debug
+                var list = GetWay(comp, hit);
+            }
+
         }
+    }
+
+    private List<HexCell> GetWay(Movable comp, RaycastHit hit)
+    {
+        var grid = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>();
+        var endCell = grid.GetByPosition(hit.point);
+        var startPos = comp.gameObject.transform.position;
+        var startCell = grid.GetByPosition(startPos);
+
+        List<HexCell> res = new List<HexCell>();
+        res.Add(startCell);
+        res.Add(endCell);
+        return res;
     }
 
     private void WhileSelected(Selectable component)
