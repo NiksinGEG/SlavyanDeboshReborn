@@ -20,9 +20,17 @@ public class InputSystem : IECSSystem
             HandleMouseLKM();
     }
 
+    private bool InputTimeCheck()
+    {
+        bool res = Time.realtimeSinceStartup - LastClickTime > ClickDelay;
+        if (res)
+            LastClickTime = Time.realtimeSinceStartup;
+        return res;
+    }
+
     private void HandleMouseLKM()
     {
-        if (Time.realtimeSinceStartup - LastClickTime < ClickDelay)
+        if (!InputTimeCheck())
             return;
         LastClickTime = Time.realtimeSinceStartup;
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);

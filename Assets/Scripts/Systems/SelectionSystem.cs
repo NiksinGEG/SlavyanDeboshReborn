@@ -5,6 +5,9 @@ using Assets.Map.WorldMap;
 
 public class SelectionSystem : IECSSystem
 {
+    private float LastClickTime = 0f;
+    public const float ClickDelay = 0.3f;
+
     public SelectionSystem(ECSService s) : base(s) { }
 
     private void SetCoords(Movable comp)
@@ -49,6 +52,37 @@ public class SelectionSystem : IECSSystem
         }
     }
 
+    /// <summary>
+    /// Вызывать этот метод для проверки ввода мыши (учитывает задержку)<br/>
+    /// Также может изменять LastClickTime!
+    /// </summary>
+    /// <returns></returns>
+    private bool InputTimeCheck()
+    {
+        bool res = Time.realtimeSinceStartup - LastClickTime > ClickDelay;
+        if(res)
+            LastClickTime = Time.realtimeSinceStartup;
+        return res;
+    }
+
+    private void HandleSelectedLKM(Selectable component)
+    {
+        if (!InputTimeCheck())
+            return;
+    }
+
+    private void HandleSelectedRKM(Selectable component)
+    {
+        if (!InputTimeCheck())
+            return;
+        Movable mov_c = component.gameObject.GetComponent<Movable>();
+        if (mov_c != null)
+        {
+            SetCoords(mov_c);
+            mov_c.isSelected = !mov_c.isSelected;
+        }
+    }
+
     public override void Run()
     {
         ECSFilter f = new ECSFilter(Service);
@@ -60,25 +94,12 @@ public class SelectionSystem : IECSSystem
             {
                 WhileSelected(c);
                 if (Input.GetMouseButton(0))
-                    c.MouseLKM.Invoke();
+                    HandleSelectedLKM(c);
                 if (Input.GetMouseButton(1))
-                {
-                    Movable mov_c = c.gameObject.GetComponent<Movable>();
-                    if (mov_c != null)
-                    {     
-                        SetCoords(mov_c);
-                        mov_c.isSelected = !mov_c.isSelected;
-                    }
-
-                }
+                    HandleSelectedRKM(c);
             }
             else
                 WhileDeselected(c);
         }
-    }
-
-    public override void Init()
-    {
-        
     }
 }
