@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Map.WorldMap;
+using Assets.Scripts;
 
 public class SelectionSystem : IECSSystem
 {
@@ -15,15 +16,10 @@ public class SelectionSystem : IECSSystem
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(inputRay, out hit))
-        {
             if(hit.transform.gameObject.GetComponentInParent<HexGridChunk>() != null) //if clicked at cell of a map
-            {
-                comp.position = HexCoords.FromHitToCoords(hit);
-                //Just for debug
-                var list = GetWay(comp, hit);
-            }
+                 comp.travel = GetWay(comp, hit); 
 
-        }
+
     }
 
     private List<HexCell> GetWay(Movable comp, RaycastHit hit)
@@ -33,10 +29,7 @@ public class SelectionSystem : IECSSystem
         var startPos = comp.gameObject.transform.position;
         var startCell = grid.GetByPosition(startPos);
 
-        List<HexCell> res = new List<HexCell>();
-        res.Add(startCell);
-        res.Add(endCell);
-        return res;
+        return Travel.GetWay(startCell, endCell);
     }
 
     private void WhileSelected(Selectable component)
@@ -97,7 +90,6 @@ public class SelectionSystem : IECSSystem
         if (mov_c != null)
         {
             SetCoords(mov_c);
-            mov_c.isSelected = !mov_c.isSelected;
         }
     }
 

@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Assets.Map.WorldMap;
 
 public class Movable : IECSComponent
 {
     public Vector3 position;
-    [SerializeField] public float movSpeed = 1.0f;
-    public bool isSelected;
+    [SerializeField] public float movSpeed = 0.15f;
+    public List<HexCell> travel = null;
 }

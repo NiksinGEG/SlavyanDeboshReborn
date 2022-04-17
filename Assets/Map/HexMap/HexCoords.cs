@@ -99,11 +99,10 @@ public struct HexCoords
 
     public static HexCell FromPositionToCell(Vector3 pos)
     {
-        return null;
-        /*HexCell retCell = new HexCell();
-        Ray inputRay = new Ray(pos, pos * 0.5f);
+        HexCell retCell = new HexCell();
+        Ray inputRay = new Ray(pos, Vector3.down);
         RaycastHit hit;
-        Debug.DrawRay(pos, Vector3.forward, Color.red);
+        //Debug.DrawRay();
         Physics.Raycast(inputRay, out hit);
 
         //hit.point = pos;
@@ -118,7 +117,7 @@ public struct HexCoords
                 retCell = cell;
             }
         }
-        return retCell;*/
+        return retCell;
     }
 
     public HexCoords GetNeighbourCoords(int direction)
