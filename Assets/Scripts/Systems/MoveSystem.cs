@@ -42,15 +42,22 @@ public class MoveSystem : IECSSystem
         foreach(var _c in components)
         {
             Movable c = (Movable)_c;
-            if (c.travel != null)
+            try
             {
-                if (Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.travel[0].transform.position.x) > eps || 
-                    Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - c.travel[0].transform.position.z) > eps)
+                if (c.travel != null)
                 {
-                    c.gameObject.GetComponent<Transform>().position = Vector3.MoveTowards(c.gameObject.transform.position, c.travel[0].transform.position, c.movSpeed)/*Lerp(c.gameObject.transform.position, c.travel[0].transform.position, c.movSpeed * Time.deltaTime)*/;
+                    if (Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.travel[0].transform.position.x) > eps || 
+                        Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - c.travel[0].transform.position.z) > eps)
+                    {
+                        c.gameObject.GetComponent<Transform>().position = Vector3.MoveTowards(c.gameObject.transform.position, c.travel[0].transform.position, 0.25f)/*Lerp(c.gameObject.transform.position, c.travel[0].transform.position, c.movSpeed * Time.deltaTime)*/;
+                    }
+                    else
+                        c.travel.Remove(c.travel[0]);
                 }
-                else
-                    c.travel.Remove(c.travel[0]);
+            }
+            catch
+            {
+                c.travel = null;
             }
         }
     }
