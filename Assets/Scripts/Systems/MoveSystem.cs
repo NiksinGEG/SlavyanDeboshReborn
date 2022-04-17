@@ -44,15 +44,13 @@ public class MoveSystem : IECSSystem
             Movable c = (Movable)_c;
             if (c.travel != null)
             {
-                if(i < c.travel.Count)
-                    c.gameObject.GetComponent<Transform>().position = Vector3.Lerp(c.gameObject.GetComponent<Transform>().position, c.travel[i].transform.position, Time.deltaTime * c.movSpeed);
-                if(Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.travel[i].transform.position.x) > eps || Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - c.travel[i].transform.position.z) > eps)
-                    i++;
-                if(i == c.travel.Count)
+                if (Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.travel[0].transform.position.x) > eps || 
+                    Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - c.travel[0].transform.position.z) > eps)
                 {
-                    i = 1;
-                    c.travel = null;
+                    c.gameObject.GetComponent<Transform>().position = Vector3.MoveTowards(c.gameObject.transform.position, c.travel[0].transform.position, c.movSpeed)/*Lerp(c.gameObject.transform.position, c.travel[0].transform.position, c.movSpeed * Time.deltaTime)*/;
                 }
+                else
+                    c.travel.Remove(c.travel[0]);
             }
         }
     }

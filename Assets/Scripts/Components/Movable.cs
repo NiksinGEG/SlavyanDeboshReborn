@@ -9,6 +9,6 @@ using Assets.Map.WorldMap;
 public class Movable : IECSComponent
 {
     public Vector3 position;
-    [SerializeField] public float movSpeed = 0.15f;
+    [SerializeField] public float movSpeed = 0.000000001f;
     public List<HexCell> travel = null;
 }
