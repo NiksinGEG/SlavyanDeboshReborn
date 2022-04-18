@@ -23,7 +23,7 @@ public class SelectionSystem : IECSSystem
                 var startPos = comp.gameObject.transform.position;
                 var startCell = grid.GetByPosition(startPos);
 
-                comp.wayCells = Travel.GetWay(startCell, endCell);
+                comp.WayCells = Travel.GetWay(startCell, endCell);
             }
     }
 
