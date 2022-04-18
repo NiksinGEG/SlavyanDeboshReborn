@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Map.WorldMap
@@ -141,5 +142,64 @@ namespace Assets.Map.WorldMap
 			int ind = HexCoords.FromPosition(pos).MakeIndex(cellCountX);
 			return cells[ind];
         }
+		
+		private int[,] CreateWeghtMatrix(int[,] weightMatrix)
+        {
+			for(int i = 0; i < cellCountX; i++)
+            {
+				for(int j = 0; j < cellCountZ; j++)
+                {
+					if(i != j)
+                    {
+						foreach(var cell in cells[j * cellCountZ + i].neighbours)
+                        {
+							weightMatrix[j * cellCountZ + i, cell.CellIndex] = 1;
+							weightMatrix[cell.CellIndex, j * cellCountZ + i] = 1;
+						}
+                    }
+                }
+            }
+			for(int i = 5; i >= 0; i--)
+					Debug.Log($"{weightMatrix[i, 0]} {weightMatrix[i, 1]} {weightMatrix[i, 2]} {weightMatrix[i, 3]} {weightMatrix[i, 4]}");
+			return weightMatrix;
+        }
+
+		public List<HexCell> GetWay(Movable c, HexCell startCell, HexCell endCell)
+		{
+			int[,] weightMatrix = new int[cellCountX * cellCountZ, cellCountX * cellCountZ];
+			weightMatrix = CreateWeghtMatrix(weightMatrix);
+			List<HexCell> res = new List<HexCell>();
+			if (c.IsSwimAndMove)
+			{
+				res.Add(startCell);
+				while (startCell != endCell)
+				{
+					var neighbours = startCell.neighbours;
+					startCell = neighbours[0];
+					double min = Mathf.Sqrt(Mathf.Pow(endCell.transform.position.x - startCell.transform.position.x, 2) + Mathf.Pow(endCell.transform.position.z - startCell.transform.position.z, 2));
+					foreach (var cell in neighbours)
+					{
+						double local_min = Mathf.Sqrt(Mathf.Pow(endCell.transform.position.x - cell.transform.position.x, 2) + Mathf.Pow(endCell.transform.position.z - cell.transform.position.z, 2));
+						if (local_min < min)
+						{
+							min = local_min;
+							startCell = cell;
+						}
+					}
+					res.Add(startCell);
+				}
+				return res;
+			}
+			if (c.IsSwimming)
+			{
+				return res;
+			}
+			if (!c.IsSwimming)
+			{
+				return res;
+			}
+			return res;
+		}
 	}
+	
 }

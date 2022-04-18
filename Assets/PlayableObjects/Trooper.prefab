@@ -139,3 +139,4 @@ MonoBehaviour:
   WayCells: []
   MovRadius: 2
   IsSwimming: 0
+  IsSwimAndMove: 1

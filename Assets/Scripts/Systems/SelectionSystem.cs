@@ -23,7 +23,7 @@ public class SelectionSystem : IECSSystem
                 var startPos = comp.gameObject.transform.position;
                 var startCell = grid.GetByPosition(startPos);
 
-                comp.WayCells = Travel.GetWay(comp, startCell, endCell);
+                comp.WayCells = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>().GetWay(comp, startCell, endCell);
             }
     }
 

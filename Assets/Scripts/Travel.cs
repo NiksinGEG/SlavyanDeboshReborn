@@ -7,6 +7,7 @@ namespace Assets.Scripts
 {
     static class Travel
     {
+        //private int[,] mapMatrix = new int[,]; 
         public static List<HexCell> GetWay(Movable c, HexCell startCell, HexCell endCell)
         {
             List<HexCell> res = new List<HexCell>();
@@ -41,6 +42,7 @@ namespace Assets.Scripts
 
                 return res;
             }
+            return res;
         }
 
         public static void Moving(Movable c)
