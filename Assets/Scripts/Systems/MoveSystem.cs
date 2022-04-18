@@ -18,7 +18,7 @@ public class MoveSystem : IECSSystem
         foreach (var _c in components)
         {
             Movable c = (Movable)_c;
-            c.position = c.gameObject.GetComponent<Transform>().position;
+            c.Position = c.gameObject.GetComponent<Transform>().position;
         }
     }
 
@@ -32,20 +32,20 @@ public class MoveSystem : IECSSystem
             Movable c = (Movable)_c;
             try
             {
-                if (c.travel != null)
+                if (c.WayCells != null)
                 {
-                    if (Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.travel[0].transform.position.x) > eps || 
-                        Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - c.travel[0].transform.position.z) > eps)
+                    if (Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.WayCells[0].transform.position.x) > eps || 
+                        Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - c.WayCells[0].transform.position.z) > eps)
                     {
-                        c.gameObject.GetComponent<Transform>().position = Vector3.MoveTowards(c.gameObject.transform.position, c.travel[0].transform.position, 0.25f)/*Lerp(c.gameObject.transform.position, c.travel[0].transform.position, c.movSpeed * Time.deltaTime)*/;
+                        c.gameObject.GetComponent<Transform>().position = Vector3.MoveTowards(c.gameObject.transform.position, c.WayCells[0].transform.position, 0.25f)/*Lerp(c.gameObject.transform.position, c.travel[0].transform.position, c.movSpeed * Time.deltaTime)*/;
                     }
                     else
-                        c.travel.Remove(c.travel[0]);
+                        c.WayCells.Remove(c.WayCells[0]);
                 }
             }
             catch
             {
-                c.travel = null;
+                c.WayCells = null;
             }
         }
     }
