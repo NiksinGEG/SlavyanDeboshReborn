@@ -11,25 +11,20 @@ public class SelectionSystem : IECSSystem
 
     public SelectionSystem(ECSService s) : base(s) { }
 
-    private void SetCoords(Movable comp)
+    private void SetWay(Movable comp)
     {
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(inputRay, out hit))
             if(hit.transform.gameObject.GetComponentInParent<HexGridChunk>() != null) //if clicked at cell of a map
-                 comp.travel = GetWay(comp, hit); 
+            {
+                var grid = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>();
+                var endCell = grid.GetByPosition(hit.point);
+                var startPos = comp.gameObject.transform.position;
+                var startCell = grid.GetByPosition(startPos);
 
-
-    }
-
-    private List<HexCell> GetWay(Movable comp, RaycastHit hit)
-    {
-        var grid = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>();
-        var endCell = grid.GetByPosition(hit.point);
-        var startPos = comp.gameObject.transform.position;
-        var startCell = grid.GetByPosition(startPos);
-
-        return Travel.GetWay(startCell, endCell);
+                comp.WayCells = Travel.GetWay(startCell, endCell);
+            }
     }
 
     private void WhileSelected(Selectable component)
@@ -88,9 +83,7 @@ public class SelectionSystem : IECSSystem
             return;
         Movable mov_c = component.gameObject.GetComponent<Movable>();
         if (mov_c != null)
-        {
-            SetCoords(mov_c);
-        }
+            SetWay(mov_c);
     }
 
     public override void Run()

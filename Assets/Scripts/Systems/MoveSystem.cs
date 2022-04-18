@@ -11,7 +11,6 @@ public class MoveSystem : IECSSystem
 {
     public MoveSystem(ECSService s) : base(s) { }
 
-    int i = 1;
     public override void Init()
     {
         ECSFilter f = new ECSFilter(Service);
@@ -21,17 +20,6 @@ public class MoveSystem : IECSSystem
             Movable c = (Movable)_c;
             c.position = c.gameObject.GetComponent<Transform>().position;
         }
-    }
-
-    private void Travel(Movable c)
-    {
-        float eps = 0.5f;
-        foreach(var cell in c.travel)
-            //while (Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - cell.transform.position.x) > eps || Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - cell.transform.position.z) > eps)
-                c.gameObject.GetComponent<Transform>().position = (cell.transform.position - c.gameObject.GetComponent<Transform>().position) * c.movSpeed;
-            //if(c.gameObject.GetComponent<Transform>().position != cell.transform.position)                       
-            //while (Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - cell.transform.position.x) > eps || Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - cell.transform.position.z) > eps)
-
     }
 
     public override void Run()
