@@ -21,30 +21,9 @@ public class MainMap : MonoBehaviour
         resGen = FindObjectOfType<ResourceGenerator>();
         resGen.GenerateResource(grid);
 
-        var startUnits = FindObjectsOfType<Unit>();
-        foreach(var cell in grid.cellList)
-        {
-            if (cell.CellType == HexCell.CellTypes.sand)
-                startUnits[0].transform.localPosition = cell.transform.localPosition;
-        }
-        for(int i = grid.cellList.Length - 1; i >= 0; i-- )
-        {
-            if (grid.cellList[i].CellType == HexCell.CellTypes.sand)
-                startUnits[1].transform.localPosition = grid.cellList[i].transform.localPosition;
-        }
-
 
         //resGen.CombineMeshes();
         //GenerateWay(grid);
     }
 
-    //public void GenerateWay
-
-    public void GenerateWayPerpend(HexGrid grid)
-    {
-        int startCell = 18;
-        int endCell = 81;
-
-
-    }
 }

@@ -9,6 +9,11 @@ using Assets.Map.WorldMap;
 public class Movable : IECSComponent
 {
     public Vector3 Position;
-    public float MoveSpeed = 0.000000001f;
+    public float MoveSpeed;
     public List<HexCell> WayCells = null;
+    public int MovRadius;
+
+    public bool IsSwimming;
+    public bool IsSwimAndMove;
+
 }
