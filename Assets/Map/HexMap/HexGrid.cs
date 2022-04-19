@@ -145,6 +145,10 @@ namespace Assets.Map.WorldMap
 		
 		private int[,] CreateWeghtMatrix(int[,] weightMatrix)
         {
+			for (int i = 0; i < cellCountX * cellCountZ; i++)
+				for (int j = 0; j < cellCountX * cellCountZ; j++)
+					weightMatrix[i, j] = 10000; //Сделал все элементы матрицы "бесконечностью"
+
 			for(int i = 0; i < cellCountX; i++)
             {
 				for(int j = 0; j < cellCountZ; j++)
@@ -158,18 +162,150 @@ namespace Assets.Map.WorldMap
 						}
                     }
                 }
-            }
-			for(int i = 5; i >= 0; i--)
-					Debug.Log($"{weightMatrix[i, 0]} {weightMatrix[i, 1]} {weightMatrix[i, 2]} {weightMatrix[i, 3]} {weightMatrix[i, 4]}");
+            }					
 			return weightMatrix;
         }
 
-		public List<HexCell> GetWay(Movable c, HexCell startCell, HexCell endCell)
+		private int[,] CreateWaterMatrix(int[,] weightMatrix)
+        {
+			for (int i = 0; i < cellCountX; i++)
+			{
+				for (int j = 0; j < cellCountZ; j++)
+				{
+					if (i != j)
+					{
+						foreach (var cell in cells[j * cellCountZ + i].neighbours)
+						{
+							if(cell.CellType != HexCell.CellTypes.water)
+                            {
+								weightMatrix[j * cellCountZ + i, cell.CellIndex] = 10000;
+								weightMatrix[cell.CellIndex, j * cellCountZ + i] = 10000;
+                            }
+						}
+					}
+				}
+			}
+			return weightMatrix;
+        }
+
+		private int[,] CreateTerrainMatrix(int[,] weightMatrix)
+		{
+			for (int i = 0; i < cellCountX; i++)
+			{
+				for (int j = 0; j < cellCountZ; j++)
+				{
+					if (i != j)
+					{
+						foreach (var cell in cells[j * cellCountZ + i].neighbours)
+						{
+							if (cell.CellType == HexCell.CellTypes.water)
+							{
+								weightMatrix[j * cellCountZ + i, cell.CellIndex] = 10000;
+								weightMatrix[cell.CellIndex, j * cellCountZ + i] = 10000;
+							}
+						}
+					}
+				}
+			}
+			return weightMatrix;
+		}
+
+		const int INF = 100000;
+		static int pathlength = 0;
+		
+		private void InitSupportArrays(int[] D, int[] V, int[] T, int n) 
+		{ 
+			 for (int i = 0; i<n; i++)
+			{
+				D[i] = INF;
+				V[i] = 0;
+				T[i] = -1;
+			}
+		}
+
+		static int[] DikstraAlg(int[,] G, int n, int[] D, int[] V, int[] T, int S, int F)
+		{
+
+			int min, i_min;
+			V[S - 1] = 1; //1. Начальная
+			D[S - 1] = 0; //установка
+			T[S - 1] = 0; //...
+			int y = S; //...
+			do {
+				for (int x = 0; x<n; x++) //2. Пересчёт значений
+				{
+					if (G[y - 1, x] != 0 && V[x] == 0)
+					{
+						if (D[y - 1] + G[y - 1, x] < D[x])
+							D[x] = D[y - 1] + G[y - 1, x];
+					}
+				}
+				min = INF; //3. Поиск минимального d(xi) и...
+				i_min = INF;
+				for (int x = 0; x < n; x++)
+					if (V[x] == 0)
+						if (D[x] < min)
+						{
+							min = D[x];
+							i_min = x;
+						}
+				if (min != INF)
+				{
+					pathlength += G[y - 1, i_min];
+					T[i_min] = y;
+					y = i_min + 1;
+					V[i_min] = 1;
+				}
+				if (y == F) //4. Проверка на окончание алгоритма
+					break;
+		} while (min != INF) ;
+			return T;
+		}
+        
+		private List<HexCell> AddPathOnTravelList(int[] T,int t, int v)
+        {
+			List<HexCell> path = new List<HexCell>();
+			path.Add(cells[t]);
+			while (T[v] != 0)
+            {
+				path.Add(cells[v]);
+				v = T[v] - 1; 
+            }
+			return path;
+        }
+
+		public List<HexCell> GetWay(int type, HexCell startCell, HexCell endCell)
 		{
 			int[,] weightMatrix = new int[cellCountX * cellCountZ, cellCountX * cellCountZ];
 			weightMatrix = CreateWeghtMatrix(weightMatrix);
 			List<HexCell> res = new List<HexCell>();
-			if (c.IsSwimAndMove)
+			switch(type)
+            {
+				case 0:
+                    weightMatrix = CreateWaterMatrix(weightMatrix);
+
+					break;
+				case 1:
+					weightMatrix = CreateTerrainMatrix(weightMatrix);
+					break;
+				case 2:
+					break;
+            }
+			int[] D = new int[cellCountX * cellCountZ];
+			int[] V = new int[cellCountX * cellCountZ];
+			int[] T = new int[cellCountX * cellCountZ];
+			InitSupportArrays(D, V, T, cellCountX * cellCountZ);
+
+			T = DikstraAlg(weightMatrix, cellCountX * cellCountZ, D, V, T, startCell.CellIndex, endCell.CellIndex);
+			
+			return AddPathOnTravelList(T,startCell.CellIndex - 1, endCell.CellIndex - 1);
+			
+			
+			
+			
+			
+			
+			/*if (c.IsSwimAndMove)
 			{
 				res.Add(startCell);
 				while (startCell != endCell)
@@ -198,7 +334,7 @@ namespace Assets.Map.WorldMap
 			{
 				return res;
 			}
-			return res;
+			return res;*/
 		}
 	}
 	

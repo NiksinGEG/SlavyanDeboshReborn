@@ -28,7 +28,7 @@ public class MoveSystem : IECSSystem
         ECSFilter f = new ECSFilter(Service);
         List<IECSComponent> components = f.GetComponents<Movable>();
         foreach(var _c in components)
-        {
+      {
             Movable c = (Movable)_c;
             try
             {
@@ -37,7 +37,7 @@ public class MoveSystem : IECSSystem
                     if (Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.WayCells[0].transform.position.x) > eps || 
                         Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - c.WayCells[0].transform.position.z) > eps)
                     {
-                        c.gameObject.GetComponent<Transform>().position = Vector3.MoveTowards(c.gameObject.transform.position, c.WayCells[0].transform.position, 0.25f);
+                        c.gameObject.GetComponent<Transform>().position = Vector3.MoveTowards(c.gameObject.transform.position, c.WayCells[0].transform.position, c.MoveSpeed);
                     }
                     else
                         c.WayCells.Remove(c.WayCells[0]);

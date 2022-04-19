@@ -13,7 +13,7 @@ public class Movable : IECSComponent
     public List<HexCell> WayCells = null;
     public int MovRadius;
 
-    public bool IsSwimming;
-    public bool IsSwimAndMove;
+    public enum MoveType {swim, move, swimAndMove };
+    public MoveType moveType;
 
 }

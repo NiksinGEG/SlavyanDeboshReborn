@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5405358912788281120}
   - component: {fileID: 627799534357696712}
   - component: {fileID: 3301043667360365934}
-  - component: {fileID: -7104134721031168331}
+  - component: {fileID: -8249618572170219780}
   m_Layer: 0
   m_Name: Trooper
   m_TagString: Untagged
@@ -122,7 +122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bec5ccfbb28dc864b8a2efdc421df6cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &-7104134721031168331
+--- !u!114 &-8249618572170219780
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -135,8 +135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Position: {x: 0, y: 0, z: 0}
-  MoveSpeed: 0.25
+  MoveSpeed: 0
   WayCells: []
-  MovRadius: 2
-  IsSwimming: 0
-  IsSwimAndMove: 1
+  MovRadius: 0
+  moveType: 2
