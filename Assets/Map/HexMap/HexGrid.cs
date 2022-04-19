@@ -227,17 +227,17 @@ namespace Assets.Map.WorldMap
 		{
 
 			int min, i_min;
-			V[S - 1] = 1; //1. Начальная
-			D[S - 1] = 0; //установка
-			T[S - 1] = 0; //...
+			V[S] = 1; //1. Начальная
+			D[S] = 0; //установка
+			T[S] = 0; //...
 			int y = S; //...
 			do {
 				for (int x = 0; x<n; x++) //2. Пересчёт значений
 				{
-					if (G[y - 1, x] != 0 && V[x] == 0)
+					if (G[y, x] != 0 && V[x] == 0)
 					{
-						if (D[y - 1] + G[y - 1, x] < D[x])
-							D[x] = D[y - 1] + G[y - 1, x];
+						if (D[y] + G[y, x] < D[x])
+							D[x] = D[y] + G[y, x];
 					}
 				}
 				min = INF; //3. Поиск минимального d(xi) и...
@@ -251,25 +251,28 @@ namespace Assets.Map.WorldMap
 						}
 				if (min != INF)
 				{
-					pathlength += G[y - 1, i_min];
+					pathlength += G[y, i_min];
 					T[i_min] = y;
-					y = i_min + 1;
+					y = i_min;
 					V[i_min] = 1;
 				}
-				if (y == F) //4. Проверка на окончание алгоритма
-					break;
-		} while (min != INF) ;
+                if (y == F) //4. Проверка на окончание алгоритма
+                    break;
+            } while (min != INF) ;
 			return T;
 		}
         
 		private List<HexCell> AddPathOnTravelList(int[] T,int t, int v)
         {
+			Debug.Log($"Root: ");
 			List<HexCell> path = new List<HexCell>();
 			path.Add(cells[t]);
 			while (T[v] != 0)
             {
 				path.Add(cells[v]);
-				v = T[v] - 1; 
+				Debug.Log($"{cells[v].CellIndex} ");
+				v = T[v];
+
             }
 			return path;
         }
@@ -298,7 +301,7 @@ namespace Assets.Map.WorldMap
 
 			T = DikstraAlg(weightMatrix, cellCountX * cellCountZ, D, V, T, startCell.CellIndex, endCell.CellIndex);
 			
-			return AddPathOnTravelList(T,startCell.CellIndex - 1, endCell.CellIndex - 1);
+			return AddPathOnTravelList(T,startCell.CellIndex, endCell.CellIndex);
 			
 			
 			

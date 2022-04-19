@@ -37,7 +37,7 @@ public class MoveSystem : IECSSystem
                     if (Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.WayCells[0].transform.position.x) > eps || 
                         Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - c.WayCells[0].transform.position.z) > eps)
                     {
-                        c.gameObject.GetComponent<Transform>().position = Vector3.MoveTowards(c.gameObject.transform.position, c.WayCells[0].transform.position, c.MoveSpeed);
+                        c.gameObject.GetComponent<Transform>().position = Vector3.Lerp(c.gameObject.transform.position, c.WayCells[0].transform.position, c.MoveSpeed);
                     }
                     else
                         c.WayCells.Remove(c.WayCells[0]);
