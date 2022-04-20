@@ -211,7 +211,6 @@ namespace Assets.Map.WorldMap
 		}
 
 		const int INF = 100000;
-		static int pathlength = 0;
 		
 		private void InitSupportArrays(int[] D, int[] V, int[] T, int n) 
 		{ 
@@ -225,19 +224,21 @@ namespace Assets.Map.WorldMap
 
 		static int[] DikstraAlg(int[,] G, int n, int[] D, int[] V, int[] T, int S, int F)
 		{
-
-			int min, i_min;
 			V[S] = 1; //1. Начальная
+			int min, i_min;
 			D[S] = 0; //установка
 			T[S] = 0; //...
 			int y = S; //...
 			do {
-				for (int x = 0; x<n; x++) //2. Пересчёт значений
+				for (int x = 0; x < n; x++)
 				{
 					if (G[y, x] != 0 && V[x] == 0)
 					{
 						if (D[y] + G[y, x] < D[x])
+                        {
 							D[x] = D[y] + G[y, x];
+							T[x] = y;
+                        }
 					}
 				}
 				min = INF; //3. Поиск минимального d(xi) и...
@@ -251,14 +252,26 @@ namespace Assets.Map.WorldMap
 						}
 				if (min != INF)
 				{
-					pathlength += G[y, i_min];
-					T[i_min] = y;
+					//T[i_min] = y;
 					y = i_min;
 					V[i_min] = 1;
 				}
-                if (y == F) //4. Проверка на окончание алгоритма
+				if (y == F) //4. Проверка на окончание алгоритма
                     break;
             } while (min != INF) ;
+			int vertex = F - 1;
+			Stack<int> stack = new Stack<int>();
+			while(vertex != 0)
+            {
+				stack.Push(vertex);
+				vertex = T[vertex];
+            }
+			int pathSize = stack.Count - 1;
+			int[] path = new int[pathSize];
+			for (int i = pathSize, j = 0; i != 0; i--, j++)
+			{
+				path[j] = stack.Pop();
+			}
 			return T;
 		}
         
@@ -271,10 +284,15 @@ namespace Assets.Map.WorldMap
             {
 				path.Add(cells[v]);
 				Debug.Log($"{cells[v].CellIndex} ");
-				v = T[v];
+				v = T[v]; 
 
             }
-			return path;
+			List<HexCell> truePath = new List<HexCell>();
+			for(int i = path.Count - 1; i > 0; i--)
+            {
+				truePath.Add(path[i]);
+            }
+			return truePath;
         }
 
 		public List<HexCell> GetWay(int type, HexCell startCell, HexCell endCell)
