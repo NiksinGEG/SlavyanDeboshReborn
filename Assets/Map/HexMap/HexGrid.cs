@@ -275,11 +275,12 @@ namespace Assets.Map.WorldMap
 			return T;
 		}
         
-		private List<HexCell> AddPathOnTravelList(int[] T,int t, int v)
+		private List<HexCell> AddPathOnTravelList(int[] T,int t, int v, int type)
         {
 			Debug.Log($"Root: ");
 			List<HexCell> path = new List<HexCell>();
 			path.Add(cells[t]);
+			int tmp = v;
 			while (T[v] != 0)
             {
 				path.Add(cells[v]);
@@ -290,8 +291,28 @@ namespace Assets.Map.WorldMap
 			List<HexCell> truePath = new List<HexCell>();
 			for(int i = path.Count - 1; i > 0; i--)
             {
+				switch(type)
+                {
+					case 0:
+						if (path[i].CellType != HexCell.CellTypes.water)
+							return null;
+						break;
+					case 1:
+						if (path[i].CellType == HexCell.CellTypes.water)
+							return null;
+						break;
+
+				}
 				truePath.Add(path[i]);
+			}
+			if(path.Count == 2)
+            {
+				foreach (var cell in cells[t].neighbours)
+					if (cell.CellIndex == tmp)
+						return truePath;
+				return null;
             }
+
 			return truePath;
         }
 
@@ -299,12 +320,10 @@ namespace Assets.Map.WorldMap
 		{
 			int[,] weightMatrix = new int[cellCountX * cellCountZ, cellCountX * cellCountZ];
 			weightMatrix = CreateWeghtMatrix(weightMatrix);
-			List<HexCell> res = new List<HexCell>();
 			switch(type)
             {
 				case 0:
                     weightMatrix = CreateWaterMatrix(weightMatrix);
-
 					break;
 				case 1:
 					weightMatrix = CreateTerrainMatrix(weightMatrix);
@@ -319,43 +338,7 @@ namespace Assets.Map.WorldMap
 
 			T = DikstraAlg(weightMatrix, cellCountX * cellCountZ, D, V, T, startCell.CellIndex, endCell.CellIndex);
 			
-			return AddPathOnTravelList(T,startCell.CellIndex, endCell.CellIndex);
-			
-			
-			
-			
-			
-			
-			/*if (c.IsSwimAndMove)
-			{
-				res.Add(startCell);
-				while (startCell != endCell)
-				{
-					var neighbours = startCell.neighbours;
-					startCell = neighbours[0];
-					double min = Mathf.Sqrt(Mathf.Pow(endCell.transform.position.x - startCell.transform.position.x, 2) + Mathf.Pow(endCell.transform.position.z - startCell.transform.position.z, 2));
-					foreach (var cell in neighbours)
-					{
-						double local_min = Mathf.Sqrt(Mathf.Pow(endCell.transform.position.x - cell.transform.position.x, 2) + Mathf.Pow(endCell.transform.position.z - cell.transform.position.z, 2));
-						if (local_min < min)
-						{
-							min = local_min;
-							startCell = cell;
-						}
-					}
-					res.Add(startCell);
-				}
-				return res;
-			}
-			if (c.IsSwimming)
-			{
-				return res;
-			}
-			if (!c.IsSwimming)
-			{
-				return res;
-			}
-			return res;*/
+			return AddPathOnTravelList(T,startCell.CellIndex, endCell.CellIndex, type);
 		}
 	}
 	
