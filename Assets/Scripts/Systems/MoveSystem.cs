@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Assets.Map.WorldMap;
+using Assets.Scripts;
 
 public class MoveSystem : IECSSystem
 {
@@ -32,12 +33,12 @@ public class MoveSystem : IECSSystem
             Movable c = (Movable)_c;
             try
             {
-                if (c.WayCells != null)
+                if (c.WayCells != null || c.WayCells.Count != 0)
                 {
-                    if (Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.WayCells[0].transform.position.x) > eps || 
+                    if (Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.WayCells[0].transform.position.x) > eps ||
                         Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - c.WayCells[0].transform.position.z) > eps)
                     {
-                        c.gameObject.GetComponent<Transform>().position = Vector3.Lerp(c.gameObject.transform.position, c.WayCells[0].transform.position, c.MoveSpeed);
+                            c.gameObject.GetComponent<Transform>().position = Vector3.MoveTowards(c.gameObject.transform.position, c.WayCells[0].transform.position, c.MoveSpeed);
                     }
                     else
                         c.WayCells.Remove(c.WayCells[0]);
