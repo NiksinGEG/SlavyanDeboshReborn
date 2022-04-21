@@ -277,14 +277,12 @@ namespace Assets.Map.WorldMap
         
 		private List<HexCell> AddPathOnTravelList(int[] T,int t, int v, int type)
         {
-			Debug.Log($"Root: ");
 			List<HexCell> path = new List<HexCell>();
 			path.Add(cells[t]);
 			int tmp = v;
 			while (T[v] != 0)
             {
 				path.Add(cells[v]);
-				Debug.Log($"{cells[v].CellIndex} ");
 				v = T[v]; 
 
             }

@@ -733,7 +733,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Position: {x: 0, y: 0, z: 0}
-  MoveSpeed: 0.15
+  MoveSpeed: 0.05
   WayCells: []
   MovRadius: 0
   moveType: 0
