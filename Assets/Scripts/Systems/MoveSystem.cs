@@ -49,23 +49,24 @@ public class MoveSystem : IECSSystem
             {
                 if (c.WayCells.Count == 1 || c.WalkedCell == null)
                 {
-
-                    rotation = Quaternion.LookRotation(c.WayCells[0].transform.position);
-                    //rotation.x = c.gameObject.transform.rotation.x;
-                    if (Mathf.Abs(c.gameObject.transform.rotation.y - rotation.y) > 0 &&
-                        Mathf.Abs(c.gameObject.transform.rotation.z - rotation.z) > 0)
+                    Vector3 point = c.WayCells[0].transform.localPosition;
+                    point.y = c.gameObject.transform.localPosition.y;
+                    Quaternion fromRotation = c.gameObject.transform.localRotation;
+                    Quaternion toRotation = Quaternion.LookRotation(point - c.gameObject.transform.localPosition);
+                    //toRotation.x = -1.0f;
+                    if (Mathf.Abs(c.gameObject.transform.localRotation.y - toRotation.y) < 0.01f &&
+                        Mathf.Abs(c.gameObject.transform.localRotation.z - toRotation.z) < 0.01f)
                         isTurned = true;
                     else
                         isTurned = false;
-
 
                     if (isTurned)
                     {
                         c.gameObject.transform.position = Vector3.MoveTowards(c.gameObject.transform.position, c.WayCells[0].transform.position, c.MoveSpeed);
                     }
                     else
-                    {
-                        c.gameObject.transform.rotation = Quaternion.RotateTowards(c.gameObject.transform.rotation, rotation, 0.1f);
+                    {                        
+                        c.gameObject.transform.rotation = Quaternion.RotateTowards(fromRotation, toRotation, 0.25f);
                     }
                 }
                 else
