@@ -11,7 +11,11 @@ public class Movable : IECSComponent
     public Vector3 Position;
     public float MoveSpeed;
     public List<HexCell> WayCells = null;
-    public int MovRadius;
+    public int MoveRadius;
+
+
+    public float t;
+    public HexCell WalkedCell;
 
     public enum MoveType {swim, move, swimAndMove };
     public MoveType moveType;
