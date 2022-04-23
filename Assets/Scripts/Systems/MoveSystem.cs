@@ -14,6 +14,7 @@ public class MoveSystem : IECSSystem
 
     private Quaternion rotation;
     private bool isTurned = true;
+    private int tryCount = 0;
 
     public override void Init()
     {
@@ -49,13 +50,13 @@ public class MoveSystem : IECSSystem
             {
                 if (c.WayCells.Count == 1 || c.WalkedCell == null)
                 {
-                    Vector3 point = c.WayCells[0].transform.localPosition;
-                    point.y = c.gameObject.transform.localPosition.y;
-                    Quaternion fromRotation = c.gameObject.transform.localRotation;
-                    Quaternion toRotation = Quaternion.LookRotation(point - c.gameObject.transform.localPosition);
+                    Vector3 point = c.WayCells[0].transform.position;
+                    point.y = c.gameObject.transform.position.y;
+                    Quaternion fromRotation = c.gameObject.transform.rotation;
+                    Quaternion toRotation = Quaternion.LookRotation(point - c.gameObject.transform.position);
                     //toRotation.x = -1.0f;
-                    if (Mathf.Abs(c.gameObject.transform.localRotation.y - toRotation.y) < 0.01f &&
-                        Mathf.Abs(c.gameObject.transform.localRotation.z - toRotation.z) < 0.01f)
+                    if (Mathf.Abs(c.gameObject.transform.rotation.y - toRotation.y) < 0.0001f &&
+                        Mathf.Abs(c.gameObject.transform.rotation.z - toRotation.z) < 0.0001f)
                         isTurned = true;
                     else
                         isTurned = false;
@@ -65,8 +66,12 @@ public class MoveSystem : IECSSystem
                         c.gameObject.transform.position = Vector3.MoveTowards(c.gameObject.transform.position, c.WayCells[0].transform.position, c.MoveSpeed);
                     }
                     else
-                    {                        
-                        c.gameObject.transform.rotation = Quaternion.RotateTowards(fromRotation, toRotation, 0.25f);
+                    {
+                        float angle = Quaternion.Angle(fromRotation, toRotation);
+                        if(angle > 0f)
+                            c.gameObject.transform.rotation = Quaternion.RotateTowards(fromRotation, toRotation, 0.5f);
+
+                        Debug.Log($" Mathf = {fromRotation} , {toRotation}");
                     }
                 }
                 else
