@@ -308,7 +308,7 @@ namespace Assets.Map.WorldMap
 				foreach (var cell in cells[t].neighbours)
 					if (cell.CellIndex == tmp)
 						return truePath;
-				//return null;
+				return null;
             }
 
 			return truePath;
