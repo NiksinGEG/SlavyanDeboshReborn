@@ -12,9 +12,11 @@ public class MoveSystem : IECSSystem
 {
     public MoveSystem(ECSService s) : base(s) { }
 
-    private Quaternion rotation;
     private bool isTurned = true;
-    private int tryCount = 0;
+    private Quaternion fromRotation;
+    private Quaternion toRotation;
+    private Vector3 point;
+    private float angle;
 
     public override void Init()
     {
@@ -50,28 +52,39 @@ public class MoveSystem : IECSSystem
             {
                 if (c.WayCells.Count == 1 || c.WalkedCell == null)
                 {
-                    Vector3 point = c.WayCells[0].transform.position;
+                    point = c.WayCells[0].transform.position;
                     point.y = c.gameObject.transform.position.y;
-                    Quaternion fromRotation = c.gameObject.transform.rotation;
-                    Quaternion toRotation = Quaternion.LookRotation(point - c.gameObject.transform.position);
-                    //toRotation.x = -1.0f;
-                    if (Mathf.Abs(c.gameObject.transform.rotation.y - toRotation.y) < 0.0001f &&
-                        Mathf.Abs(c.gameObject.transform.rotation.z - toRotation.z) < 0.0001f)
+                    fromRotation = c.gameObject.transform.rotation;
+                    toRotation = Quaternion.LookRotation(point - c.gameObject.transform.position);
+
+                    if ((Mathf.Abs(Mathf.Abs(toRotation.x) - Mathf.Abs(fromRotation.x)) < 0.00025f) &&
+                        (Mathf.Abs(Mathf.Abs(toRotation.y) - Mathf.Abs(fromRotation.y)) < 0.00025f) &&
+                        (Mathf.Abs(Mathf.Abs(toRotation.z) - Mathf.Abs(fromRotation.z)) < 0.00025f) &&
+                        (Mathf.Abs(Mathf.Abs(toRotation.w) - Mathf.Abs(fromRotation.w)) < 0.00025f))
                         isTurned = true;
                     else
                         isTurned = false;
 
                     if (isTurned)
                     {
+                        Debug.Log($"Move Tovards");
+                        Debug.Log($"Mathf.Abs X  {Mathf.Abs(Mathf.Abs(toRotation.x) - Mathf.Abs(fromRotation.x))}");
+                        Debug.Log($"Mathf.Abs Y {Mathf.Abs(Mathf.Abs(toRotation.y) - Mathf.Abs(fromRotation.y))}");
+                        Debug.Log($"Mathf.Abs Z {Mathf.Abs(Mathf.Abs(toRotation.z) - Mathf.Abs(fromRotation.z))}");
+                        Debug.Log($"Mathf.Abs W {Mathf.Abs(Mathf.Abs(toRotation.w) - Mathf.Abs(fromRotation.w))}");
                         c.gameObject.transform.position = Vector3.MoveTowards(c.gameObject.transform.position, c.WayCells[0].transform.position, c.MoveSpeed);
                     }
                     else
                     {
-                        float angle = Quaternion.Angle(fromRotation, toRotation);
+                        angle = Quaternion.Angle(fromRotation, toRotation);
                         if(angle > 0f)
-                            c.gameObject.transform.rotation = Quaternion.RotateTowards(fromRotation, toRotation, 0.5f);
-
-                        Debug.Log($" Mathf = {fromRotation} , {toRotation}");
+                            c.gameObject.transform.rotation = Quaternion.RotateTowards(fromRotation, toRotation, c.RotationSpeed);
+                        
+                        Debug.Log($"Rotation Tovards");
+                        Debug.Log($"Mathf.Abs X  {Mathf.Abs(Mathf.Abs(toRotation.x) - Mathf.Abs(fromRotation.x))}");
+                        Debug.Log($"Mathf.Abs Y {Mathf.Abs(Mathf.Abs(toRotation.y) - Mathf.Abs(fromRotation.y))}");
+                        Debug.Log($"Mathf.Abs Z {Mathf.Abs(Mathf.Abs(toRotation.z) - Mathf.Abs(fromRotation.z))}");
+                        Debug.Log($"Mathf.Abs W {Mathf.Abs(Mathf.Abs(toRotation.w) - Mathf.Abs(fromRotation.w))}");
                     }
                 }
                 else

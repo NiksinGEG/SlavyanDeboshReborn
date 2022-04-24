@@ -9,7 +9,10 @@ using Assets.Map.WorldMap;
 public class Movable : IECSComponent
 {
     public Vector3 Position;
+
+    public float RotationSpeed;
     public float MoveSpeed;
+    
     public List<HexCell> WayCells = null;
     public int MoveRadius;
 
