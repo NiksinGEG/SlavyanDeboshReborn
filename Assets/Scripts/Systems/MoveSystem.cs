@@ -57,21 +57,16 @@ public class MoveSystem : IECSSystem
                     fromRotation = c.gameObject.transform.rotation;
                     toRotation = Quaternion.LookRotation(point - c.gameObject.transform.position);
 
-                    if ((Mathf.Abs(Mathf.Abs(toRotation.x) - Mathf.Abs(fromRotation.x)) < 0.00025f) &&
-                        (Mathf.Abs(Mathf.Abs(toRotation.y) - Mathf.Abs(fromRotation.y)) < 0.00025f) &&
-                        (Mathf.Abs(Mathf.Abs(toRotation.z) - Mathf.Abs(fromRotation.z)) < 0.00025f) &&
-                        (Mathf.Abs(Mathf.Abs(toRotation.w) - Mathf.Abs(fromRotation.w)) < 0.00025f))
+                    if ((Mathf.Abs(Mathf.Abs(toRotation.x) - Mathf.Abs(fromRotation.x)) < 0.00351f) &&
+                        (Mathf.Abs(Mathf.Abs(toRotation.y) - Mathf.Abs(fromRotation.y)) < 0.00351f) &&
+                        (Mathf.Abs(Mathf.Abs(toRotation.z) - Mathf.Abs(fromRotation.z)) < 0.00351f) &&
+                        (Mathf.Abs(Mathf.Abs(toRotation.w) - Mathf.Abs(fromRotation.w)) < 0.00351f))
                         isTurned = true;
                     else
                         isTurned = false;
 
                     if (isTurned)
                     {
-                        Debug.Log($"Move Tovards");
-                        Debug.Log($"Mathf.Abs X  {Mathf.Abs(Mathf.Abs(toRotation.x) - Mathf.Abs(fromRotation.x))}");
-                        Debug.Log($"Mathf.Abs Y {Mathf.Abs(Mathf.Abs(toRotation.y) - Mathf.Abs(fromRotation.y))}");
-                        Debug.Log($"Mathf.Abs Z {Mathf.Abs(Mathf.Abs(toRotation.z) - Mathf.Abs(fromRotation.z))}");
-                        Debug.Log($"Mathf.Abs W {Mathf.Abs(Mathf.Abs(toRotation.w) - Mathf.Abs(fromRotation.w))}");
                         c.gameObject.transform.position = Vector3.MoveTowards(c.gameObject.transform.position, c.WayCells[0].transform.position, c.MoveSpeed);
                     }
                     else
@@ -79,12 +74,6 @@ public class MoveSystem : IECSSystem
                         angle = Quaternion.Angle(fromRotation, toRotation);
                         if(angle > 0f)
                             c.gameObject.transform.rotation = Quaternion.RotateTowards(fromRotation, toRotation, c.RotationSpeed);
-                        
-                        Debug.Log($"Rotation Tovards");
-                        Debug.Log($"Mathf.Abs X  {Mathf.Abs(Mathf.Abs(toRotation.x) - Mathf.Abs(fromRotation.x))}");
-                        Debug.Log($"Mathf.Abs Y {Mathf.Abs(Mathf.Abs(toRotation.y) - Mathf.Abs(fromRotation.y))}");
-                        Debug.Log($"Mathf.Abs Z {Mathf.Abs(Mathf.Abs(toRotation.z) - Mathf.Abs(fromRotation.z))}");
-                        Debug.Log($"Mathf.Abs W {Mathf.Abs(Mathf.Abs(toRotation.w) - Mathf.Abs(fromRotation.w))}");
                     }
                 }
                 else
