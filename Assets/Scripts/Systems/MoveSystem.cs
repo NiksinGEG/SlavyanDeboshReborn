@@ -15,6 +15,7 @@ public class MoveSystem : IECSSystem
     private bool isTurned = true;
     private Quaternion fromRotation;
     private Quaternion toRotation;
+    
     private Vector3 point;
     private float angle;
 
@@ -57,10 +58,10 @@ public class MoveSystem : IECSSystem
                     fromRotation = c.gameObject.transform.rotation;
                     toRotation = Quaternion.LookRotation(point - c.gameObject.transform.position);
 
-                    if ((Mathf.Abs(Mathf.Abs(toRotation.x) - Mathf.Abs(fromRotation.x)) < 0.00351f) &&
-                        (Mathf.Abs(Mathf.Abs(toRotation.y) - Mathf.Abs(fromRotation.y)) < 0.00351f) &&
-                        (Mathf.Abs(Mathf.Abs(toRotation.z) - Mathf.Abs(fromRotation.z)) < 0.00351f) &&
-                        (Mathf.Abs(Mathf.Abs(toRotation.w) - Mathf.Abs(fromRotation.w)) < 0.00351f))
+                    if ((Mathf.Abs(Mathf.Abs(toRotation.x) - Mathf.Abs(fromRotation.x)) < 0.0001f) &&
+                        (Mathf.Abs(Mathf.Abs(toRotation.y) - Mathf.Abs(fromRotation.y)) < 0.0001f) &&
+                        (Mathf.Abs(Mathf.Abs(toRotation.z) - Mathf.Abs(fromRotation.z)) < 0.0001f) &&
+                        (Mathf.Abs(Mathf.Abs(toRotation.w) - Mathf.Abs(fromRotation.w)) < 0.0001f))
                         isTurned = true;
                     else
                         isTurned = false;
@@ -82,7 +83,11 @@ public class MoveSystem : IECSSystem
                     Vector3 end = c.WayCells[1].transform.position;
                     Vector3 middle = c.WayCells[0].transform.position;
 
-                    c.gameObject.transform.position = Bezier.GetPoint(start, middle, end, c.t);
+                    point = Bezier.GetPoint(start, middle, end, c.t);
+                    toRotation = Quaternion.LookRotation(point - c.gameObject.transform.position);
+
+                    c.gameObject.transform.rotation = toRotation;
+                    c.gameObject.transform.position = point;
                     c.t += c.MoveSpeed * 0.05f;
                 }
             }
