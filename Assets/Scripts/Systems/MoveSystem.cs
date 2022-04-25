@@ -55,13 +55,13 @@ public class MoveSystem : IECSSystem
                 {
                     point = c.WayCells[0].transform.position;
                     point.y = c.gameObject.transform.position.y;
+
                     fromRotation = c.gameObject.transform.rotation;
                     toRotation = Quaternion.LookRotation(point - c.gameObject.transform.position);
 
-                    if ((Mathf.Abs(Mathf.Abs(toRotation.x) - Mathf.Abs(fromRotation.x)) < 0.0001f) &&
-                        (Mathf.Abs(Mathf.Abs(toRotation.y) - Mathf.Abs(fromRotation.y)) < 0.0001f) &&
-                        (Mathf.Abs(Mathf.Abs(toRotation.z) - Mathf.Abs(fromRotation.z)) < 0.0001f) &&
-                        (Mathf.Abs(Mathf.Abs(toRotation.w) - Mathf.Abs(fromRotation.w)) < 0.0001f))
+                    Debug.Log($"Angle: {Quaternion.Angle(fromRotation, toRotation)}");
+
+                    if (Quaternion.Angle(fromRotation, toRotation) < 0.00001f)
                         isTurned = true;
                     else
                         isTurned = false;
@@ -72,9 +72,7 @@ public class MoveSystem : IECSSystem
                     }
                     else
                     {
-                        angle = Quaternion.Angle(fromRotation, toRotation);
-                        if(angle > 0f)
-                            c.gameObject.transform.rotation = Quaternion.RotateTowards(fromRotation, toRotation, c.RotationSpeed);
+                        c.gameObject.transform.rotation = Quaternion.Slerp(fromRotation, toRotation, c.RotationSpeed);
                     }
                 }
                 else
