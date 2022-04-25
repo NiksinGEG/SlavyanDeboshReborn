@@ -17,7 +17,6 @@ public class MoveSystem : IECSSystem
     private Quaternion toRotation;
     
     private Vector3 point;
-    private float angle;
 
     public override void Init()
     {
@@ -41,6 +40,15 @@ public class MoveSystem : IECSSystem
             Movable c = (Movable)_c;
             if (c.WayCells == null || c.WayCells.Count == 0)
                 return;
+            foreach(var __c in components)
+            {
+                if (c.WayCells[c.WayCells.Count - 1].transform.position == __c.transform.position)
+                {
+                    c.WayCells = null;
+                    return;
+                }
+
+            }
             if((Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.WayCells[0].transform.position.x) < eps &&
                 Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - c.WayCells[0].transform.position.z) < eps) ||
                 (c.t > 0.5 && c.WayCells.Count > 2) || (c.t >= 1)) //Путь не пустой, но объект на ближайшей точке пути

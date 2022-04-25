@@ -83,7 +83,11 @@ public class SelectionSystem : IECSSystem
             return;
         Movable mov_c = component.gameObject.GetComponent<Movable>();
         if (mov_c != null)
+        {
+
             SetWay(mov_c);
+        }
+
     }
 
     public override void Run()
