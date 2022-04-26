@@ -20,13 +20,7 @@ public class MoveSystem : IECSSystem
 
     public override void Init()
     {
-        ECSFilter f = new ECSFilter(Service);
-        List<IECSComponent> components = f.GetComponents<Movable>();
-        foreach (var _c in components)
-        {
-            Movable c = (Movable)_c;
-            c.Position = c.gameObject.GetComponent<Transform>().position;
-        }
+
     }
 
     public override void Run()
@@ -42,26 +36,28 @@ public class MoveSystem : IECSSystem
                 return;
             foreach(var __c in components)
             {
-                if (c.WayCells[c.WayCells.Count - 1].transform.position == __c.transform.position)
+                if (c.WayCells[c.WayCells.Count - 1] == __c.transform.position)
                 {
                     c.WayCells = null;
                     return;
                 }
 
             }
-            if((Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.WayCells[0].transform.position.x) < eps &&
-                Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - c.WayCells[0].transform.position.z) < eps) ||
+            if ((Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.WayCells[0].x) < eps &&
+                Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - c.WayCells[0].z) < eps) ||
                 (c.t > 0.5 && c.WayCells.Count > 2) || (c.t >= 1)) //Путь не пустой, но объект на ближайшей точке пути
                 {
                     c.WalkedCell = c.WayCells[0];
-                    c.WayCells.Remove(c.WalkedCell);
+                    if (c.t > 0.5 && c.WayCells.Count > 2)
+                        c.WalkedCell = c.transform.position;
+                    c.WayCells.RemoveAt(0);
                     c.t = 0;
                 }
             else
             {
                 if (c.WayCells.Count == 1 || c.WalkedCell == null)
                 {
-                    point = c.WayCells[0].transform.position;
+                    point = c.WayCells[0];
                     point.y = c.gameObject.transform.position.y;
 
                     fromRotation = c.gameObject.transform.rotation;
@@ -73,15 +69,15 @@ public class MoveSystem : IECSSystem
                         isTurned = false;
 
                     if (isTurned)
-                        c.gameObject.transform.position = Vector3.MoveTowards(c.gameObject.transform.position, c.WayCells[0].transform.position, c.MoveSpeed);
+                        c.gameObject.transform.position = Vector3.MoveTowards(c.gameObject.transform.position, point, c.MoveSpeed);
                     else
                         c.gameObject.transform.rotation = Quaternion.RotateTowards(fromRotation, toRotation, c.RotationSpeed);
                 }
                 else
                 {
-                    Vector3 start = c.WalkedCell.transform.position;
-                    Vector3 end = c.WayCells[1].transform.position;
-                    Vector3 middle = c.WayCells[0].transform.position;
+                    Vector3 start = c.WalkedCell;
+                    Vector3 end = c.WayCells[1];
+                    Vector3 middle = c.WayCells[0];
 
                     point = Bezier.GetPoint(start, middle, end, c.t);
                     point.y = c.gameObject.transform.position.y;
