@@ -83,13 +83,21 @@ public class MoveSystem : IECSSystem
                     point.y = c.gameObject.transform.position.y;
                     fromRotation = c.gameObject.transform.rotation;
                     toRotation = Quaternion.LookRotation(point - c.gameObject.transform.position);
-                    float angle = Quaternion.Angle(fromRotation, toRotation);
-                    Debug.Log($"Angle: {angle}");
-                    if (Quaternion.Angle(fromRotation, toRotation) < 20.0f && Quaternion.Angle(fromRotation, toRotation) > -1.0f)
+                    Debug.Log($"fromRotation: {fromRotation}");
+                    Debug.Log($"toRotation: {toRotation}");
+                    
+                    if (toRotation.w == 1)
+                        toRotation = fromRotation;
+
+                    if(Mathf.Abs(end.y - c.transform.position.y) <= 0.01f)
+                        c.gameObject.transform.rotation = toRotation;
+
+                    if (Quaternion.Angle(fromRotation, toRotation) < 10.0f && Quaternion.Angle(fromRotation, toRotation) > -1.0f )
                         isTurned = true;
                     else
                         isTurned = false;
-                    if(isTurned)
+
+                    if (isTurned)
                     {
                         c.gameObject.transform.rotation = toRotation;
                         c.gameObject.transform.position = point;
