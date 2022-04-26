@@ -34,15 +34,6 @@ public class MoveSystem : IECSSystem
             Movable c = (Movable)_c;
             if (c.WayCells == null || c.WayCells.Count == 0)
                 return;
-            foreach(var __c in components)
-            {
-                if (c.WayCells[c.WayCells.Count - 1] == __c.transform.position)
-                {
-                    c.WayCells = null;
-                    return;
-                }
-
-            }
             if ((Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.WayCells[0].x) < eps &&
                 Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - c.WayCells[0].z) < eps) ||
                 (c.t > 0.5 && c.WayCells.Count > 2) || (c.t >= 1)) //Путь не пустой, но объект на ближайшей точке пути
@@ -89,10 +80,7 @@ public class MoveSystem : IECSSystem
                     if (toRotation.w == 1)
                         toRotation = fromRotation;
 
-                    if(Mathf.Abs(end.y - c.transform.position.y) <= 0.01f)
-                        c.gameObject.transform.rotation = toRotation;
-
-                    if (Quaternion.Angle(fromRotation, toRotation) < 10.0f && Quaternion.Angle(fromRotation, toRotation) > -1.0f )
+                    if (Quaternion.Angle(fromRotation, toRotation) < 5.0f && Quaternion.Angle(fromRotation, toRotation) > -1.0f )
                         isTurned = true;
                     else
                         isTurned = false;
