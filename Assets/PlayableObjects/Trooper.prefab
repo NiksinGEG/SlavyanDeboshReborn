@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 316108564508304550}
   - component: {fileID: 316108564508304551}
   - component: {fileID: 316108564508304544}
+  - component: {fileID: 4259767656510773800}
+  - component: {fileID: 2137313408868499723}
   m_Layer: 0
   m_Name: Trooper
   m_TagString: Untagged
@@ -142,3 +144,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bec5ccfbb28dc864b8a2efdc421df6cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4259767656510773800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 316108564508304545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 349c0b5e41da4cb1bc9a757a5ca6ea27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 100
+--- !u!114 &2137313408868499723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 316108564508304545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41dbb885841b48cf9074e8e03a470e77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 4
+  countAttack: 12
+  damage: 500
+  damageble: {fileID: 0}

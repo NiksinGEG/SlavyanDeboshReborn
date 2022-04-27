@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Map.WorldMap;
 using Assets.Scripts;
+using Assets.Scripts.Components;
 
 public class SelectionSystem : IECSSystem
 {
@@ -87,10 +88,14 @@ public class SelectionSystem : IECSSystem
         Movable mov_c = component.gameObject.GetComponent<Movable>();
         if (mov_c != null)
         {
-
             SetWay(mov_c);
         }
 
+        Attack attack_c = component.gameObject.GetComponent<Attack>();
+        if (attack_c != null)
+        {
+            Debug.Log("Attack != null");
+        }
     }
 
     public override void Run()

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.Systems;
 using UnityEngine;
 
 /// <summary>
@@ -31,6 +32,7 @@ public class ECSService : MonoBehaviour
         _systems.Add(new SelectionSystem(this));
         _systems.Add(new SpawnSystem(this));
         _systems.Add(new MoveSystem(this));
+        _systems.Add(new AttackSystem(this));
 
         foreach (var s in _systems)
             s.Init();
