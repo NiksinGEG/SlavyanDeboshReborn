@@ -78,7 +78,7 @@ public class MoveSystem : IECSSystem
                     if (toRotation.w == 1)
                         toRotation = fromRotation;
 
-                    if (Quaternion.Angle(fromRotation, toRotation) < 5.0f && Quaternion.Angle(fromRotation, toRotation) > -1.0f )
+                    if (Quaternion.Angle(fromRotation, toRotation) < 20.0f && Quaternion.Angle(fromRotation, toRotation) > -1.0f )
                         isTurned = true;
                     else
                         isTurned = false;
