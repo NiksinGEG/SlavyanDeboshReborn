@@ -8,5 +8,20 @@ using UnityEngine;
 /// </summary>
 public class IECSComponent : MonoBehaviour
 {
+    private void Awake()
+    {
+        ECSInstance.Instance().Components.Add(this);
+    }
 
+    public void AddComponent<T>(T component) where T: IECSComponent
+    {
+        gameObject.AddComponent<T>();
+        ECSInstance.Instance().Components.Add(component);
+    }
+
+    public void RemoveComponent<T>(T component) where T : IECSComponent
+    {
+        ECSInstance.Instance().Components.Remove(component);
+        Destroy(component);
+    }
 }

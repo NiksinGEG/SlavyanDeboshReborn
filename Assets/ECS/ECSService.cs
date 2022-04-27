@@ -4,46 +4,47 @@ using Assets.Scripts.Systems;
 using UnityEngine;
 
 /// <summary>
-/// —ервис, агрегирующий системы, и предоставл€ющий им доступ к компонентам.<br/>
-/// ¬се добавл€емые системы должны быть добавлены здесь.
+/// —ервис, предоставл€ющий доступ к системам.<br/>
+/// ¬се системы должны быть добавлены здесь.
 /// </summary>
 public class ECSService : MonoBehaviour
 {
-    /// <summary>
-    /// ¬се компоненты всех объектов на карте. “очнее, ссылки на них.
-    /// </summary>
-    public List<IECSComponent> AllComponents;
-    private List<IECSSystem> _systems; 
+    void InitSystems()
+    {
+        var Systems = ECSInstance.Instance().Systems;
+
+        /*ƒќЅј¬Ћя“№ «ƒ≈—№*/
+        Systems.Add(new InputSystem(this));
+        Systems.Add(new SelectionSystem(this));
+        Systems.Add(new SpawnSystem(this));
+        Systems.Add(new MoveSystem(this));
+        Systems.Add(new AttackSystem(this));
+    }
+
+
 
     void Awake()
     {
-        
+        InitSystems();
     }
 
     void Start()
     {
-        AllComponents = new List<IECSComponent>();
-        AllComponents.AddRange(FindObjectsOfType<IECSComponent>());
-
-        _systems = new List<IECSSystem>();
-        
-        /*ƒќЅј¬Ћя“№ «ƒ≈—№*/
-        _systems.Add(new InputSystem(this));
-        _systems.Add(new SelectionSystem(this));
-        _systems.Add(new SpawnSystem(this));
-        _systems.Add(new MoveSystem(this));
-        _systems.Add(new AttackSystem(this));
-
-        foreach (var s in _systems)
+        foreach (var s in ECSInstance.Instance().Systems)
             s.Init();
     }
 
     void Update()
     {
-        foreach (var s in _systems)
-        {
+        foreach (var s in ECSInstance.Instance().Systems)
             s.Run();
-        }
-            
+    }
+
+    public T GetSystem<T>() where T: IECSSystem
+    {
+        foreach(var s in ECSInstance.Instance().Systems)
+            if (s.GetType() == typeof(T))
+                return (T)s;
+        return null;
     }
 }

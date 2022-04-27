@@ -12,6 +12,21 @@ public class SelectionSystem : IECSSystem
 
     public SelectionSystem(ECSService s) : base(s) { }
 
+    public void Select(Selectable comp)
+    {
+        if (comp.IsSelected)
+        {
+            comp.IsSelected = false;
+            return;
+        }
+        ECSFilter filter = new ECSFilter();
+        List<Selectable> selectable_comps = filter.GetComponents<Selectable>(s => s.IsSelected);
+        foreach (var c in selectable_comps)
+            c.IsSelected = false;
+        comp.IsSelected = true;
+        //comp.IsSelected = !comp.IsSelected;
+    }
+
     private void SetWay(Movable comp)
     {
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -109,14 +124,14 @@ public class SelectionSystem : IECSSystem
         Attack attack_c = component.gameObject.GetComponent<Attack>();
         if (attack_c != null)
         {
-            GetComponentTeam();
+            //GetComponentTeam();
             Debug.Log("Attack != null");
         }
     }
 
     public override void Run()
     {
-        ECSFilter f = new ECSFilter(Service);
+        ECSFilter f = new ECSFilter();
         List<Selectable> components = f.GetComponents<Selectable>();
         foreach(var c in components)
         {

@@ -5,7 +5,5 @@
         public int radius;
         public int countAttack;
         public int damage;
-
-        public Damageble damageble;
     }
 }

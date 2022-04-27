@@ -18,7 +18,6 @@ public class Movable : IECSComponent
     public float t;
     public Vector3 WalkedCell;
 
-
     public enum MoveType {swim, move, swimAndMove };
     public MoveType moveType;
 

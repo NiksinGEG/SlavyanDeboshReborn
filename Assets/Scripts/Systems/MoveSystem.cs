@@ -26,14 +26,14 @@ public class MoveSystem : IECSSystem
     public override void Run()
     {
         float eps = 0.15f;
-        ECSFilter f = new ECSFilter(Service);
+        ECSFilter f = new ECSFilter();
         List<Movable> components = f.GetComponents<Movable>();
         foreach (var c in components)
         {
             var ms = c.MoveSpeed * Time.deltaTime;
             var rs = c.RotationSpeed * Time.deltaTime;
             if (c.WayCells == null || c.WayCells.Count == 0)
-                return;
+                continue;
             if ((Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.WayCells[0].x) < eps &&
                 Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - c.WayCells[0].z) < eps) ||
                 (c.t > 0.5 && c.WayCells.Count > 2) || (c.t >= 1)) //Путь не пустой, но объект на ближайшей точке пути

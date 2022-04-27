@@ -8,7 +8,7 @@ public class ECSFilter
     public List<IECSComponent> Components;
     public ECSFilter(IECSComponent[] components) { Components = new List<IECSComponent>(components); }
     public ECSFilter(List<IECSComponent> components) { Components = components; }
-    public ECSFilter(ECSService service) { Components = service.AllComponents; }
+    public ECSFilter() { Components = ECSInstance.Instance().Components; }
     
     public ECSFilter OfType<T>()
     {
