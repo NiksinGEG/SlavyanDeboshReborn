@@ -11,7 +11,17 @@ public class InputSystem : IECSSystem
 
     private void Select(Selectable comp)
     {
-        comp.IsSelected = !comp.IsSelected;
+        if(comp.IsSelected)
+        {
+            comp.IsSelected = false;
+            return;
+        }
+        ECSFilter filter = new ECSFilter(Service);
+        List<Selectable> selectable_comps = filter.GetComponents<Selectable>(s => s.IsSelected);
+        foreach (var c in selectable_comps)
+            c.IsSelected = false;
+        comp.IsSelected = true;
+        //comp.IsSelected = !comp.IsSelected;
     }
 
     public override void Run()
@@ -36,7 +46,7 @@ public class InputSystem : IECSSystem
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         ECSFilter filter = new ECSFilter(Service);
-        List<IECSComponent> components = filter.GetComponents<InputHandler>();
+        List<InputHandler> components = filter.GetComponents<InputHandler>();
 
         if (Physics.Raycast(inputRay, out hit))
         {

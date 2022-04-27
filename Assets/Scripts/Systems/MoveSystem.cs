@@ -27,11 +27,11 @@ public class MoveSystem : IECSSystem
     {
         float eps = 0.15f;
         ECSFilter f = new ECSFilter(Service);
-        List<IECSComponent> components = f.GetComponents<Movable>();
-
-        foreach (var _c in components)
+        List<Movable> components = f.GetComponents<Movable>();
+        foreach (var c in components)
         {
-            Movable c = (Movable)_c;
+            var ms = c.MoveSpeed * Time.deltaTime;
+            var rs = c.RotationSpeed * Time.deltaTime;
             if (c.WayCells == null || c.WayCells.Count == 0)
                 return;
             if ((Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.WayCells[0].x) < eps &&
@@ -60,9 +60,9 @@ public class MoveSystem : IECSSystem
                         isTurned = false;
 
                     if (isTurned)
-                        c.gameObject.transform.position = Vector3.MoveTowards(c.gameObject.transform.position, point, c.MoveSpeed);
+                        c.gameObject.transform.position = Vector3.MoveTowards(c.gameObject.transform.position, point, ms);
                     else
-                        c.gameObject.transform.rotation = Quaternion.RotateTowards(fromRotation, toRotation, c.RotationSpeed);
+                        c.gameObject.transform.rotation = Quaternion.RotateTowards(fromRotation, toRotation, rs);
                 }
                 else
                 {
@@ -74,8 +74,6 @@ public class MoveSystem : IECSSystem
                     point.y = c.gameObject.transform.position.y;
                     fromRotation = c.gameObject.transform.rotation;
                     toRotation = Quaternion.LookRotation(point - c.gameObject.transform.position);
-                    Debug.Log($"fromRotation: {fromRotation}");
-                    Debug.Log($"toRotation: {toRotation}");
                     
                     if (toRotation.w == 1)
                         toRotation = fromRotation;
@@ -89,10 +87,10 @@ public class MoveSystem : IECSSystem
                     {
                         c.gameObject.transform.rotation = toRotation;
                         c.gameObject.transform.position = point;
-                        c.t += c.MoveSpeed * 0.05f;
+                        c.t += ms * 0.05f;
                     }
                     else
-                        c.gameObject.transform.rotation = Quaternion.RotateTowards(fromRotation, toRotation, c.RotationSpeed);
+                        c.gameObject.transform.rotation = Quaternion.RotateTowards(fromRotation, toRotation, rs);
                 }
             }
         }

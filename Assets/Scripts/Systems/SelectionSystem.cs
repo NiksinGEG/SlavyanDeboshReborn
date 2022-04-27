@@ -96,10 +96,9 @@ public class SelectionSystem : IECSSystem
     public override void Run()
     {
         ECSFilter f = new ECSFilter(Service);
-        List<IECSComponent> components = f.GetComponents<Selectable>();
-        foreach(var _c in components)
+        List<Selectable> components = f.GetComponents<Selectable>();
+        foreach(var c in components)
         {
-            Selectable c = (Selectable)_c;
             if (c.IsSelected)
             {
                 WhileSelected(c);

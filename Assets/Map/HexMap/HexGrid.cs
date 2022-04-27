@@ -30,8 +30,8 @@ namespace Assets.Map.WorldMap
 		[ContextMenu("Generate game field")]
 		void Awake()
 		{
-			chunkCountX = 10;//35
-			chunkCountZ = 10;//35
+			chunkCountX = 35;//35
+			chunkCountZ = 20;//35
 
 			cellCountX = chunkCountX * HexMetrics.chunkSizeX;
 			cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;

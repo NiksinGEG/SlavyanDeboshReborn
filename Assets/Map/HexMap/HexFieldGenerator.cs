@@ -9,6 +9,7 @@ namespace Assets.Map.WorldMap
 {
     public static class HexFieldGenerator
     {
+        static int equator;
         static int terrainCells;
         static CellList neighbourCells;
 
@@ -33,7 +34,7 @@ namespace Assets.Map.WorldMap
                     terrainCells++;
         }
 
-        static CellList DeleteShit(CellList cells)
+        static CellList DeleteFakeRivers(CellList cells)
         {
             foreach(var cell in cells)
                 if(cell.CellType == HexCell.CellTypes.water)
@@ -43,11 +44,10 @@ namespace Assets.Map.WorldMap
                     foreach (var nCell in neighbourCells)
                        if (nCell.CellType == HexCell.CellTypes.terrain)
                            count++;
-                    if(count == 6 || count == 5)
+                    if(count >= 4 && count <= 6)
                     {
                         cell.CellType = HexCell.CellTypes.terrain;
-                        int rndEvaluate = UnityEngine.Random.Range(0, 1);
-                        cell.Elevation = rndEvaluate;
+                        cell.Elevation = 0;
                     }
                 }
             return cells;
@@ -62,7 +62,11 @@ namespace Assets.Map.WorldMap
             cells = GenerateMainlands(cells);
             //Острова
             cells = GenerateIslands(cells);
-            cells = DeleteShit(cells);
+            cells = DeleteFakeRivers(cells);
+            //После удаления дерьма нужно 
+            
+
+            
             //Горы. Сначала нужно получить количество сгенерированных клеток terrain
             GetTerrainCellsCount(cells);
 
@@ -119,7 +123,7 @@ namespace Assets.Map.WorldMap
         }
         private static CellList GenerateMainlands(CellList cells)
         {
-            int mainlandCount = UnityEngine.Random.Range(2, 4);
+            int mainlandCount = UnityEngine.Random.Range(3, 5);
             int startCell = UnityEngine.Random.Range(0, cells.Length);
             int tryCount = 0;
             for (int i = 0; i < mainlandCount; i++)

@@ -15,16 +15,15 @@ public class SpawnSystem : IECSSystem
     {
         //Как получить все компоненты "SpawnComponent":
         ECSFilter f = new ECSFilter(Service);
-        List<IECSComponent> components = f.GetComponents<SpawnComponent>();
+        List<SpawnComponent> components = f.GetComponents<SpawnComponent>();
         //Конец мема. Чтобы работать с компонентом именно как с SpawnComponent (пример):
         foreach (var c in components)
         {
-            SpawnComponent aboba = (SpawnComponent)c;
-            if(aboba.spawn)
+            if(c.spawn)
             {
-                MonoBehaviour.Instantiate(aboba.gameObject);
-                aboba.obj.transform.localPosition = aboba.pos;
-                aboba.spawn = false;
+                MonoBehaviour.Instantiate(c.gameObject);
+                c.obj.transform.localPosition = c.pos;
+                c.spawn = false;
             }
 
         }

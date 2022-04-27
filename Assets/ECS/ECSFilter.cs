@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,12 +27,21 @@ public class ECSFilter
         return new ECSFilter(new_list);
     }
 
-    public List<IECSComponent> GetComponents<T>()
+    public List<T> GetComponents<T>() where T: IECSComponent
     {
-        List<IECSComponent> new_list = new List<IECSComponent>();
+        List<T> new_list = new List<T>();
         foreach (var c in Components)
             if (c.GetType() == typeof(T))
-                new_list.Add(c);
+                new_list.Add((T)c);
+        return new_list;
+    }
+    public List<T> GetComponents<T>(Func<T, bool> predicate) where T: IECSComponent
+    {
+        List<T> new_list = new List<T>();
+        foreach (var c in Components)
+            if (c.GetType() == typeof(T))
+                if(predicate.Invoke((T)c))
+                    new_list.Add((T)c);
         return new_list;
     }
 }
