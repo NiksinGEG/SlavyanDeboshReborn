@@ -81,6 +81,21 @@ public class SelectionSystem : IECSSystem
             return;
     }
 
+    private int GetComponentTeam()
+    {
+        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(inputRay, out hit))
+        {
+            if (hit.transform.gameObject.GetComponentInParent<HexGridChunk>() != null)
+            {
+                return hit.transform.gameObject.GetComponent<Team>().team;
+            }
+        }
+
+        return 0;
+    }
+
     private void HandleSelectedRKM(Selectable component)
     {
         if (!InputTimeCheck())
@@ -94,6 +109,7 @@ public class SelectionSystem : IECSSystem
         Attack attack_c = component.gameObject.GetComponent<Attack>();
         if (attack_c != null)
         {
+            GetComponentTeam();
             Debug.Log("Attack != null");
         }
     }
