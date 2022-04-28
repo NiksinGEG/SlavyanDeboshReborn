@@ -22,6 +22,7 @@ namespace Assets.Map.WorldMap
     }
     public enum CellTexture { water, terrain, rock, sand, dirt }
     public enum CellType { water, terrain, rock, sand, dirt }
+
     public static class HexDirectionExtensions
     {
         public static HexDirection Previous(this HexDirection direction)
@@ -80,6 +81,32 @@ namespace Assets.Map.WorldMap
             Bridges = new bool[6];
             for (int i = 0; i < Bridges.Length; i++)
                 Bridges[i] = false;
+        }
+
+        public void SetTypeAndTexture(CellType cellType)
+        {
+            this.Type = cellType;
+            switch ((int)this.Type)
+            {
+                case 0:
+                    this.Texture = CellTexture.sand;
+                    break;
+                case 1:
+                    this.Texture = CellTexture.terrain;
+                    break;
+                case 2:
+                    this.Texture = CellTexture.rock;
+                    break;
+                case 3:
+                    this.Texture = CellTexture.sand;
+                    break;
+                case 4:
+                    this.Texture = CellTexture.dirt;
+                    break;
+                case 5:
+                    break;
+            }
+            //this.Texture = cellTexture;         
         }
 
         public void Choose(object sender, HexCellEventArgs e)

@@ -96,8 +96,11 @@ namespace Assets.Map.WorldMap
             for (int i = 0; i < cells.Length; i++)
             {
                 if (cells[i].Type == CellType.terrain && cells[i].Elevation != 0)
-                    cells[i].Type = CellType.rock;
+                {
+                    cells[i].SetTypeAndTexture(CellType.rock);
+                }    
 
+                    
             }
             return cells;
         }
@@ -121,7 +124,7 @@ namespace Assets.Map.WorldMap
                            count++;
                     if(count >= 4 && count <= 6)
                     {
-                        cell.Type = CellType.terrain;
+                        cell.SetTypeAndTexture(CellType.terrain);
                         cell.Elevation = 0;
                     }
                 }
@@ -167,6 +170,7 @@ namespace Assets.Map.WorldMap
             for(int i = 0; i < cells.Length; i++)
             {
                 cells[i].Type = CellType.water;
+                cells[i].Texture = CellTexture.water;
                 cells[i].Elevation = 0;
             }
             return cells;
@@ -184,12 +188,13 @@ namespace Assets.Map.WorldMap
                 neighbourCells = cells.GetNeighbours(startCell);
                 neighbourCells.Add(cells[startCell], 0, 0);
                 int islandsCellsCount = UnityEngine.Random.Range(0, neighbourCells.Length);
-                cells[startCell].Type = CellType.terrain;
+                cells[startCell].SetTypeAndTexture(CellType.terrain);
+
                 for (int i = 0; i < islandsCellsCount; i++)
                 {
                     int index = neighbourCells[i].coords.MakeIndex(cells.CellCountX);
                     int rndEvaluate = UnityEngine.Random.Range(0, 1);
-                    cells[index].Type = CellType.terrain;
+                    cells[index].SetTypeAndTexture(CellType.terrain);
                     cells[index].Elevation = rndEvaluate;
                 }
                 startCell = UnityEngine.Random.Range(0, cells.Length);
@@ -222,7 +227,7 @@ namespace Assets.Map.WorldMap
                     if(tryCount > neighbourCells.Count())
                         nextCell = UnityEngine.Random.Range(0, neighbourCells.Count());
                     int index = neighbourCells[nextCell].coords.MakeIndex(cells.CellCountX);
-                    cells[index].Type = CellType.terrain;
+                    cells[index].SetTypeAndTexture(CellType.terrain);
                     int rndEvaluate = UnityEngine.Random.Range(0, 1);
                     cells[index].Elevation = rndEvaluate;
                     startCell = index;
@@ -247,7 +252,7 @@ namespace Assets.Map.WorldMap
                     foreach (var tCell in neighbourCells)
                         if (tCell.Type == CellType.terrain)
                         {
-                            cells[tCell.CellIndex].Type = CellType.sand;
+                            cells[tCell.CellIndex].SetTypeAndTexture(CellType.sand);
                         }
 
                 }
@@ -305,7 +310,7 @@ namespace Assets.Map.WorldMap
                 {
                     tryCount = 0;
                     int index = neighbourCells[nextCell].coords.MakeIndex(cells.CellCountX);
-                    cells[index].Type = CellType.rock;
+                    cells[index].SetTypeAndTexture(CellType.rock);
                     int rndEvaluate = UnityEngine.Random.Range(3, 4);
                     cells[index].Elevation = rndEvaluate;
                     cells = GenerateTransition(cells, index);
