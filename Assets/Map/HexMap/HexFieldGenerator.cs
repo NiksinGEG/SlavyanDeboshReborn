@@ -61,7 +61,7 @@ namespace Assets.Map.WorldMap
             desertMinChance = tmp - biomesMaxCellCount;
             tmp -= biomesMaxCellCount;
 
-            tropicMaxChance = tmp + 2;
+            tropicMaxChance = tmp + desertMaxChance - desertMinChance - 3;
             tropicMinChance = tmp - biomesMaxCellCount;
             tmp -= biomesMaxCellCount;
 
@@ -98,9 +98,7 @@ namespace Assets.Map.WorldMap
                 if (cells[i].Type == CellType.terrain && cells[i].Elevation != 0)
                 {
                     cells[i].SetTypeAndTexture(CellType.rock);
-                }    
-
-                    
+                }           
             }
             return cells;
         }
@@ -130,6 +128,81 @@ namespace Assets.Map.WorldMap
                 }
             return cells;
         }
+
+        private static void GenerateBiomes(CellList cells)
+        {
+            foreach (var cell in cells)
+            {
+                if(cell.Type != CellType.water && cell.Type != CellType.rock)
+                {
+                    if((desertMaxChance - (tropicMaxChance - desertMinChance)) <= cell.SpawnChance && desertMaxChance >= cell.SpawnChance)
+                        cell.SetTypeAndTexture(CellType.sand);
+                    if(tropicMaxChance >= cell.SpawnChance && desertMinChance <= cell.SpawnChance)
+                    {
+                        int chance = UnityEngine.Random.Range(1, 3);
+                        switch (chance)
+                        {
+                            case 1:
+                                cell.SetTypeAndTexture(CellType.sand);
+                                break;
+                            case 2:
+                                cell.SetTypeAndTexture(CellType.tropic);
+                                break;
+                        }
+                    }
+                    if (desertMinChance >= cell.SpawnChance && tropicMinChance <= cell.SpawnChance)
+                        cell.SetTypeAndTexture(CellType.tropic);
+                    if(tropicMinChance <= cell.SpawnChance && standartMaxChance >= cell.SpawnChance)
+                    {
+                        int chance = UnityEngine.Random.Range(1, 3);
+                        switch (chance)
+                        {
+                            case 1:
+                                cell.SetTypeAndTexture(CellType.tropic);
+                                break;
+                            case 2:
+                                cell.SetTypeAndTexture(CellType.terrain);
+                                break;
+                        }
+                    }
+                    if (tropicMinChance >= cell.SpawnChance && taigaMaxChance <= cell.SpawnChance)
+                        cell.SetTypeAndTexture(CellType.terrain);
+                    if (standartMinChance <= cell.SpawnChance && taigaMaxChance >= cell.SpawnChance)
+                    {
+                        int chance = UnityEngine.Random.Range(1, 3);
+                        switch (chance)
+                        {
+                            case 1:
+                                cell.SetTypeAndTexture(CellType.terrain);
+                                break;
+                            case 2:
+                                cell.SetTypeAndTexture(CellType.taiga);
+                                break;
+                        }
+                    }
+                    if (winterMaxChance <= cell.SpawnChance && standartMinChance >= cell.SpawnChance)
+                        cell.SetTypeAndTexture(CellType.taiga);
+                    if(taigaMinChance <= cell.SpawnChance && winterMaxChance >= cell.SpawnChance)
+                    {
+                        int chance = UnityEngine.Random.Range(1, 3);
+                        switch (chance)
+                        {
+                            case 1:
+                                cell.SetTypeAndTexture(CellType.taiga);
+                                break;
+                            case 2:
+                                cell.SetTypeAndTexture(CellType.winter);
+                                break;
+                        }
+                    }
+                    if (taigaMinChance >= cell.SpawnChance && winterMinChance <= cell.SpawnChance)
+                        cell.SetTypeAndTexture(CellType.winter);
+                }
+
+            }
+           
+        }
+
         public static CellList GenerateHexMap(CellList cells)
         {
             //Генерируем сначала водный рельеф
@@ -153,10 +226,13 @@ namespace Assets.Map.WorldMap
             biomesMaxCellCount = maxChance / 5; //Всего пока что 5 биомов. Думаю достаточно.
             if (biomesMaxCellCount == 0)
                 biomesMaxCellCount = 1;         //Это на случай если карта мелкая
-            SetBiomesChance();
+            SetBiomesChance();                  //Установка значений, при которых возможен спавн того или иного биома
+            GenerateBiomes(cells);
+
+
 
             //Немного пляжных клеток
-            cells = GenerateBeachSells(cells);
+            //cells = GenerateBeachSells(cells);
 
             //Короч чтобы все "подводные клетки" были под водой, опускаем их на один уровень
             foreach (var cell in cells)
@@ -169,8 +245,7 @@ namespace Assets.Map.WorldMap
         {
             for(int i = 0; i < cells.Length; i++)
             {
-                cells[i].Type = CellType.water;
-                cells[i].Texture = CellTexture.water;
+                cells[i].SetTypeAndTexture(CellType.water);
                 cells[i].Elevation = 0;
             }
             return cells;

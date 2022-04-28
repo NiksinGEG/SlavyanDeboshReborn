@@ -20,8 +20,8 @@ namespace Assets.Map.WorldMap
     {
         NE, E, SE, SW, W, NW
     }
-    public enum CellTexture { water, terrain, rock, sand, dirt }
-    public enum CellType { water, terrain, rock, sand, dirt }
+    public enum CellTexture { water,tropic_1, tropic_2, tropic_3, tropic_4, tropic_5, terrain_1, terrain_2, terrain_3, terrain_4, terrain_5, rock, sand_1, sand_2, sand_3, sand_4, sand_5, taiga_1, taiga_2, taiga_3, taiga_4, taiga_5, winter_1, winter_2, winter_3, winter_4, winter_5, dirt }
+    public enum CellType { water, tropic, terrain, taiga, winter, rock, sand, dirt }
 
     public static class HexDirectionExtensions
     {
@@ -89,24 +89,30 @@ namespace Assets.Map.WorldMap
             switch ((int)this.Type)
             {
                 case 0:
-                    this.Texture = CellTexture.sand;
+                    this.Texture = (CellTexture)(UnityEngine.Random.Range(12, 16));
                     break;
                 case 1:
-                    this.Texture = CellTexture.terrain;
+                    this.Texture = (CellTexture)(UnityEngine.Random.Range(1, 5));
                     break;
                 case 2:
-                    this.Texture = CellTexture.rock;
+                    this.Texture = (CellTexture)(UnityEngine.Random.Range(6, 10));
                     break;
                 case 3:
-                    this.Texture = CellTexture.sand;
+                    this.Texture = (CellTexture)(UnityEngine.Random.Range(17, 21));
                     break;
                 case 4:
-                    this.Texture = CellTexture.dirt;
+                    this.Texture = (CellTexture)(UnityEngine.Random.Range(22, 26));
                     break;
                 case 5:
+                    this.Texture = CellTexture.rock;
                     break;
-            }
-            //this.Texture = cellTexture;         
+                case 6:
+                    this.Texture = (CellTexture)(UnityEngine.Random.Range(12, 16));
+                    break;
+                case 7:
+                    this.Texture = CellTexture.dirt;
+                    break;
+            }      
         }
 
         public void Choose(object sender, HexCellEventArgs e)

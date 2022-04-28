@@ -83,7 +83,7 @@ namespace Assets.Map.MapResources
         {
             float rndCoeff = 0.8f;
             foreach (var cell in grid.cellList)
-                if (cell.Type == CellType.terrain || cell.Type == CellType.rock)
+                if (cell.Type != CellType.water )
                 {
                     int isRock = UnityEngine.Random.Range(1, 10);
                     var nCells = grid.cellList.GetNeighbours(cell.CellIndex);
@@ -161,7 +161,7 @@ namespace Assets.Map.MapResources
                             else
                             {
                                 treeCountOnCell = UnityEngine.Random.Range(4,6);
-                                cell.Type = CellType.dirt;
+                                cell.SetTypeAndTexture(CellType.dirt);
                             }
 
                             for(int i = 0; i < treeCountOnCell; i++)

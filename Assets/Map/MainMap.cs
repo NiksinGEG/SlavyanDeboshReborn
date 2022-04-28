@@ -20,8 +20,8 @@ public class MainMap : MonoBehaviour
 
 
 
-        //resGen = FindObjectOfType<ResourceGenerator>();
-        //resGen.GenerateResource(grid);
+        resGen = FindObjectOfType<ResourceGenerator>();
+        resGen.GenerateResource(grid);
 
 
         //resGen.CombineMeshes();
