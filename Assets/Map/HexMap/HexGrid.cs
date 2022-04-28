@@ -31,7 +31,7 @@ namespace Assets.Map.WorldMap
 		void Awake()
 		{
 			chunkCountX = 35;//35
-			chunkCountZ = 20;//35
+			chunkCountZ = 21;//35
 
 			cellCountX = chunkCountX * HexMetrics.chunkSizeX;
 			cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;

@@ -38,10 +38,12 @@ namespace Assets.Map.WorldMap
 
     public class HexCell : MonoBehaviour
     {
-        [SerializeField] int cellIndex;
 
         public enum CellTypes { water, terrain, rock, sand, dirt }
-        private CellTypes cellType;
+
+        [SerializeField] public int spawnChance;
+        public int SpawnChance { get; set; }
+
         public CellTypes CellType { get; set; }
         
 
@@ -53,22 +55,7 @@ namespace Assets.Map.WorldMap
 
         [SerializeField] public HexCoords coords;
 
-        /*
-        //Цвета клеток для дегенерации
-        [SerializeField] public Color desertColor = Color.yellow;
-        [SerializeField] public Color terrainColor = Color.green;
-        [SerializeField] public Color rockColor = Color.gray;
-        [SerializeField] public Color waterColor = Color.blue;
-        */
-
-
-        //Тестовый цвет
-        [SerializeField] public Color neighboorColor = Color.red;
-
         public EventHandler<HexCellEventArgs> MouseLeftClick;
-
-        private Color cellColor;
-        public Color CellColor { get; set; }
 
         private int elevation;
         public int Elevation
@@ -94,7 +81,7 @@ namespace Assets.Map.WorldMap
 
         public void Choose(object sender, HexCellEventArgs e)
         {
-            cellColor = Color.cyan;
+            
         }
 
         /// <summary>

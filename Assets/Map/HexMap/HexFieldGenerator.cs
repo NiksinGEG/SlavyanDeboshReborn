@@ -9,19 +9,94 @@ namespace Assets.Map.WorldMap
 {
     public static class HexFieldGenerator
     {
-        static int equator;
+        static int biomesMaxCellCount;
+        static int maxChance;
+
+        static int winterMaxChance;
+        static int taigaMaxChance;
+        static int standartMaxChance;
+        static int tropicMaxChance;
+        static int desertMaxChance;
+
+        static int winterMinChance;
+        static int taigaMinChance;
+        static int standartMinChance;
+        static int tropicMinChance;
+        static int desertMinChance;
+
+
         static int terrainCells;
+
         static CellList neighbourCells;
+
+        static void SetChance(CellList cells)
+        {
+            int tmp = 1;
+            maxChance = tmp;
+            for(int i = 0; i <= cells.CellCountZ / 2; i++)
+                for (int j = 0; j < cells.CellCountX; j++)
+                {
+                    cells.cells[i * cells.CellCountX + j].SpawnChance = i + 1;
+                    if(maxChance < i + 1)
+                        maxChance = i + 1;
+                }
+
+            for(int i = cells.CellCountZ - 1; i >= cells.CellCountZ / 2; i--)
+            {
+                for (int j = 0; j < cells.CellCountX; j++)
+                {
+                    cells.cells[i * cells.CellCountX + j].SpawnChance = tmp;
+                    if (maxChance < tmp)
+                        maxChance = tmp;
+                }
+                tmp++;
+            }
+            Debug.Log($"Max spawn chance: {maxChance}");
+        }
+
+        static void SetBiomesChance()
+        {
+            int tmp = maxChance;
+            desertMaxChance = tmp;
+            desertMinChance = tmp - biomesMaxCellCount;
+            tmp -= biomesMaxCellCount;
+
+            tropicMaxChance = tmp + 2;
+            tropicMinChance = tmp - biomesMaxCellCount;
+            tmp -= biomesMaxCellCount;
+
+            standartMaxChance = tmp + 2;
+            standartMinChance = tmp - biomesMaxCellCount - 1;
+            tmp -= biomesMaxCellCount;
+
+            taigaMaxChance = tmp;
+            taigaMinChance = tmp - biomesMaxCellCount - 3;
+            tmp -= biomesMaxCellCount;
+
+            winterMaxChance = tmp - 2;
+            winterMinChance = 0;
+            tmp -= biomesMaxCellCount;
+
+            Debug.Log($"Spawn chances \n" +
+                $"Desert Max: {desertMaxChance}\n" +
+                $"Desert Min: {desertMinChance}\n" +
+                $"\nTropic Max: {tropicMaxChance}\n" +
+                $"Tropic Min: {tropicMinChance}\n" +
+                $"\nStandart Max: {standartMaxChance}\n" +
+                $"Standart Min: {standartMinChance}\n" +
+                $"\nTaiga Max: {taigaMaxChance}\n" +
+                $"Taiga Min: {taigaMinChance}\n" +
+                $"\nWinter Max: {winterMaxChance}\n" +
+                $"Winter Min: {winterMinChance}");
+            
+        }
 
         static CellList GenerateTrueRock(CellList cells)
         {
             for (int i = 0; i < cells.Length; i++)
             {
                 if (cells[i].CellType == HexCell.CellTypes.terrain && cells[i].Elevation != 0)
-                {
-                    cells[i].CellColor = Color.gray;
                     cells[i].CellType = HexCell.CellTypes.rock;
-                }
 
             }
             return cells;
@@ -63,14 +138,20 @@ namespace Assets.Map.WorldMap
             //Острова
             cells = GenerateIslands(cells);
             cells = DeleteFakeRivers(cells);
-            //После удаления дерьма нужно 
-            
-
             
             //Горы. Сначала нужно получить количество сгенерированных клеток terrain
             GetTerrainCellsCount(cells);
-
             cells = GenerateRock(cells);
+
+            //После удаления дерьма нужно 
+            //Берем "экватор" и устанавливаем шансы на спавн. Чем больше, тем теплее)
+            SetChance(cells);
+            //Установка количества клеток для каждой климатической зоны
+            biomesMaxCellCount = maxChance / 5; //Всего пока что 5 биомов. Думаю достаточно.
+            if (biomesMaxCellCount == 0)
+                biomesMaxCellCount = 1;         //Это на случай если карта мелкая
+            SetBiomesChance();
+
             //Немного пляжных клеток
             cells = GenerateBeachSells(cells);
 
@@ -86,7 +167,6 @@ namespace Assets.Map.WorldMap
             for(int i = 0; i < cells.Length; i++)
             {
                 cells[i].CellType = HexCell.CellTypes.water;
-                cells[i].CellColor = Color.yellow;
                 cells[i].Elevation = 0;
             }
             return cells;
@@ -104,13 +184,11 @@ namespace Assets.Map.WorldMap
                 neighbourCells = cells.GetNeighbours(startCell);
                 neighbourCells.Add(cells[startCell], 0, 0);
                 int islandsCellsCount = UnityEngine.Random.Range(0, neighbourCells.Length);
-                cells[startCell].CellColor = Color.green;
                 cells[startCell].CellType = HexCell.CellTypes.terrain;
                 for (int i = 0; i < islandsCellsCount; i++)
                 {
                     int index = neighbourCells[i].coords.MakeIndex(cells.CellCountX);
                     int rndEvaluate = UnityEngine.Random.Range(0, 1);
-                    cells[index].CellColor = Color.green;
                     cells[index].CellType = HexCell.CellTypes.terrain;
                     cells[index].Elevation = rndEvaluate;
                 }
@@ -144,7 +222,6 @@ namespace Assets.Map.WorldMap
                     if(tryCount > neighbourCells.Count())
                         nextCell = UnityEngine.Random.Range(0, neighbourCells.Count());
                     int index = neighbourCells[nextCell].coords.MakeIndex(cells.CellCountX);
-                    cells[index].CellColor = Color.green;
                     cells[index].CellType = HexCell.CellTypes.terrain;
                     int rndEvaluate = UnityEngine.Random.Range(0, 1);
                     cells[index].Elevation = rndEvaluate;
@@ -170,7 +247,6 @@ namespace Assets.Map.WorldMap
                     foreach (var tCell in neighbourCells)
                         if (tCell.CellType == HexCell.CellTypes.terrain)
                         {
-                            cells[tCell.CellIndex].CellColor = Color.yellow;
                             cells[tCell.CellIndex].CellType = HexCell.CellTypes.sand;
                         }
 
@@ -229,7 +305,6 @@ namespace Assets.Map.WorldMap
                 {
                     tryCount = 0;
                     int index = neighbourCells[nextCell].coords.MakeIndex(cells.CellCountX);
-                    cells[index].CellColor = Color.gray;
                     cells[index].CellType = HexCell.CellTypes.rock;
                     int rndEvaluate = UnityEngine.Random.Range(3, 4);
                     cells[index].Elevation = rndEvaluate;
