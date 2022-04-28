@@ -79,23 +79,6 @@ public struct HexCoords
     {
         return x + z * mapWidth + z / 2;
     }
-    public static Vector3 FromHitToCoords(RaycastHit hit)
-    {
-        Vector3 coords;
-        var choosenChunk = hit.transform.gameObject.GetComponentInParent<HexGridChunk>();
-        float globalMin = Mathf.Sqrt(Mathf.Pow(hit.point.x - choosenChunk.cells[0].transform.position.x, 2) + Mathf.Pow(hit.point.z - choosenChunk.cells[0].transform.position.z, 2));
-        coords = choosenChunk.cells[0].transform.position;
-        foreach (var cell in choosenChunk.cells)
-        {
-            float min = Mathf.Sqrt(Mathf.Pow(hit.point.x - cell.transform.position.x, 2) + Mathf.Pow(hit.point.z - cell.transform.position.z, 2));
-            if(min < globalMin)
-            {
-                globalMin = min;
-                coords = cell.transform.position;
-            }
-        }
-        return coords;
-    }
 
     public HexCoords GetNeighbourCoords(int direction)
     {
