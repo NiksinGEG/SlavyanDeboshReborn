@@ -95,8 +95,8 @@ namespace Assets.Map.WorldMap
         {
             for (int i = 0; i < cells.Length; i++)
             {
-                if (cells[i].CellType == HexCell.CellTypes.terrain && cells[i].Elevation != 0)
-                    cells[i].CellType = HexCell.CellTypes.rock;
+                if (cells[i].Type == CellType.terrain && cells[i].Elevation != 0)
+                    cells[i].Type = CellType.rock;
 
             }
             return cells;
@@ -105,23 +105,23 @@ namespace Assets.Map.WorldMap
         {
             terrainCells = 0;
             for (int i = 0; i < cells.Length; i++)
-                if (cells[i].CellType == HexCell.CellTypes.terrain)
+                if (cells[i].Type == CellType.terrain)
                     terrainCells++;
         }
 
         static CellList DeleteFakeRivers(CellList cells)
         {
             foreach(var cell in cells)
-                if(cell.CellType == HexCell.CellTypes.water)
+                if(cell.Type == CellType.water)
                 {
                     int count = 0;
                     var neighbourCells = cells.GetNeighbours(cell.CellIndex);
                     foreach (var nCell in neighbourCells)
-                       if (nCell.CellType == HexCell.CellTypes.terrain)
+                       if (nCell.Type == CellType.terrain)
                            count++;
                     if(count >= 4 && count <= 6)
                     {
-                        cell.CellType = HexCell.CellTypes.terrain;
+                        cell.Type = CellType.terrain;
                         cell.Elevation = 0;
                     }
                 }
@@ -157,7 +157,7 @@ namespace Assets.Map.WorldMap
 
             //Короч чтобы все "подводные клетки" были под водой, опускаем их на один уровень
             foreach (var cell in cells)
-                if (cell.CellType == HexCell.CellTypes.water)
+                if (cell.Type == CellType.water)
                     cell.Elevation = -1;
 
             return cells;
@@ -166,7 +166,7 @@ namespace Assets.Map.WorldMap
         {
             for(int i = 0; i < cells.Length; i++)
             {
-                cells[i].CellType = HexCell.CellTypes.water;
+                cells[i].Type = CellType.water;
                 cells[i].Elevation = 0;
             }
             return cells;
@@ -175,7 +175,7 @@ namespace Assets.Map.WorldMap
         private static CellList GenerateIslands(CellList cells)
         {
             int startCell = UnityEngine.Random.Range(0, cells.Length);
-            while(cells[startCell].CellType == HexCell.CellTypes.terrain)
+            while(cells[startCell].Type == CellType.terrain)
                 startCell = UnityEngine.Random.Range(0, cells.Length);
             int islandsCount = UnityEngine.Random.Range(0, 10);
             
@@ -184,16 +184,16 @@ namespace Assets.Map.WorldMap
                 neighbourCells = cells.GetNeighbours(startCell);
                 neighbourCells.Add(cells[startCell], 0, 0);
                 int islandsCellsCount = UnityEngine.Random.Range(0, neighbourCells.Length);
-                cells[startCell].CellType = HexCell.CellTypes.terrain;
+                cells[startCell].Type = CellType.terrain;
                 for (int i = 0; i < islandsCellsCount; i++)
                 {
                     int index = neighbourCells[i].coords.MakeIndex(cells.CellCountX);
                     int rndEvaluate = UnityEngine.Random.Range(0, 1);
-                    cells[index].CellType = HexCell.CellTypes.terrain;
+                    cells[index].Type = CellType.terrain;
                     cells[index].Elevation = rndEvaluate;
                 }
                 startCell = UnityEngine.Random.Range(0, cells.Length);
-                while (cells[startCell].CellType == HexCell.CellTypes.terrain)
+                while (cells[startCell].Type == CellType.terrain)
                     startCell = UnityEngine.Random.Range(0, cells.Length);
                 islandsCount--;
             }
@@ -215,14 +215,14 @@ namespace Assets.Map.WorldMap
                     neighbourCells.Add(cells[startCell], 0, 0);
                     nextCell = UnityEngine.Random.Range(0, neighbourCells.Count());
                     
-                    if (neighbourCells[nextCell].CellType == HexCell.CellTypes.terrain)
+                    if (neighbourCells[nextCell].Type == CellType.terrain)
                         nextCell = UnityEngine.Random.Range(0, neighbourCells.Count());
                     else
                         tryCount++;
                     if(tryCount > neighbourCells.Count())
                         nextCell = UnityEngine.Random.Range(0, neighbourCells.Count());
                     int index = neighbourCells[nextCell].coords.MakeIndex(cells.CellCountX);
-                    cells[index].CellType = HexCell.CellTypes.terrain;
+                    cells[index].Type = CellType.terrain;
                     int rndEvaluate = UnityEngine.Random.Range(0, 1);
                     cells[index].Elevation = rndEvaluate;
                     startCell = index;
@@ -230,7 +230,7 @@ namespace Assets.Map.WorldMap
                     if (tryCount == 3)
                         startCell = UnityEngine.Random.Range(0, cells.Length);
                 }
-                while(cells[startCell].CellType == HexCell.CellTypes.terrain)
+                while(cells[startCell].Type == CellType.terrain)
                     startCell = UnityEngine.Random.Range(0, cells.Length);
 
             }
@@ -240,14 +240,14 @@ namespace Assets.Map.WorldMap
         {
             foreach(var cell in cells)
             {
-                if(cell.CellType == HexCell.CellTypes.water)
+                if(cell.Type == CellType.water)
                 {
                     neighbourCells = cells.GetNeighbours(cell.CellIndex);
                     neighbourCells.Add(cell, 0, 0);
                     foreach (var tCell in neighbourCells)
-                        if (tCell.CellType == HexCell.CellTypes.terrain)
+                        if (tCell.Type == CellType.terrain)
                         {
-                            cells[tCell.CellIndex].CellType = HexCell.CellTypes.sand;
+                            cells[tCell.CellIndex].Type = CellType.sand;
                         }
 
                 }
@@ -259,11 +259,11 @@ namespace Assets.Map.WorldMap
             neighbourCells = cells.GetNeighbours(startCell);
             int minRockEleation = cells[startCell].Elevation;
             foreach (var cell in neighbourCells)
-                if (cell.CellType == HexCell.CellTypes.rock && minRockEleation > cell.Elevation)
+                if (cell.Type == CellType.rock && minRockEleation > cell.Elevation)
                     minRockEleation = cell.Elevation;
             foreach (var cell in neighbourCells)
             {
-                if(cell.CellType == HexCell.CellTypes.terrain)
+                if(cell.Type == CellType.terrain)
                 {
                     int index = cell.coords.MakeIndex(cells.CellCountX);
                     cells[index].Elevation = minRockEleation - 1;
@@ -272,13 +272,13 @@ namespace Assets.Map.WorldMap
             CellList neighbourTerrainCells;
             foreach(var cell in neighbourCells)
             {
-                if(cell.CellType == HexCell.CellTypes.terrain)
+                if(cell.Type == CellType.terrain)
                 {
                     int indexCellElevation = cell.Elevation;
                     int index = cell.coords.MakeIndex(cells.CellCountX);
                     neighbourTerrainCells = cells.GetNeighbours(index);
                     foreach(var tCell in neighbourTerrainCells)
-                        if (tCell.Elevation < cell.Elevation && tCell.CellType == HexCell.CellTypes.terrain)
+                        if (tCell.Elevation < cell.Elevation && tCell.Type == CellType.terrain)
                         {
                             int tIndex = tCell.coords.MakeIndex(cells.CellCountX);
                             cells[tIndex].Elevation = indexCellElevation - 1;
@@ -292,7 +292,7 @@ namespace Assets.Map.WorldMap
         {
             int maxCount = UnityEngine.Random.Range(0, terrainCells / 20);
             int startCell = UnityEngine.Random.Range(0, cells.Length);
-            while (cells[startCell].CellType == HexCell.CellTypes.water)
+            while (cells[startCell].Type == CellType.water)
                 startCell = UnityEngine.Random.Range(0, cells.Length);
             int tryCount = 0;
             while (maxCount != 0)
@@ -301,11 +301,11 @@ namespace Assets.Map.WorldMap
                 neighbourCells = cells.GetNeighbours(startCell);
                 neighbourCells.Add(cells[startCell], 0, 0);
                 int nextCell = UnityEngine.Random.Range(0, neighbourCells.Count());
-                if(neighbourCells[nextCell].CellType == HexCell.CellTypes.terrain)
+                if(neighbourCells[nextCell].Type == CellType.terrain)
                 {
                     tryCount = 0;
                     int index = neighbourCells[nextCell].coords.MakeIndex(cells.CellCountX);
-                    cells[index].CellType = HexCell.CellTypes.rock;
+                    cells[index].Type = CellType.rock;
                     int rndEvaluate = UnityEngine.Random.Range(3, 4);
                     cells[index].Elevation = rndEvaluate;
                     cells = GenerateTransition(cells, index);
@@ -316,7 +316,7 @@ namespace Assets.Map.WorldMap
                 if (tryCount == 3)
                 {
                     startCell = UnityEngine.Random.Range(0, cells.Length);
-                    while (cells[startCell].CellType == HexCell.CellTypes.water)
+                    while (cells[startCell].Type == CellType.water)
                         startCell = UnityEngine.Random.Range(0, cells.Length);
                 }               
             }

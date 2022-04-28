@@ -82,7 +82,7 @@ namespace Assets.Map.WorldMap
 			//cell.transform.localPosition = position;
 			cell.transform.position = position;
 			cell.coords = HexCoords.FromOffset(x, z);
-			cell.CellType = HexCell.CellTypes.water;
+			cell.Type = CellType.water;
 
 			cell.CellIndex = i;
 			cell.name = $"Index = {cell.CellIndex}";
@@ -176,7 +176,7 @@ namespace Assets.Map.WorldMap
 					{
 						foreach (var cell in cells[j * cellCountZ + i].neighbours)
 						{
-							if(cell.CellType != HexCell.CellTypes.water)
+							if(cell.Type != CellType.water)
                             {
 								weightMatrix[j * cellCountZ + i, cell.CellIndex] = 10000;
 								weightMatrix[cell.CellIndex, j * cellCountZ + i] = 10000;
@@ -198,7 +198,7 @@ namespace Assets.Map.WorldMap
 					{
 						foreach (var cell in cells[j * cellCountZ + i].neighbours)
 						{
-							if (cell.CellType == HexCell.CellTypes.water)
+							if (cell.Type == CellType.water)
 							{
 								weightMatrix[j * cellCountZ + i, cell.CellIndex] = 10000;
 								weightMatrix[cell.CellIndex, j * cellCountZ + i] = 10000;
@@ -292,11 +292,11 @@ namespace Assets.Map.WorldMap
 				switch(type)
                 {
 					case 0:
-						if (path[i].CellType != HexCell.CellTypes.water)
+						if (path[i].Type != CellType.water)
 							return null;
 						break;
 					case 1:
-						if (path[i].CellType == HexCell.CellTypes.water)
+						if (path[i].Type == CellType.water)
 							return null;
 						break;
 

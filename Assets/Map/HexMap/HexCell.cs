@@ -20,6 +20,8 @@ namespace Assets.Map.WorldMap
     {
         NE, E, SE, SW, W, NW
     }
+    public enum CellTexture { water, terrain, rock, sand, dirt }
+    public enum CellType { water, terrain, rock, sand, dirt }
     public static class HexDirectionExtensions
     {
         public static HexDirection Previous(this HexDirection direction)
@@ -39,12 +41,13 @@ namespace Assets.Map.WorldMap
     public class HexCell : MonoBehaviour
     {
 
-        public enum CellTypes { water, terrain, rock, sand, dirt }
+        
 
         [SerializeField] public int spawnChance;
         public int SpawnChance { get; set; }
 
-        public CellTypes CellType { get; set; }
+        public CellType Type { get; set; }
+        public CellTexture Texture { get; set; }
         
 
         public List<Vector3> vertices;

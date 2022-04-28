@@ -75,7 +75,7 @@ namespace Assets.Map.MapResources
         {
             int count = 0;
             foreach (var cell in grid.cellList)
-                if (cell.CellType == HexCell.CellTypes.terrain)
+                if (cell.Type == CellType.terrain)
                     count++;
             return count;
         }
@@ -83,14 +83,14 @@ namespace Assets.Map.MapResources
         {
             float rndCoeff = 0.8f;
             foreach (var cell in grid.cellList)
-                if (cell.CellType == HexCell.CellTypes.terrain || cell.CellType == HexCell.CellTypes.rock)
+                if (cell.Type == CellType.terrain || cell.Type == CellType.rock)
                 {
                     int isRock = UnityEngine.Random.Range(1, 10);
                     var nCells = grid.cellList.GetNeighbours(cell.CellIndex);
                     nCells.Add(cell, 0, 0);
                     bool isNearRock = false;
                     foreach (var nCell in nCells)
-                    if (cell.CellType == HexCell.CellTypes.rock)
+                    if (cell.Type == CellType.rock)
                     {
                        rndCoeff = 0.7f;
                        isRock = 10;
@@ -138,22 +138,22 @@ namespace Assets.Map.MapResources
         public void GenerateTree(HexGrid grid)
         {
             int startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
-            while(grid.cellList[startCell].CellType != HexCell.CellTypes.terrain)
+            while(grid.cellList[startCell].Type != CellType.terrain)
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
             int treeChunkCount = UnityEngine.Random.Range(GetTerrainCellsCount(grid) - 100, GetTerrainCellsCount(grid));
             while(treeChunkCount >= 0)
             {
-                if(grid.cellList[startCell].CellType == HexCell.CellTypes.terrain)
+                if(grid.cellList[startCell].Type == CellType.terrain)
                 {
                     CellList neigboursCells = grid.cellList.GetNeighbours(startCell);
                     neigboursCells.Add(grid.cellList[startCell], 0, 0);
                     bool isRock = false;
                     foreach(var cell in neigboursCells)
-                        if(cell.CellType == HexCell.CellTypes.rock)
+                        if(cell.Type == CellType.rock)
                             isRock = true;
                     foreach(var cell in neigboursCells)
                     {
-                        if (cell.CellType == HexCell.CellTypes.terrain)
+                        if (cell.Type == CellType.terrain)
                         {
                             int treeCountOnCell = 0;
                             if (isRock)
@@ -161,7 +161,7 @@ namespace Assets.Map.MapResources
                             else
                             {
                                 treeCountOnCell = UnityEngine.Random.Range(4,6);
-                                cell.CellType = HexCell.CellTypes.dirt;
+                                cell.Type = CellType.dirt;
                             }
 
                             for(int i = 0; i < treeCountOnCell; i++)
@@ -192,7 +192,7 @@ namespace Assets.Map.MapResources
                     }
                 }
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
-                while (grid.cellList[startCell].CellType != HexCell.CellTypes.terrain)
+                while (grid.cellList[startCell].Type != CellType.terrain)
                     startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
             }
         }
@@ -200,7 +200,7 @@ namespace Assets.Map.MapResources
         {
             foreach(var cell in grid.cellList)
             {
-                if(cell.CellType == HexCell.CellTypes.dirt)
+                if(cell.Type == CellType.dirt)
                 {
                     int grassCount = UnityEngine.Random.Range(1, 5);
                     while(grassCount >= 0)
@@ -230,7 +230,7 @@ namespace Assets.Map.MapResources
         private void GenerateBush(HexGrid grid)
         {
             foreach(var cell in grid.cellList)
-                if(cell.CellType == HexCell.CellTypes.terrain || cell.CellType == HexCell.CellTypes.dirt)
+                if(cell.Type == CellType.terrain || cell.Type == CellType.dirt)
                 {
                     int spawnChance = UnityEngine.Random.Range(0, 10);
                     if (spawnChance > 5)
@@ -265,7 +265,7 @@ namespace Assets.Map.MapResources
         {
             foreach(var cell in grid.cellList)
             {
-                if(cell.CellType == HexCell.CellTypes.terrain || cell.CellType == HexCell.CellTypes.dirt)
+                if(cell.Type == CellType.terrain || cell.Type == CellType.dirt)
                 {
 
                 }
