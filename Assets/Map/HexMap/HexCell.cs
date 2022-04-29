@@ -20,8 +20,10 @@ namespace Assets.Map.WorldMap
     {
         NE, E, SE, SW, W, NW
     }
-    public enum CellTexture { water,tropic_1, tropic_2, tropic_3, tropic_4, tropic_5, terrain_1, terrain_2, terrain_3, terrain_4, terrain_5, rock, sand_1, sand_2, sand_3, sand_4, sand_5, taiga_1, taiga_2, taiga_3, taiga_4, taiga_5, winter_1, winter_2, winter_3, winter_4, winter_5, dirt }
-    public enum CellType { water, tropic, terrain, taiga, winter, rock, sand, dirt }
+    public enum CellTexture { water,tropic_1, tropic_2, tropic_3, tropic_4, tropic_5, terrain_1, 
+       terrain_2, terrain_3, terrain_4, terrain_5, rock, sand_1, sand_2, sand_3, sand_4, sand_5,
+       taiga_1, taiga_2, taiga_3, taiga_4, taiga_5, winter_1, winter_2, winter_3, winter_4, winter_5, dirt, winter_rock}
+    public enum CellType { water, tropic, terrain, taiga, winter, rock, sand, dirt}
 
     public static class HexDirectionExtensions
     {

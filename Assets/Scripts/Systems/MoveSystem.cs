@@ -74,8 +74,8 @@ public class MoveSystem : IECSSystem
                     point.y = c.gameObject.transform.position.y;
                     fromRotation = c.gameObject.transform.rotation;
                     toRotation = Quaternion.LookRotation(point - c.gameObject.transform.position);
-                    
-                    if (toRotation.w == 1)
+
+                    if (toRotation.w == 1) 
                         toRotation = fromRotation;
 
                     if (Quaternion.Angle(fromRotation, toRotation) < 20.0f && Quaternion.Angle(fromRotation, toRotation) > -1.0f )

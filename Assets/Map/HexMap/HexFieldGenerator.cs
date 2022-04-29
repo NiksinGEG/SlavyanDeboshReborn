@@ -75,7 +75,6 @@ namespace Assets.Map.WorldMap
 
             winterMaxChance = tmp - 2;
             winterMinChance = 0;
-            tmp -= biomesMaxCellCount;
 
             Debug.Log($"Spawn chances \n" +
                 $"Desert Max: {desertMaxChance}\n" +
@@ -98,6 +97,8 @@ namespace Assets.Map.WorldMap
                 if (cells[i].Type == CellType.terrain && cells[i].Elevation != 0)
                 {
                     cells[i].SetTypeAndTexture(CellType.rock);
+                    if (cells[i].Elevation == 2)
+                        cells[i].Texture = CellTexture.winter_rock;
                 }           
             }
             return cells;
@@ -167,10 +168,12 @@ namespace Assets.Map.WorldMap
         {
             foreach (var cell in cells)
             {
-                if(cell.Type != CellType.water && cell.Type != CellType.rock)
+                if (cell.Type != CellType.water && cell.Type != CellType.rock)
                 {
-                    if((desertMaxChance - (tropicMaxChance - desertMinChance)) <= cell.SpawnChance && desertMaxChance >= cell.SpawnChance)
+                    if ((desertMaxChance - (tropicMaxChance - desertMinChance)) <= cell.SpawnChance && desertMaxChance >= cell.SpawnChance)
+                    {
                         cell.SetTypeAndTexture(CellType.sand);
+                    }
                     if(tropicMaxChance >= cell.SpawnChance && desertMinChance <= cell.SpawnChance)
                     {
                            int chooseBiome = UnityEngine.Random.Range(1, 7);
@@ -394,6 +397,7 @@ namespace Assets.Map.WorldMap
                     cells[index].SetTypeAndTexture(CellType.rock);
                     int rndEvaluate = UnityEngine.Random.Range(3, 4);
                     cells[index].Elevation = rndEvaluate;
+                    cells[index].Texture = CellTexture.winter_1;
                     cells = GenerateTransition(cells, index);
                     startCell = index;
                     maxCount--;
