@@ -4,5 +4,6 @@
     <file url="file://$PROJECT_DIR$/Assets/ECS/ECSService.cs" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/Assets/Map/MapResources/MapResource.cs" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/Assets/Scripts/Systems/SelectionSystem.cs" charset="windows-1251" />
+    <file url="PROJECT" charset="windows-1251" />
   </component>
 </project>

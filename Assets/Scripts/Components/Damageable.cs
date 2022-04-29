@@ -1,6 +1,6 @@
 ﻿namespace Assets.Scripts.Components
 {
-    public class Damageble : IECSComponent
+    public class Damageable : IECSComponent
     {
         public int health;
     }

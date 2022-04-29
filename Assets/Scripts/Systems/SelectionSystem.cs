@@ -102,12 +102,13 @@ public class SelectionSystem : IECSSystem
         RaycastHit hit;
         if (Physics.Raycast(inputRay, out hit))
         {
-            if (hit.transform.gameObject.GetComponentInParent<HexGridChunk>() != null)
+            var chunk = hit.transform.gameObject.GetComponentInParent<HexGridChunk>();
+            if (chunk != null)
             {
-                return hit.transform.gameObject.GetComponent<Team>().team;
+                var grid = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>();
+                var unit = grid.GetByPosition(chunk.gameObject.transform.position);
             }
         }
-
         return 0;
     }
 
@@ -124,7 +125,8 @@ public class SelectionSystem : IECSSystem
         Attack attack_c = component.gameObject.GetComponent<Attack>();
         if (attack_c != null)
         {
-            //GetComponentTeam();
+            GetComponentTeam();
+            Debug.Log("GetComponentTeam");
             Debug.Log("Attack != null");
         }
     }
