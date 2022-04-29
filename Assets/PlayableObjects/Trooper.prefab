@@ -126,8 +126,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80cd1f1415882d34989a727f303e0b89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RotationSpeed: 40
-  MoveSpeed: 20
+  RotationSpeed: 50
+  MoveSpeed: 0.3
   WayCells: []
   MoveRadius: 0
   t: 0
@@ -173,7 +173,6 @@ MonoBehaviour:
   radius: 4
   countAttack: 12
   damage: 500
-  damageble: {fileID: 0}
 --- !u!114 &-1385653117689627748
 MonoBehaviour:
   m_ObjectHideFlags: 0

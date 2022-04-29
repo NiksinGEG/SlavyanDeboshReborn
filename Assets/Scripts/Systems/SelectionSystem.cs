@@ -24,26 +24,6 @@ public class SelectionSystem : IECSSystem
         foreach (var c in selectable_comps)
             c.IsSelected = false;
         comp.IsSelected = true;
-        //comp.IsSelected = !comp.IsSelected;
-    }
-
-    private void SetWay(Movable comp)
-    {
-        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(inputRay, out hit))
-            if(hit.transform.gameObject.GetComponentInParent<HexGridChunk>() != null) //if clicked at cell of a map
-            {
-                var grid = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>();
-                var endCell = grid.GetByPosition(hit.point);
-                var startPos = comp.gameObject.transform.position;
-                var startCell = grid.GetByPosition(startPos);
-
-                comp.WayCells = new List<Vector3>();
-                List <HexCell> WayCells = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>().GetWay((int)comp.moveType, startCell, endCell);
-                foreach(var cell in WayCells)
-                    comp.WayCells.Add(cell.transform.position);
-            }
     }
 
     private void WhileSelected(Selectable component)
@@ -119,7 +99,7 @@ public class SelectionSystem : IECSSystem
         Movable mov_c = component.gameObject.GetComponent<Movable>();
         if (mov_c != null)
         {
-            SetWay(mov_c);
+            Service.GetSystem<MoveSystem>().SetWay(mov_c);
         }
 
         Attack attack_c = component.gameObject.GetComponent<Attack>();

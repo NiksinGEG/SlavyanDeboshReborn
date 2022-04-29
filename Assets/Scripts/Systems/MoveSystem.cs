@@ -12,87 +12,110 @@ public class MoveSystem : IECSSystem
 {
     public MoveSystem(ECSService s) : base(s) { }
 
-    private bool isTurned = true;
-    private Quaternion fromRotation;
-    private Quaternion toRotation;
-    
-    private Vector3 point;
-
     public override void Init()
     {
 
     }
 
+    private float UpdateT(Movable c)
+    {
+        var ms = c.MoveSpeed * Time.deltaTime;
+        return c.t + ms;
+    }
+
+    private Vector3 GetNewPoint(Movable comp, float t)
+    {
+        return Bezier.GetPointN(t, comp.WayCells);
+    }
+
+    private void OnFinishPosition(Movable c)
+    {
+        c.t = 0;
+        c.WayCells.Clear();
+    }
+
+    private bool UpdateRotation(Movable c, Vector3 newPoint)
+    {
+        Quaternion toRotation = Quaternion.LookRotation(newPoint - c.transform.position);
+        bool res = Quaternion.Angle(c.transform.rotation, toRotation) < 20f;
+        Quaternion newRotation = Quaternion.RotateTowards(c.transform.rotation, toRotation, c.RotationSpeed * Time.deltaTime);
+        c.transform.rotation = newRotation;
+        return res;
+    }
+
+    private void UpdateComponent(Movable c)
+    {
+        if (c.WayCells.Count == 0)
+            return;
+        var newT = UpdateT(c);
+        if (newT > 1f)
+            OnFinishPosition(c);
+        else
+        {
+            var newPoint = GetNewPoint(c, newT);
+            bool canMove = UpdateRotation(c, newPoint);
+            if (canMove)
+            {
+                c.transform.position = newPoint;
+                c.t = newT;
+            }
+            
+        }
+        
+    }
+
     public override void Run()
     {
-        float eps = 0.15f;
         ECSFilter f = new ECSFilter();
         List<Movable> components = f.GetComponents<Movable>();
         foreach (var c in components)
-        {
-            var ms = c.MoveSpeed * Time.deltaTime;
-            var rs = c.RotationSpeed * Time.deltaTime;
-            if (c.WayCells == null || c.WayCells.Count == 0)
-                continue;
-            if ((Mathf.Abs(c.gameObject.GetComponent<Transform>().position.x - c.WayCells[0].x) < eps &&
-                Mathf.Abs(c.gameObject.GetComponent<Transform>().position.z - c.WayCells[0].z) < eps) ||
-                (c.t > 0.5 && c.WayCells.Count > 2) || (c.t >= 1)) //Путь не пустой, но объект на ближайшей точке пути
-                {
-                    c.WalkedCell = c.WayCells[0];
-                    if (c.t > 0.5 && c.WayCells.Count > 2)
-                        c.WalkedCell = c.transform.position;
-                    c.WayCells.RemoveAt(0);
-                    c.t = 0;
-                }
-            else
+            UpdateComponent(c);
+    }
+
+    //TODO: оптимизировать GetWay
+    public void SetWay(Movable comp)
+    {
+        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(inputRay, out hit))
+            if (hit.transform.gameObject.GetComponentInParent<HexGridChunk>() != null) //if clicked at cell of a map
             {
-                if (c.WayCells.Count == 1 || c.WalkedCell == null)
-                {
-                    point = c.WayCells[0];
-                    point.y = c.gameObject.transform.position.y;
+                var grid = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>();
+                var endCell = grid.GetByPosition(hit.point);
+                var startPos = comp.gameObject.transform.position;
+                var startCell = grid.GetByPosition(startPos);
 
-                    fromRotation = c.gameObject.transform.rotation;
-                    toRotation = Quaternion.LookRotation(point - c.gameObject.transform.position);
-
-                    if (Quaternion.Angle(fromRotation, toRotation) < 0.00001f)
-                        isTurned = true;
-                    else
-                        isTurned = false;
-
-                    if (isTurned)
-                        c.gameObject.transform.position = Vector3.MoveTowards(c.gameObject.transform.position, point, ms);
-                    else
-                        c.gameObject.transform.rotation = Quaternion.RotateTowards(fromRotation, toRotation, rs);
-                }
-                else
-                {
-                    Vector3 start = c.WalkedCell;
-                    Vector3 end = c.WayCells[1];
-                    Vector3 middle = c.WayCells[0];
-
-                    point = Bezier.GetPoint(start, middle, end, c.t);
-                    point.y = c.gameObject.transform.position.y;
-                    fromRotation = c.gameObject.transform.rotation;
-                    toRotation = Quaternion.LookRotation(point - c.gameObject.transform.position);
-                    
-                    if (toRotation.w == 1)
-                        toRotation = fromRotation;
-
-                    if (Quaternion.Angle(fromRotation, toRotation) < 20.0f && Quaternion.Angle(fromRotation, toRotation) > -1.0f )
-                        isTurned = true;
-                    else
-                        isTurned = false;
-
-                    if (isTurned)
-                    {
-                        c.gameObject.transform.rotation = toRotation;
-                        c.gameObject.transform.position = point;
-                        c.t += ms * 0.05f;
-                    }
-                    else
-                        c.gameObject.transform.rotation = Quaternion.RotateTowards(fromRotation, toRotation, rs);
-                }
+                comp.WayCells = new List<Vector3>();
+                List<HexCell> WayCells = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>().GetWay((int)comp.moveType, startCell, endCell);
+                comp.WayCells.Add(comp.transform.position);
+                foreach (var cell in WayCells)
+                    comp.WayCells.Add(cell.transform.position);
             }
-        }
+    }
+
+
+    //TODO: ловит ексепшн, видимо потому что при создании List<HexCell> вызывается конструктор HexCell(), который на побочном потоке вызывать нельзя
+    public async void SetWayAsync(Movable comp)
+    {
+        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(inputRay, out hit))
+            if (hit.transform.gameObject.GetComponentInParent<HexGridChunk>() != null) //if clicked at cell of a map
+            {
+                var grid = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>();
+                List<HexCell> WayCells = new List<HexCell>();
+                await Task.Run(() =>
+                {
+                    var endCell = grid.GetByPosition(hit.point);
+                    var startPos = comp.gameObject.transform.position;
+                    var startCell = grid.GetByPosition(startPos);
+
+                    WayCells = grid.GetWay((int)comp.moveType, startCell, endCell);
+                });
+                comp.WayCells = new List<Vector3>();
+                comp.WayCells.Add(comp.transform.position);
+                foreach (var cell in WayCells)
+                    comp.WayCells.Add(cell.transform.position);
+            }
     }
 }
