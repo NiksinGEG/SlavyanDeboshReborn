@@ -8,3 +8,8 @@ A - nalevo
 D - napravo
 Probel - vverh
 left ctrl - vniz
+
+
+#TODO:
+* sore za translit, kodirovka shakalit russki yazyk
+1. Optimizirovat SetWay. Libo kak-to make (ha-ha, English mzfk) ego async, libo kak-to optimizirovat sam algorytm.
