@@ -24,6 +24,11 @@ namespace Assets.Map.MapResources
             meshFilters = new List<MeshFilter>();
         }
 
+        private int GetPercent(int number, int percent)
+        {
+            return (number * percent) / 100;
+        }
+
         public void CombineMeshes()
         {
             CombineInstance[] combines = new CombineInstance[meshFilters.Count];
@@ -46,15 +51,29 @@ namespace Assets.Map.MapResources
             return manager.tree_prefabs[prefNum];
         }
 
+        private MapResource ChooseTropicTreePrefab()
+        {
+            if (manager == null)
+                Awake();
+            int prefNum = UnityEngine.Random.Range(0, manager.tropic_tree_prefabs.Length - 1);
+            return manager.tropic_tree_prefabs[prefNum];
+        }
+
         private MapResource ChooseGrassPrefab()
         {
             if (manager == null)
                 Awake();
-            int prefNum = UnityEngine.Random.Range(0, manager.grass_prefabs.Length - 1);
-            
+            int prefNum = UnityEngine.Random.Range(0, manager.grass_prefabs.Length - 1);          
             return manager.grass_prefabs[prefNum];
         }
 
+        private MapResource ChooseDesertPrefab()
+        {
+            if (manager == null)
+                Awake();
+            int prefNum = UnityEngine.Random.Range(0, manager.desert_prefabs.Length - 1);
+            return manager.desert_prefabs[prefNum];
+        }
         private MapResource ChooseRockPrefab()
         {
             if (manager == null)
@@ -71,6 +90,7 @@ namespace Assets.Map.MapResources
 
             return manager.forest_prefabs[prefNum];
         }
+
         private int GetTerrainCellsCount(HexGrid grid)
         {
             int count = 0;
@@ -79,11 +99,21 @@ namespace Assets.Map.MapResources
                     count++;
             return count;
         }
+
+        private int GetTropicCellsCount(HexGrid grid)
+        {
+            int count = 0;
+            foreach (var cell in grid.cellList)
+                if (cell.Type == CellType.tropic)
+                    count++;
+            return count;
+        }
+
         private void GenerateRock(HexGrid grid)
         {
             float rndCoeff = 0.8f;
             foreach (var cell in grid.cellList)
-                if (cell.Type != CellType.water )
+                if (cell.Type != CellType.water && cell.Type != CellType.sand)
                 {
                     int isRock = UnityEngine.Random.Range(1, 10);
                     var nCells = grid.cellList.GetNeighbours(cell.CellIndex);
@@ -140,7 +170,7 @@ namespace Assets.Map.MapResources
             int startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
             while(grid.cellList[startCell].Type != CellType.terrain)
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
-            int treeChunkCount = UnityEngine.Random.Range(GetTerrainCellsCount(grid) - 100, GetTerrainCellsCount(grid));
+            int treeChunkCount = UnityEngine.Random.Range(GetPercent(GetTerrainCellsCount(grid), 5), GetPercent(GetTerrainCellsCount(grid), 10));
             while(treeChunkCount >= 0)
             {
                 if(grid.cellList[startCell].Type == CellType.terrain)
@@ -157,10 +187,10 @@ namespace Assets.Map.MapResources
                         {
                             int treeCountOnCell = 0;
                             if (isRock)
-                                treeCountOnCell = UnityEngine.Random.Range(0, 1);
+                                treeCountOnCell = UnityEngine.Random.Range(1, 2);
                             else
                             {
-                                treeCountOnCell = UnityEngine.Random.Range(4,6);
+                                treeCountOnCell = UnityEngine.Random.Range(3,5);
                                 cell.SetTypeAndTexture(CellType.dirt);
                             }
 
@@ -185,17 +215,79 @@ namespace Assets.Map.MapResources
 
                                 //treeList.Add(obj);  //??? начем, а главное захуя 
                                 //А затем, что нужно будет как то проверить где деревья находятся при постановке к примеру лесопилки
-                                treeChunkCount--;
                             }
 
                         }
                     }
+                    treeChunkCount--;
                 }
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
                 while (grid.cellList[startCell].Type != CellType.terrain)
                     startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
             }
         }
+
+
+
+        public void GenerateTropicTree(HexGrid grid)
+        {
+            int startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
+            while (grid.cellList[startCell].Type != CellType.tropic)
+                startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
+            int treeChunkCount = UnityEngine.Random.Range(GetPercent(GetTropicCellsCount(grid), 20), GetPercent(GetTropicCellsCount(grid), 40));
+            while (treeChunkCount >= 0)
+            {
+                if (grid.cellList[startCell].Type == CellType.tropic)
+                {
+                    CellList neigboursCells = grid.cellList.GetNeighbours(startCell);
+                    neigboursCells.Add(grid.cellList[startCell], 0, 0);
+                    bool isRock = false;
+                    foreach (var cell in neigboursCells)
+                        if (cell.Type == CellType.rock)
+                            isRock = true;
+                    foreach (var cell in neigboursCells)
+                    {
+                        if (cell.Type == CellType.tropic)
+                        {
+                            int treeCountOnCell = 0;
+                            if (isRock)
+                                treeCountOnCell = UnityEngine.Random.Range(2, 3);
+                            else
+                            {
+                                treeCountOnCell = UnityEngine.Random.Range(4, 6);
+                                //cell.SetTypeAndTexture(CellType.dirt);
+                            }
+
+                            for (int i = 0; i < treeCountOnCell; i++)
+                            {
+                                MapResource obj = Instantiate(ChooseTropicTreePrefab());
+                                obj.transform.SetParent(transform);
+                                Vector3 pos = cell.transform.position;
+                                Vector3 scale = obj.transform.localScale;
+
+                                pos.y += obj.transform.localScale.y * 0.04f;
+                                obj.transform.position = pos;
+
+                                float scaling = UnityEngine.Random.Range(-0.5f, 0.5f);
+                                scale.x += scaling;
+                                scale.y += scaling;
+                                scale.z += scaling;
+                                obj.transform.localScale = scale;
+
+                                obj.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(-180, 180), 0f);
+                                obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
+                            }
+                        }
+
+                    }
+                    treeChunkCount--;
+                }
+                startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
+                while (grid.cellList[startCell].Type != CellType.tropic)
+                    startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
+            }
+        }
+
         private void GenerateForest(HexGrid grid)
         {
             foreach(var cell in grid.cellList)
@@ -229,8 +321,8 @@ namespace Assets.Map.MapResources
 
         private void GenerateBush(HexGrid grid)
         {
-            foreach(var cell in grid.cellList)
-                if(cell.Type == CellType.terrain || cell.Type == CellType.dirt)
+            foreach (var cell in grid.cellList)
+                if (cell.Type == CellType.terrain || cell.Type == CellType.dirt || cell.Type == CellType.taiga)
                 {
                     int spawnChance = UnityEngine.Random.Range(0, 10);
                     if (spawnChance > 5)
@@ -261,6 +353,40 @@ namespace Assets.Map.MapResources
                 }
         }
 
+        private void GenerateDesertBush(HexGrid grid)
+        {
+            foreach(var cell in grid.cellList)
+                if(cell.Type == CellType.sand)
+                {
+                    int spawnChance = UnityEngine.Random.Range(0, 11);
+                    if(spawnChance > 3)
+                    {
+                        int grassCount = UnityEngine.Random.Range(1, 6);
+                        while(grassCount != 0)
+                        {
+                            MapResource obj = Instantiate(ChooseDesertPrefab());
+                            obj.transform.SetParent(transform);
+                            Vector3 pos = cell.transform.position;
+                            Vector3 scale = obj.transform.localScale;
+
+                            pos.y += obj.transform.localScale.y * 0.02f;
+                            obj.transform.position = pos;
+
+                            float scaling = UnityEngine.Random.Range(-0.4f, 0.4f);
+                            scale.x += scaling;
+                            scale.y += scaling;
+                            scale.z += scaling;
+                            obj.transform.localScale = scale;
+
+                            obj.transform.rotation = Quaternion.Euler(0f, UnityEngine.Random.Range(-180, 180), 0f);
+                            obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
+
+                            grassCount--;
+                            ;                       }
+                    }
+                }
+        }
+
         private void GenerateGrass(HexGrid grid)
         {
             foreach(var cell in grid.cellList)
@@ -279,6 +405,8 @@ namespace Assets.Map.MapResources
             GenerateTree(grid);
             GenerateBush(grid);
             GenerateForest(grid);
+            GenerateTropicTree(grid);
+            GenerateDesertBush(grid);
         }
     }
 }

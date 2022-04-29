@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -809,3 +809,21 @@ MonoBehaviour:
   - {fileID: 6355734392835300340, guid: 6bd02e114ccf30541b684330e907d6c1, type: 3}
   - {fileID: 2831500815174690772, guid: a8be88d125c5bae46b8900dbccfe2d47, type: 3}
   - {fileID: 6513301551583981817, guid: ae306d5d16b7ec5428d5630ab885bfdc, type: 3}
+  desert_prefabs:
+  - {fileID: -179768468981972478, guid: 61ed0764ad9e8254eb637ca5b2ec9b65, type: 3}
+  - {fileID: -4122599555261338243, guid: 3017137701a2adf4791e4e8222422efe, type: 3}
+  - {fileID: 8960306895126367411, guid: cc070f39f90f40e46b2352883bd26fbc, type: 3}
+  - {fileID: -3108913194766937227, guid: 23bd212f7229adb43a8a41a1fd6eb8b2, type: 3}
+  - {fileID: -7327117043643540777, guid: 9eb78da38aae8254f872c9f03daebfb9, type: 3}
+  - {fileID: -3129092087152680573, guid: 82b6bdb56c00fc64b8b44dac498deb23, type: 3}
+  - {fileID: -865968125721592927, guid: eed7061a3b3b0474cafebe2980d18d4d, type: 3}
+  - {fileID: 607333306561570477, guid: 7cd6d88aae1a2024fa94d5f5e372a6e0, type: 3}
+  - {fileID: -6329558288544447070, guid: 7ec6dedcfbd734943bea57da8c85ad25, type: 3}
+  - {fileID: 7556849106738354295, guid: 0fabb59a12c094a408e177e50d316c41, type: 3}
+  - {fileID: -1558638882167117346, guid: 4ddae5d960c1e0a4e80fa0d8fab9c548, type: 3}
+  - {fileID: 3142004288502805719, guid: 9d017b533bb465348929e2750669666e, type: 3}
+  - {fileID: -633107855559483258, guid: fdb474c78b0dbe84783d12a5635f1bd7, type: 3}
+  - {fileID: -4938414088325078594, guid: b0b636a81246d574b901122cfefbcccc, type: 3}
+  - {fileID: -3087935135796014579, guid: e11a4e6d13b17ed4f8435c4062f2bd5b, type: 3}
+  - {fileID: -2327290632543197803, guid: aa4e53b498f951944a7a4895101e6e9a, type: 3}
+  - {fileID: -588578431647697133, guid: 019a9d7dbece5304e9097e756d5d82d6, type: 3}
