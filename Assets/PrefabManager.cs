@@ -10,6 +10,8 @@ public class PrefabManager : MonoBehaviour
     [SerializeField] public MapResource[] forest_prefabs;
     [SerializeField] public MapResource[] desert_prefabs;
     [SerializeField] public MapResource[] tropic_tree_prefabs;
-
+    [SerializeField] public MapResource[] tropic_grass_prefab;
+    [SerializeField] public MapResource[] winter_tree_prefabs;
+    [SerializeField] public MapResource[] winter_grass_prefabs;
     //[SerializeField] public PlayableObject[] building_prefabs;
 }

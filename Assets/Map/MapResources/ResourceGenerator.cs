@@ -67,6 +67,14 @@ namespace Assets.Map.MapResources
             return manager.grass_prefabs[prefNum];
         }
 
+        private MapResource ChooseTropicGrassPrefab()
+        {
+            if (manager == null)
+                Awake();
+            int prefNum = UnityEngine.Random.Range(0, manager.tropic_grass_prefab.Length - 1);
+            return manager.tropic_grass_prefab[prefNum];
+        }
+
         private MapResource ChooseDesertPrefab()
         {
             if (manager == null)
@@ -91,6 +99,24 @@ namespace Assets.Map.MapResources
             return manager.forest_prefabs[prefNum];
         }
 
+        private MapResource ChooseWinterTreePrefab()
+        {
+            if (manager == null)
+                Awake();
+            int prefNum = UnityEngine.Random.Range(0, manager.winter_tree_prefabs.Length - 1);
+
+            return manager.winter_tree_prefabs[prefNum];
+        }
+
+        private MapResource ChooseWinterGrassPrefab()
+        {
+            if (manager == null)
+                Awake();
+            int prefNum = UnityEngine.Random.Range(0, manager.winter_grass_prefabs.Length - 1);
+
+            return manager.winter_grass_prefabs[prefNum];
+        }
+
         private int GetTerrainCellsCount(HexGrid grid)
         {
             int count = 0;
@@ -105,6 +131,15 @@ namespace Assets.Map.MapResources
             int count = 0;
             foreach (var cell in grid.cellList)
                 if (cell.Type == CellType.tropic)
+                    count++;
+            return count;
+        }
+
+        private int GetWinterCellsCount(HexGrid grid)
+        {
+            int count = 0;
+            foreach (var cell in grid.cellList)
+                if (cell.Type == CellType.taiga || cell.Type == CellType.winter)
                     count++;
             return count;
         }
@@ -165,12 +200,12 @@ namespace Assets.Map.MapResources
                 }
         }
 
-        public void GenerateTree(HexGrid grid)
+        public void GenerateTerrainTree(HexGrid grid)
         {
             int startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
             while(grid.cellList[startCell].Type != CellType.terrain)
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
-            int treeChunkCount = UnityEngine.Random.Range(GetPercent(GetTerrainCellsCount(grid), 5), GetPercent(GetTerrainCellsCount(grid), 10));
+            int treeChunkCount = UnityEngine.Random.Range(GetPercent(GetTerrainCellsCount(grid), 9), GetPercent(GetTerrainCellsCount(grid), 10));
             while(treeChunkCount >= 0)
             {
                 if(grid.cellList[startCell].Type == CellType.terrain)
@@ -190,8 +225,8 @@ namespace Assets.Map.MapResources
                                 treeCountOnCell = UnityEngine.Random.Range(1, 2);
                             else
                             {
-                                treeCountOnCell = UnityEngine.Random.Range(3,5);
-                                cell.SetTypeAndTexture(CellType.dirt);
+                                treeCountOnCell = UnityEngine.Random.Range(5,7);
+                                cell.SetTypeAndTexture(CellType.forest_dirt);
                             }
 
                             for(int i = 0; i < treeCountOnCell; i++)
@@ -234,7 +269,7 @@ namespace Assets.Map.MapResources
             int startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
             while (grid.cellList[startCell].Type != CellType.tropic)
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
-            int treeChunkCount = UnityEngine.Random.Range(GetPercent(GetTropicCellsCount(grid), 20), GetPercent(GetTropicCellsCount(grid), 40));
+            int treeChunkCount = UnityEngine.Random.Range(GetPercent(GetTropicCellsCount(grid), 60), GetPercent(GetTropicCellsCount(grid), 80));
             while (treeChunkCount >= 0)
             {
                 if (grid.cellList[startCell].Type == CellType.tropic)
@@ -254,8 +289,8 @@ namespace Assets.Map.MapResources
                                 treeCountOnCell = UnityEngine.Random.Range(2, 3);
                             else
                             {
-                                treeCountOnCell = UnityEngine.Random.Range(4, 6);
-                                //cell.SetTypeAndTexture(CellType.dirt);
+                                treeCountOnCell = UnityEngine.Random.Range(8, 10);
+                                cell.SetTypeAndTexture(CellType.tropic_dirt);
                             }
 
                             for (int i = 0; i < treeCountOnCell; i++)
@@ -278,9 +313,8 @@ namespace Assets.Map.MapResources
                                 obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
                             }
                         }
-
+                        treeChunkCount--;
                     }
-                    treeChunkCount--;
                 }
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
                 while (grid.cellList[startCell].Type != CellType.tropic)
@@ -288,11 +322,69 @@ namespace Assets.Map.MapResources
             }
         }
 
-        private void GenerateForest(HexGrid grid)
+        public void GenerateWinterTree(HexGrid grid)
+        {
+            int startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
+            while (grid.cellList[startCell].Type != CellType.winter && grid.cellList[startCell].Type != CellType.taiga)
+                startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
+            int treeChunkCount = UnityEngine.Random.Range(GetPercent(GetWinterCellsCount(grid), 20), GetPercent(GetWinterCellsCount(grid), 30));
+            while (treeChunkCount >= 0)
+            {
+                if (grid.cellList[startCell].Type == CellType.winter || grid.cellList[startCell].Type == CellType.taiga)
+                {
+                    CellList neigboursCells = grid.cellList.GetNeighbours(startCell);
+                    neigboursCells.Add(grid.cellList[startCell], 0, 0);
+                    bool isRock = false;
+                    foreach (var cell in neigboursCells)
+                        if (cell.Type == CellType.rock)
+                            isRock = true;
+                    foreach (var cell in neigboursCells)
+                    {
+                        if (cell.Type == CellType.winter || cell.Type == CellType.taiga)
+                        {
+                            int treeCountOnCell = 0;
+                            if (isRock)
+                                treeCountOnCell = UnityEngine.Random.Range(2, 3);
+                            else
+                            {
+                                treeCountOnCell = UnityEngine.Random.Range(8, 10);
+                                //cell.SetTypeAndTexture(CellType.tropic_dirt);
+                            }
+
+                            for (int i = 0; i < treeCountOnCell; i++)
+                            {
+                                MapResource obj = Instantiate(ChooseWinterTreePrefab());
+                                obj.transform.SetParent(transform);
+                                Vector3 pos = cell.transform.position;
+                                Vector3 scale = obj.transform.localScale;
+
+                                pos.y += obj.transform.localScale.y * 0.04f;
+                                obj.transform.position = pos;
+
+                                float scaling = UnityEngine.Random.Range(-0.5f, 0.5f);
+                                scale.x += scaling;
+                                scale.y += scaling;
+                                scale.z += scaling;
+                                obj.transform.localScale = scale;
+
+                                obj.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(-180, 180), 0f);
+                                obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
+                            }
+                        }
+                        treeChunkCount--;
+                    }
+                }
+                startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
+                while (grid.cellList[startCell].Type != CellType.winter && grid.cellList[startCell].Type != CellType.taiga)
+                    startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
+            }
+        }
+
+        private void GenerateForestBush(HexGrid grid)
         {
             foreach(var cell in grid.cellList)
             {
-                if(cell.Type == CellType.dirt)
+                if(cell.Type == CellType.forest_dirt)
                 {
                     int grassCount = UnityEngine.Random.Range(1, 5);
                     while(grassCount >= 0)
@@ -319,10 +411,10 @@ namespace Assets.Map.MapResources
             }
         }
 
-        private void GenerateBush(HexGrid grid)
+        private void GenerateTerrainBush(HexGrid grid)
         {
             foreach (var cell in grid.cellList)
-                if (cell.Type == CellType.terrain || cell.Type == CellType.dirt || cell.Type == CellType.taiga)
+                if (cell.Type == CellType.terrain || cell.Type == CellType.forest_dirt)
                 {
                     int spawnChance = UnityEngine.Random.Range(0, 10);
                     if (spawnChance > 5)
@@ -331,6 +423,40 @@ namespace Assets.Map.MapResources
                         while(grassCount != 0)
                         {
                             MapResource obj = Instantiate(ChooseGrassPrefab());
+                            obj.transform.SetParent(transform);
+                            Vector3 pos = cell.transform.position;
+                            Vector3 scale = obj.transform.localScale;
+
+                            pos.y += obj.transform.localScale.y * 0.02f;
+                            obj.transform.position = pos;
+
+                            float scaling = UnityEngine.Random.Range(-0.3f, 0.3f);
+                            scale.x += scaling;
+                            scale.y += scaling;
+                            scale.z += scaling;
+                            obj.transform.localScale = scale;
+
+                            obj.transform.rotation = Quaternion.Euler(0f, UnityEngine.Random.Range(-180, 180), 0f);
+                            obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
+
+                            grassCount--;
+                        }
+                    }
+                }
+        }
+
+        private void GenerateTropicBush(HexGrid grid)
+        {
+            foreach (var cell in grid.cellList)
+                if (cell.Type == CellType.tropic || cell.Type == CellType.tropic_dirt)
+                {
+                    int spawnChance = UnityEngine.Random.Range(0, 10);
+                    if (spawnChance > 5)
+                    {
+                        int grassCount = UnityEngine.Random.Range(6, 8);
+                        while (grassCount != 0)
+                        {
+                            MapResource obj = Instantiate(ChooseTropicGrassPrefab());
                             obj.transform.SetParent(transform);
                             Vector3 pos = cell.transform.position;
                             Vector3 scale = obj.transform.localScale;
@@ -382,7 +508,41 @@ namespace Assets.Map.MapResources
                             obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
 
                             grassCount--;
-                            ;                       }
+                        }
+                    }
+                }
+        }
+
+        private void GenerateWinterBush(HexGrid grid)
+        {
+            foreach (var cell in grid.cellList)
+                if (cell.Type == CellType.winter || cell.Type == CellType.taiga)
+                {
+                    int spawnChance = UnityEngine.Random.Range(0, 11);
+                    if (spawnChance > 3)
+                    {
+                        int grassCount = UnityEngine.Random.Range(1, 6);
+                        while (grassCount != 0)
+                        {
+                            MapResource obj = Instantiate(ChooseWinterGrassPrefab());
+                            obj.transform.SetParent(transform);
+                            Vector3 pos = cell.transform.position;
+                            Vector3 scale = obj.transform.localScale;
+
+                            pos.y += obj.transform.localScale.y * 0.02f;
+                            obj.transform.position = pos;
+
+                            float scaling = UnityEngine.Random.Range(-0.4f, 0.4f);
+                            scale.x += scaling;
+                            scale.y += scaling;
+                            scale.z += scaling;
+                            obj.transform.localScale = scale;
+
+                            obj.transform.rotation = Quaternion.Euler(0f, UnityEngine.Random.Range(-180, 180), 0f);
+                            obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
+
+                            grassCount--;
+                        }
                     }
                 }
         }
@@ -391,7 +551,7 @@ namespace Assets.Map.MapResources
         {
             foreach(var cell in grid.cellList)
             {
-                if(cell.Type == CellType.terrain || cell.Type == CellType.dirt)
+                if(cell.Type == CellType.terrain || cell.Type == CellType.forest_dirt)
                 {
 
                 }
@@ -402,11 +562,15 @@ namespace Assets.Map.MapResources
         {
 
             GenerateRock(grid);
-            GenerateTree(grid);
-            GenerateBush(grid);
-            GenerateForest(grid);
+            GenerateTerrainTree(grid);
             GenerateTropicTree(grid);
+            GenerateWinterTree(grid);
+
+            GenerateForestBush(grid);
             GenerateDesertBush(grid);
+            GenerateTropicBush(grid);
+            GenerateTerrainBush(grid);
+            GenerateWinterBush(grid);
         }
     }
 }
