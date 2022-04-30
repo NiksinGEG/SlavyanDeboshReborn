@@ -59,9 +59,14 @@ public class MoveSystem : IECSSystem
                 c.transform.position = newPoint;
                 c.t = newT;
             }
-            
         }
-        
+
+        var net_c = c.gameObject.GetComponent<NetComponent>();
+        if (net_c != null)
+        {
+            net_c.ComponentToSend = c;
+            net_c.NeedSend = true;
+        }
     }
 
     public override void Run()
