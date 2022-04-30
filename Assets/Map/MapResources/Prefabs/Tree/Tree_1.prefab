@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3334299294348212472}
   - component: {fileID: -3369142624235777345}
-  - component: {fileID: 5285200959279031312}
   - component: {fileID: -8167516905708929707}
   - component: {fileID: 3604163818633755237}
   - component: {fileID: 5248083248997379584}
@@ -48,45 +47,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5128935531656d64e9e6bf06d5f3fe9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5285200959279031312
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8025185576591580775}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91eb922dc57b0db4aa462af65ae76c99, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MouseLKM:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: -3369142624235777345}
-        m_TargetAssemblyTypeName: MapResource, Assembly-CSharp
-        m_MethodName: Select
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  MouseRKM:
-    m_PersistentCalls:
-      m_Calls: []
-  MouseWheelUp:
-    m_PersistentCalls:
-      m_Calls: []
-  MouseWheelDown:
-    m_PersistentCalls:
-      m_Calls: []
-  KeyPressed:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &-8167516905708929707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99,42 +59,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bec5ccfbb28dc864b8a2efdc421df6cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnSelect:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDeselect:
-    m_PersistentCalls:
-      m_Calls: []
-  WhileSelected:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: -3369142624235777345}
-        m_TargetAssemblyTypeName: MapResource, Assembly-CSharp
-        m_MethodName: WhileSelected
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  WhileDeselected:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: -3369142624235777345}
-        m_TargetAssemblyTypeName: MapResource, Assembly-CSharp
-        m_MethodName: WhileDeselected
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!33 &3604163818633755237
 MeshFilter:
   m_ObjectHideFlags: 0

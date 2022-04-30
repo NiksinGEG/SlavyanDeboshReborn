@@ -7,10 +7,33 @@ using Assets.Scripts.Components;
 
 public class SelectionSystem : IECSSystem
 {
-    private float LastClickTime = 0f;
-    public const float ClickDelay = 0.3f;
-
     public SelectionSystem(ECSService s) : base(s) { }
+
+    public void OnMouseLKM(RaycastHit hit)
+    {
+        Selectable c = hit.transform.gameObject.GetComponent<Selectable>();
+        if (c == null)
+            return;
+        Select(c);
+    }
+
+    public void OnMouseRKM(RaycastHit hit)
+    {
+        List<Selectable> selected_c = new ECSFilter().GetComponents<Selectable>(c => c.IsSelected);
+        if(selected_c.Count > 0)
+        {
+            Movable mov_c = selected_c[0].gameObject.GetComponent<Movable>();
+            if (mov_c == null)
+                return;
+            Service.GetSystem<MoveSystem>().SetWay(mov_c, hit);
+        }
+    }
+
+    public override void Init()
+    {
+        Service.GetSystem<InputSystem>().MouseDownLKM += OnMouseLKM;
+        Service.GetSystem<InputSystem>().MouseDownRKM += OnMouseRKM;
+    }
 
     public void Select(Selectable comp)
     {
@@ -57,25 +80,6 @@ public class SelectionSystem : IECSSystem
         }
     }
 
-    /// <summary>
-    /// Вызывать этот метод для проверки ввода мыши (учитывает задержку)<br/>
-    /// Также может изменять LastClickTime!
-    /// </summary>
-    /// <returns></returns>
-    private bool InputTimeCheck()
-    {
-        bool res = Time.realtimeSinceStartup - LastClickTime > ClickDelay;
-        if(res)
-            LastClickTime = Time.realtimeSinceStartup;
-        return res;
-    }
-
-    private void HandleSelectedLKM(Selectable component)
-    {
-        if (!InputTimeCheck())
-            return;
-    }
-
     private int GetComponentTeam()
     {
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -92,25 +96,6 @@ public class SelectionSystem : IECSSystem
         return 0;
     }
 
-    private void HandleSelectedRKM(Selectable component)
-    {
-        if (!InputTimeCheck())
-            return;
-        Movable mov_c = component.gameObject.GetComponent<Movable>();
-        if (mov_c != null)
-        {
-            Service.GetSystem<MoveSystem>().SetWay(mov_c);
-        }
-
-        Attack attack_c = component.gameObject.GetComponent<Attack>();
-        if (attack_c != null)
-        {
-            GetComponentTeam();
-            Debug.Log("GetComponentTeam");
-            Debug.Log("Attack != null");
-        }
-    }
-
     public override void Run()
     {
         ECSFilter f = new ECSFilter();
@@ -118,13 +103,7 @@ public class SelectionSystem : IECSSystem
         foreach(var c in components)
         {
             if (c.IsSelected)
-            {
                 WhileSelected(c);
-                if (Input.GetMouseButton(0))
-                    HandleSelectedLKM(c);
-                if (Input.GetMouseButton(1))
-                    HandleSelectedRKM(c);
-            }
             else
                 WhileDeselected(c);
         }

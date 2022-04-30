@@ -73,49 +73,41 @@ public class MoveSystem : IECSSystem
     }
 
     //TODO: оптимизировать GetWay
-    public void SetWay(Movable comp)
+    public void SetWay(Movable comp, RaycastHit hit)
     {
-        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(inputRay, out hit))
-            if (hit.transform.gameObject.GetComponentInParent<HexGridChunk>() != null) //if clicked at cell of a map
-            {
-                var grid = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>();
-                var endCell = grid.GetByPosition(hit.point);
-                var startPos = comp.gameObject.transform.position;
-                var startCell = grid.GetByPosition(startPos);
+        if (hit.transform.gameObject.GetComponentInParent<HexGridChunk>() == null) //if clicked at cell of a map
+            return;
+        var grid = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>();
+        var endCell = grid.GetByPosition(hit.point);
+        var startPos = comp.gameObject.transform.position;
+        var startCell = grid.GetByPosition(startPos);
 
-                comp.WayCells = new List<Vector3>();
-                List<HexCell> WayCells = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>().GetWay((int)comp.moveType, startCell, endCell);
-                comp.WayCells.Add(comp.transform.position);
-                foreach (var cell in WayCells)
-                    comp.WayCells.Add(cell.transform.position);
-            }
+        comp.WayCells = new List<Vector3>();
+        List<HexCell> WayCells = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>().GetWay((int)comp.moveType, startCell, endCell);
+        comp.WayCells.Add(comp.transform.position);
+        foreach (var cell in WayCells)
+            comp.WayCells.Add(cell.transform.position);
     }
 
 
     //TODO: ловит ексепшн, видимо потому что при создании List<HexCell> вызывается конструктор HexCell(), который на побочном потоке вызывать нельзя
-    public async void SetWayAsync(Movable comp)
+    public async void SetWayAsync(Movable comp, RaycastHit hit)
     {
-        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(inputRay, out hit))
-            if (hit.transform.gameObject.GetComponentInParent<HexGridChunk>() != null) //if clicked at cell of a map
-            {
-                var grid = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>();
-                List<HexCell> WayCells = new List<HexCell>();
-                await Task.Run(() =>
-                {
-                    var endCell = grid.GetByPosition(hit.point);
-                    var startPos = comp.gameObject.transform.position;
-                    var startCell = grid.GetByPosition(startPos);
+        if (hit.transform.gameObject.GetComponentInParent<HexGridChunk>() == null) //if clicked at cell of a map
+            return;
+        var grid = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>();
+        List<HexCell> WayCells = new List<HexCell>();
+        await Task.Run(() =>
+        {
+            var endCell = grid.GetByPosition(hit.point);
+            var startPos = comp.gameObject.transform.position;
+            var startCell = grid.GetByPosition(startPos);
 
-                    WayCells = grid.GetWay((int)comp.moveType, startCell, endCell);
-                });
-                comp.WayCells = new List<Vector3>();
-                comp.WayCells.Add(comp.transform.position);
-                foreach (var cell in WayCells)
-                    comp.WayCells.Add(cell.transform.position);
-            }
+            WayCells = grid.GetWay((int)comp.moveType, startCell, endCell);
+        });
+        comp.WayCells = new List<Vector3>();
+        comp.WayCells.Add(comp.transform.position);
+        foreach (var cell in WayCells)
+            comp.WayCells.Add(cell.transform.position);
     }
 }
