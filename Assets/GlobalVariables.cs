@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using UnityEngine;
 
 public static class GlobalVariables
@@ -9,4 +10,6 @@ public static class GlobalVariables
     public static string HostAddress;
 
     public static Convertor convertor;
+
+    public static NetworkStream NetStream;
 }

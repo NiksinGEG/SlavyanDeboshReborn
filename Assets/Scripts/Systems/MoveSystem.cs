@@ -60,13 +60,6 @@ public class MoveSystem : IECSSystem
                 c.t = newT;
             }
         }
-
-        var net_c = c.gameObject.GetComponent<NetComponent>();
-        if (net_c != null)
-        {
-            net_c.ComponentToSend = c;
-            net_c.NeedSend = true;
-        }
     }
 
     public override void Run()
@@ -92,6 +85,14 @@ public class MoveSystem : IECSSystem
         comp.WayCells.Add(comp.transform.position);
         foreach (var cell in WayCells)
             comp.WayCells.Add(cell.transform.position);
+
+
+        var net_c = comp.gameObject.GetComponent<NetComponent>();
+        if (net_c != null)
+        {
+            net_c.ComponentToSend = comp;
+            net_c.NeedSend = true;
+        }
     }
 
 

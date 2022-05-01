@@ -119,8 +119,9 @@ public class MainMenuScript : MonoBehaviour
         Client_output.text = "Got stream...";
         byte[] resp = new byte[sizeof(int)];
         stream.Read(resp, 0, sizeof(int));
+        Debug.Log("readed" + BitConverter.ToInt32(resp, 0).ToString());
         Client_output.text = $"Recieved response...";
-        GlobalVariables.Seed = System.BitConverter.ToInt32(resp, 0);
+        GlobalVariables.Seed = BitConverter.ToInt32(resp, 0);
 
         Client_output.text = $"Readed seed {GlobalVariables.Seed}!";
 

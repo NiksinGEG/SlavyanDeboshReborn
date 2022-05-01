@@ -2,6 +2,7 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets.Scripts.Systems.Net;
 
 public class NetSystem : IECSSystem
 {
@@ -29,9 +30,17 @@ public class NetSystem : IECSSystem
         return sb.ToString();
     }
 
-    public void Send(System.Type type, IECSComponent compToSend, NetComponent netComp)
+    private void Send(System.Type type, IECSComponent compToSend, NetComponent netComp)
     {
-
+        Serializer s = new Serializer();
+        s.SerializeField("Component", compToSend.Serialize());
+        s.SerializeField("Id", netComp.Id);
+        s.SerializeField("Type", type);
+        string component = s.ToString();
+        s = new Serializer();
+        s.SerializeField("NetFrame", component);
+        Debug.Log("Sending:\n");
+        Debug.Log(s.ToString());
     }
 
     public override void Run()
@@ -42,9 +51,8 @@ public class NetSystem : IECSSystem
         {
             if(c.NeedSend)
             {
-                Debug.Log(c.ComponentToSend.Serialize());
+                Send(c.ComponentToSend.GetType(), c.ComponentToSend, c);
                 c.NeedSend = false;
-                //c.ComponentToSend.
             }
         }
     }
