@@ -206,7 +206,7 @@ namespace Assets.Map.MapResources
             while(grid.cellList[startCell].Type != CellType.terrain)
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
 
-            int treeChunkCount = GetPercent(GetTerrainCellsCount(grid), GlobalVariables.convertor.standartTreeProcent);
+            int treeChunkCount = GetPercent(GetTerrainCellsCount(grid), GlobalVariables.generationSettings.standartTreeProcent);
 
             while(treeChunkCount >= 0)
             {
@@ -270,7 +270,7 @@ namespace Assets.Map.MapResources
             int startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
             while (grid.cellList[startCell].Type != CellType.tropic)
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
-            int treeChunkCount = GetPercent(GetTropicCellsCount(grid), GlobalVariables.convertor.tropicTreeProcent);
+            int treeChunkCount = GetPercent(GetTropicCellsCount(grid), GlobalVariables.generationSettings.tropicTreeProcent);
             while (treeChunkCount >= 0)
             {
                 if (grid.cellList[startCell].Type == CellType.tropic)
@@ -329,7 +329,7 @@ namespace Assets.Map.MapResources
             int startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
             while (grid.cellList[startCell].Type != CellType.winter && grid.cellList[startCell].Type != CellType.taiga)
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
-            int treeChunkCount = GetPercent(GetWinterCellsCount(grid), GlobalVariables.convertor.winterTreeProcent); ;
+            int treeChunkCount = GetPercent(GetWinterCellsCount(grid), GlobalVariables.generationSettings.winterTreeProcent); ;
             while (treeChunkCount >= 0)
             {
                 if (grid.cellList[startCell].Type == CellType.winter || grid.cellList[startCell].Type == CellType.taiga)

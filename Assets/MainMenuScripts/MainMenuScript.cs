@@ -116,8 +116,9 @@ public class MainMenuScript : MonoBehaviour
         Client_output.text = "Got stream...";
         byte[] resp = new byte[sizeof(int)];
         stream.Read(resp, 0, sizeof(int));
+        Debug.Log("readed" + BitConverter.ToInt32(resp, 0).ToString());
         Client_output.text = $"Recieved response...";
-        GlobalVariables.Seed = System.BitConverter.ToInt32(resp, 0);
+        GlobalVariables.Seed = BitConverter.ToInt32(resp, 0);
 
         Client_output.text = $"Readed seed {GlobalVariables.Seed}!";
 
@@ -133,7 +134,7 @@ public class MainMenuScript : MonoBehaviour
     public void SwitchTropicTreeProcentFieldValue()
     {
         tropicTreeProcentField.text = tropicTreeProcentSlider.value.ToString();
-        GlobalVariables.convertor.tropicTreeProcent = Convert.ToInt32(tropicTreeProcentField.text);
+        GlobalVariables.generationSettings.tropicTreeProcent = Convert.ToInt32(tropicTreeProcentField.text);
     }
 
     public void SwitchTropicTreeProcentSliderValue()
@@ -144,7 +145,7 @@ public class MainMenuScript : MonoBehaviour
     public void SwitchStandartTreeProcentFieldValue()
     {
         standartTreeProcentField.text = standartTreeProcentSlider.value.ToString();
-        GlobalVariables.convertor.standartTreeProcent = Convert.ToInt32(standartTreeProcentField.text);
+        GlobalVariables.generationSettings.standartTreeProcent = Convert.ToInt32(standartTreeProcentField.text);
     }
 
     public void SwitchStandartTreeProcentSliderValue()
@@ -155,7 +156,7 @@ public class MainMenuScript : MonoBehaviour
     public void SwitchWinterTreeProcentFieldValue()
     {
         winterTreeProcentField.text = winterTreeProcentSlider.value.ToString();
-        GlobalVariables.convertor.winterTreeProcent = Convert.ToInt32(winterTreeProcentField.text);
+        GlobalVariables.generationSettings.winterTreeProcent = Convert.ToInt32(winterTreeProcentField.text);
     }
 
     public void SwitchWinterTreeProcentSliderValue()
@@ -165,18 +166,18 @@ public class MainMenuScript : MonoBehaviour
 
     public void SwitchXField()
     {
-        GlobalVariables.convertor.terrainChunkCountX = Convert.ToInt32(chunkCountXField.text);
+        GlobalVariables.generationSettings.terrainChunkCountX = Convert.ToInt32(chunkCountXField.text);
     }
 
     public void SwitchYField()
     {
-        GlobalVariables.convertor.terrainChunkCountY = Convert.ToInt32(chunkCountYField.text);
+        GlobalVariables.generationSettings.terrainChunkCountY = Convert.ToInt32(chunkCountYField.text);
     }
 
     public void SwitchRockProcentFieldValue()
     {
         rockProcentField.text = rockProcentSlider.value.ToString();
-        GlobalVariables.convertor.rockProcent = Convert.ToInt32(rockProcentField.text);
+        GlobalVariables.generationSettings.rockProcent = Convert.ToInt32(rockProcentField.text);
     }
 
     public void SwitchRockProcentSliderValue()
@@ -194,7 +195,7 @@ public class MainMenuScript : MonoBehaviour
     public void SwitchMainlandsCountFieldValue()
     {
         mainlandsCountField.text = mainlandsCountSlider.value.ToString();
-        GlobalVariables.convertor.mainlandsCount = Convert.ToInt32(mainlandsCountField.text);
+        GlobalVariables.generationSettings.mainlandsCount = Convert.ToInt32(mainlandsCountField.text);
     }
 
     public void SwitchMainlandsCountSliderValue()
@@ -241,8 +242,8 @@ public class MainMenuScript : MonoBehaviour
     public void OpenGenerationMenu()
     {
         ShowMenu("Generation");
-        GlobalVariables.convertor.terrainChunkCountX = 35;
-        GlobalVariables.convertor.terrainChunkCountY = 21;
+        GlobalVariables.generationSettings.terrainChunkCountX = 35;
+        GlobalVariables.generationSettings.terrainChunkCountY = 21;
 
         GlobalVariables.convertor.tropicTreeProcent = 50;
         GlobalVariables.convertor.standartTreeProcent = 50;

@@ -59,6 +59,15 @@ namespace Assets.Scripts.Systems.Net
             return _sb.ToString();
         }
 
+        private string RemoveSpaces(string s)
+        {
+            string res = "";
+            for(int i = 0; i < s.Length; i++)
+                if (s[i] != ' ' && s[i] != '\n')
+                    res += s[i];
+            return res;
+        }
+
         private List<string> DivideByObjects(string s)
         {
             List<string> vals = new List<string>();
@@ -87,6 +96,7 @@ namespace Assets.Scripts.Systems.Net
 
         private Dictionary<string, string> Parse(string s)
         {
+            s = RemoveSpaces(s);
             Dictionary<string, string> res = new Dictionary<string, string>();
             List<string> objects = DivideByObjects(s);
             foreach(string obj in objects)
