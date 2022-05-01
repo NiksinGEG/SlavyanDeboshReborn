@@ -24,7 +24,6 @@ namespace Assets.Map.WorldMap
         static int tropicMinChance;
         static int desertMinChance;
 
-
         static int terrainCells;
 
         static CellList neighbourCells;

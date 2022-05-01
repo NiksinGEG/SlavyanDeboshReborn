@@ -205,7 +205,7 @@ namespace Assets.Map.MapResources
             int startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
             while(grid.cellList[startCell].Type != CellType.terrain)
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
-            int treeChunkCount = UnityEngine.Random.Range(GetPercent(GetTerrainCellsCount(grid), 9), GetPercent(GetTerrainCellsCount(grid), 10));
+            int treeChunkCount = GetPercent(GetTerrainCellsCount(grid), GlobalVariables.convertor.standartTreeProcent);
             while(treeChunkCount >= 0)
             {
                 if(grid.cellList[startCell].Type == CellType.terrain)
@@ -251,10 +251,9 @@ namespace Assets.Map.MapResources
                                 //treeList.Add(obj);  //??? начем, а главное захуя 
                                 //А затем, что нужно будет как то проверить где деревья находятся при постановке к примеру лесопилки
                             }
-
+                            treeChunkCount--;
                         }
                     }
-                    treeChunkCount--;
                 }
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
                 while (grid.cellList[startCell].Type != CellType.terrain)
@@ -269,7 +268,7 @@ namespace Assets.Map.MapResources
             int startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
             while (grid.cellList[startCell].Type != CellType.tropic)
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
-            int treeChunkCount = UnityEngine.Random.Range(GetPercent(GetTropicCellsCount(grid), 60), GetPercent(GetTropicCellsCount(grid), 80));
+            int treeChunkCount = GetPercent(GetTropicCellsCount(grid), GlobalVariables.convertor.tropicTreeProcent);
             while (treeChunkCount >= 0)
             {
                 if (grid.cellList[startCell].Type == CellType.tropic)
@@ -312,8 +311,9 @@ namespace Assets.Map.MapResources
                                 obj.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(-180, 180), 0f);
                                 obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
                             }
+                            treeChunkCount--;
                         }
-                        treeChunkCount--;
+
                     }
                 }
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
@@ -327,7 +327,7 @@ namespace Assets.Map.MapResources
             int startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
             while (grid.cellList[startCell].Type != CellType.winter && grid.cellList[startCell].Type != CellType.taiga)
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
-            int treeChunkCount = UnityEngine.Random.Range(GetPercent(GetWinterCellsCount(grid), 20), GetPercent(GetWinterCellsCount(grid), 30));
+            int treeChunkCount = GetPercent(GetWinterCellsCount(grid), GlobalVariables.convertor.winterTreeProcent); ;
             while (treeChunkCount >= 0)
             {
                 if (grid.cellList[startCell].Type == CellType.winter || grid.cellList[startCell].Type == CellType.taiga)
@@ -370,8 +370,9 @@ namespace Assets.Map.MapResources
                                 obj.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(-180, 180), 0f);
                                 obj.SetInnerPosition(UnityEngine.Random.Range(-0.8f, 0.8f), UnityEngine.Random.Range(-0.8f, 0.8f));
                             }
+                            treeChunkCount--;
                         }
-                        treeChunkCount--;
+
                     }
                 }
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);

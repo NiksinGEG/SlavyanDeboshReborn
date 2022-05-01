@@ -27,11 +27,19 @@ namespace Assets.Map.WorldMap
 			set { cells = value; }
         }
 
-		[ContextMenu("Generate game field")]
 		void Awake()
 		{
-			chunkCountX = 35;//35
-			chunkCountZ = 21;//35
+			if(GlobalVariables.convertor.terrainChunkCountX == 0 || GlobalVariables.convertor.terrainChunkCountY == 0)
+            {
+				chunkCountX = 35;
+				chunkCountZ = 21;
+            }
+			else
+            {
+				chunkCountX = GlobalVariables.convertor.terrainChunkCountX;//35
+				chunkCountZ = GlobalVariables.convertor.terrainChunkCountY;//35
+            }
+
 
 			cellCountX = chunkCountX * HexMetrics.chunkSizeX;
 			cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;

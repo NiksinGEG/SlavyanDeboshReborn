@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,6 +10,18 @@ using System.Net.Sockets;
 
 public class MainMenuScript : MonoBehaviour
 {
+    public InputField chunkCountXField;
+    public InputField chunkCountYField;
+
+    public Slider tropicTreeProcentSlider;
+    public Slider standartTreeProcentSlider;
+    public Slider winterTreeProcentSlider;
+
+    public InputField tropicTreeProcentField;
+    public InputField standartTreeProcentField;
+    public InputField winterTreeProcentField;
+
+
     public InputField seed_field;
     public Text Address_text;
     public InputField host_addr_field;
@@ -113,5 +126,53 @@ public class MainMenuScript : MonoBehaviour
     {
         GlobalVariables.Seed = new System.Random().Next(1000);
         SceneManager.LoadScene("SampleScene");
+    }
+
+    public void SwitchTropicTreeProcentFieldValue()
+    {
+        tropicTreeProcentField.text = tropicTreeProcentSlider.value.ToString();
+        GlobalVariables.convertor.tropicTreeProcent = Convert.ToInt32(tropicTreeProcentField.text);
+    }
+
+    public void SwitchTropicTreeProcentSliderValue()
+    {
+        tropicTreeProcentSlider.value = Convert.ToInt32(tropicTreeProcentField.text);
+    }
+
+    public void SwitchStandartTreeProcentFieldValue()
+    {
+        standartTreeProcentField.text = standartTreeProcentSlider.value.ToString();
+        GlobalVariables.convertor.standartTreeProcent = Convert.ToInt32(standartTreeProcentField.text);
+    }
+
+    public void SwitchStandartTreeProcentSliderValue()
+    {
+        standartTreeProcentSlider.value = Convert.ToInt32(standartTreeProcentField.text);
+    }
+
+    public void SwitchWinterTreeProcentFieldValue()
+    {
+        winterTreeProcentField.text = winterTreeProcentSlider.value.ToString();
+        GlobalVariables.convertor.winterTreeProcent = Convert.ToInt32(winterTreeProcentField.text);
+    }
+
+    public void SwitchWinterTreeProcentSliderValue()
+    {
+        winterTreeProcentSlider.value = Convert.ToInt32(winterTreeProcentField.text);
+    }
+
+    public void SwitchXField()
+    {
+        GlobalVariables.convertor.terrainChunkCountX = Convert.ToInt32(chunkCountXField.text);
+    }
+
+    public void SwitchYField()
+    {
+        GlobalVariables.convertor.terrainChunkCountY = Convert.ToInt32(chunkCountYField.text);
+    }
+
+    public void OpenGenerationMenu()
+    {
+        ShowMenu("Generation");
     }
 }
