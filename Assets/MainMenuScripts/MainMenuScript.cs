@@ -27,6 +27,12 @@ public class MainMenuScript : MonoBehaviour
     public Slider mainlandsCountSlider;
     public InputField mainlandsCountField;
 
+    public Slider mixingBiomesSlider;
+    public InputField mixingBiomesField;
+
+    public InputField seedField;
+    public Button seedGenerateBtn;
+
     public InputField seed_field;
     public Text Address_text;
     public InputField host_addr_field;
@@ -56,7 +62,6 @@ public class MainMenuScript : MonoBehaviour
         System.Random rnd = new System.Random();
         GlobalVariables.Seed = rnd.Next(3000000);
         var creating_menu = Resources.FindObjectsOfTypeAll<Menu>()[0];
-        seed_field.text = GlobalVariables.Seed.ToString();
 
         //IPHostEntry entry = Dns.GetHostEntry(Dns.GetHostName());
         //IPAddress host_addr;// = entry.AddressList[0];
@@ -78,14 +83,6 @@ public class MainMenuScript : MonoBehaviour
 
     public void CreateGame()
     {
-        try
-        {
-            GlobalVariables.Seed = System.Convert.ToInt32(seed_field.text);
-        }
-        catch
-        {
-            GlobalVariables.Seed = new System.Random().Next(3000000);
-        }
         Host_output.text = $"Genered seed {GlobalVariables.Seed}...";
         //IPHostEntry entry = Dns.GetHostEntry(Dns.GetHostName());
         //IPAddress host_addr = IPAddress.Parse("127.0.0.1");//entry.AddressList[0];
@@ -129,7 +126,7 @@ public class MainMenuScript : MonoBehaviour
 
     public void EnterDevelopMode()
     {
-        GlobalVariables.Seed = new System.Random().Next(1000);
+        UnityEngine.Random.InitState(GlobalVariables.Seed);
         SceneManager.LoadScene("SampleScene");
     }
 
@@ -190,7 +187,7 @@ public class MainMenuScript : MonoBehaviour
         }
         catch
         {
-            rockProcentSlider.value = Convert.ToInt32(rockProcentField.text = "20");
+            rockProcentSlider.value = Convert.ToInt32(rockProcentField.text = "5");
         }
     }
 
@@ -212,6 +209,35 @@ public class MainMenuScript : MonoBehaviour
         }
     }
 
+    public void SwitchMixingBiomesFieldValue()
+    {
+        mixingBiomesField.text = mixingBiomesSlider.value.ToString();
+    }
+
+    public void SwitchMixingBiomesSliderValue()
+    {
+        try
+        {
+            mixingBiomesSlider.value = Convert.ToInt32(mixingBiomesField.text);
+        }
+        catch
+        {
+            mixingBiomesSlider.value = Convert.ToInt32(mixingBiomesField.text = "7");
+        }
+    }
+
+    public void SwitchSeedFieldValue()
+    {
+        GlobalVariables.Seed = Convert.ToInt32(seedField.text);
+        UnityEngine.Random.InitState(GlobalVariables.Seed);
+    }
+
+    public void GenerateSeedOnClick()
+    {
+        GlobalVariables.Seed = new System.Random().Next(3000000);
+        seedField.text = GlobalVariables.Seed.ToString();
+    }
+
     public void OpenGenerationMenu()
     {
         ShowMenu("Generation");
@@ -221,7 +247,11 @@ public class MainMenuScript : MonoBehaviour
         GlobalVariables.convertor.tropicTreeProcent = 50;
         GlobalVariables.convertor.standartTreeProcent = 50;
         GlobalVariables.convertor.winterTreeProcent = 50;
-        GlobalVariables.convertor.rockProcent = 20;
+        GlobalVariables.convertor.rockProcent = 5;
         GlobalVariables.convertor.mainlandsCount = 3;
+        GlobalVariables.convertor.mixingBiomesCount = 7;
+
+        GlobalVariables.Seed = new System.Random().Next(3000000);
+        seedField.text = GlobalVariables.Seed.ToString();
     }
 }

@@ -11,18 +11,21 @@ namespace Assets.Map.WorldMap
     {
         static int biomesMaxCellCount;
         static int maxChance;
+        public struct BiomeChances
+        {
+            public static int winterMaxChance;
+            public static int taigaMaxChance;
+            public static int standartMaxChance;
+            public static int tropicMaxChance;
+            public static int desertMaxChance;
 
-        static int winterMaxChance;
-        static int taigaMaxChance;
-        static int standartMaxChance;
-        static int tropicMaxChance;
-        static int desertMaxChance;
+            public static int winterMinChance;
+            public static int taigaMinChance;
+            public static int standartMinChance;
+            public static int tropicMinChance;
+            public static int desertMinChance;
+        }
 
-        static int winterMinChance;
-        static int taigaMinChance;
-        static int standartMinChance;
-        static int tropicMinChance;
-        static int desertMinChance;
 
         static int terrainCells;
 
@@ -61,37 +64,24 @@ namespace Assets.Map.WorldMap
         static void SetBiomesChance()
         {
             int tmp = maxChance;
-            desertMaxChance = tmp;
-            desertMinChance = tmp - biomesMaxCellCount;
+            BiomeChances.desertMaxChance = tmp;
+            BiomeChances.desertMinChance = tmp - biomesMaxCellCount;
             tmp -= biomesMaxCellCount;
 
-            tropicMaxChance = tmp + desertMaxChance - desertMinChance - 2;
-            tropicMinChance = tmp - biomesMaxCellCount;
+            BiomeChances.tropicMaxChance = tmp + BiomeChances.desertMaxChance - BiomeChances.desertMinChance - 2;
+            BiomeChances.tropicMinChance = tmp - biomesMaxCellCount;
             tmp -= biomesMaxCellCount;
 
-            standartMaxChance = tmp + 2;
-            standartMinChance = tmp - biomesMaxCellCount - 1;
+            BiomeChances.standartMaxChance = tmp + 2;
+            BiomeChances.standartMinChance = tmp - biomesMaxCellCount - 1;
             tmp -= biomesMaxCellCount;
 
-            taigaMaxChance = tmp;
-            taigaMinChance = tmp - biomesMaxCellCount - 3;
+            BiomeChances.taigaMaxChance = tmp;
+            BiomeChances.taigaMinChance = tmp - biomesMaxCellCount - 3;
             tmp -= biomesMaxCellCount;
 
-            winterMaxChance = tmp - 2;
-            winterMinChance = 0;
-
-            Debug.Log($"Spawn chances \n" +
-                $"Desert Max: {desertMaxChance}\n" +
-                $"Desert Min: {desertMinChance}\n" +
-                $"\nTropic Max: {tropicMaxChance}\n" +
-                $"Tropic Min: {tropicMinChance}\n" +
-                $"\nStandart Max: {standartMaxChance}\n" +
-                $"Standart Min: {standartMinChance}\n" +
-                $"\nTaiga Max: {taigaMaxChance}\n" +
-                $"Taiga Min: {taigaMinChance}\n" +
-                $"\nWinter Max: {winterMaxChance}\n" +
-                $"Winter Min: {winterMinChance}");
-            
+            BiomeChances.winterMaxChance = tmp - 2;
+            BiomeChances.winterMinChance = 0;
         }
 
         static CellList GenerateTrueRock(CellList cells)
@@ -137,25 +127,8 @@ namespace Assets.Map.WorldMap
 
         private static void GenerateCurve(HexCell cell, int chooseBiome)
         {
-            switch(chooseBiome)
-            {
-                case 1:
-                    cell.SetTypeAndTexture(CellType.tropic);
-                    break;
-                case 2:
-                    cell.SetTypeAndTexture(CellType.terrain);
-                    break;
-                case 3:
-                    cell.SetTypeAndTexture(CellType.taiga);
-                    break;
-                case 4:
-                    cell.SetTypeAndTexture(CellType.winter);
-                    break;
-                case 6:
-                    cell.SetTypeAndTexture(CellType.sand);
-                    break;
-            }
-            int curveNum = UnityEngine.Random.Range(7, 15);
+            cell.SetTypeAndTexture((CellType)chooseBiome);
+            int curveNum = GlobalVariables.convertor.mixingBiomesCount;
             while(curveNum >= 0)
             {
                 foreach (var nCell in cell.neighbours)
@@ -175,41 +148,41 @@ namespace Assets.Map.WorldMap
             {
                 if (cell.Type != CellType.water && cell.Type != CellType.rock)
                 {
-                    if ((desertMaxChance - (tropicMaxChance - desertMinChance)) <= cell.SpawnChance && desertMaxChance >= cell.SpawnChance)
+                    if ((BiomeChances.desertMaxChance - (BiomeChances.tropicMaxChance - BiomeChances.desertMinChance)) <= cell.SpawnChance && BiomeChances.desertMaxChance >= cell.SpawnChance)
                     {
                         cell.SetTypeAndTexture(CellType.sand);
                     }
-                    if(tropicMaxChance >= cell.SpawnChance && desertMinChance <= cell.SpawnChance)
+                    if(BiomeChances.tropicMaxChance >= cell.SpawnChance && BiomeChances.desertMinChance <= cell.SpawnChance)
                     {
                            int chooseBiome = UnityEngine.Random.Range(1, 7);
                            if (chooseBiome == 1 || chooseBiome == 6)
                                GenerateCurve(cell, chooseBiome);
                     }
-                    if (desertMinChance >= cell.SpawnChance && tropicMinChance <= cell.SpawnChance)
+                    if (BiomeChances.desertMinChance >= cell.SpawnChance && BiomeChances.tropicMinChance <= cell.SpawnChance)
                         cell.SetTypeAndTexture(CellType.tropic);
-                    if(tropicMinChance <= cell.SpawnChance && standartMaxChance >= cell.SpawnChance)
+                    if(BiomeChances.tropicMinChance <= cell.SpawnChance && BiomeChances.standartMaxChance >= cell.SpawnChance)
                     {
                         int chooseBiome = UnityEngine.Random.Range(1, 3);
                         if (chooseBiome == 1 || chooseBiome == 2)
                             GenerateCurve(cell, chooseBiome);
                     }
-                    if (tropicMinChance >= cell.SpawnChance && taigaMaxChance <= cell.SpawnChance)
+                    if (BiomeChances.tropicMinChance >= cell.SpawnChance && BiomeChances.taigaMaxChance <= cell.SpawnChance)
                         cell.SetTypeAndTexture(CellType.terrain);
-                    if (standartMinChance <= cell.SpawnChance && taigaMaxChance >= cell.SpawnChance)
+                    if (BiomeChances.standartMinChance <= cell.SpawnChance && BiomeChances.taigaMaxChance >= cell.SpawnChance)
                     {
                         int chooseBiome = UnityEngine.Random.Range(2, 4);
                         if (chooseBiome == 2 || chooseBiome == 3)
                             GenerateCurve(cell, chooseBiome);
                     }
-                    if (winterMaxChance <= cell.SpawnChance && standartMinChance >= cell.SpawnChance)
+                    if (BiomeChances.winterMaxChance <= cell.SpawnChance && BiomeChances.standartMinChance >= cell.SpawnChance)
                         cell.SetTypeAndTexture(CellType.taiga);
-                    if(taigaMinChance <= cell.SpawnChance && winterMaxChance >= cell.SpawnChance)
+                    if(BiomeChances.taigaMinChance <= cell.SpawnChance && BiomeChances.winterMaxChance >= cell.SpawnChance)
                     {
                         int chooseBiome = UnityEngine.Random.Range(3, 5);
                         if (chooseBiome == 3 || chooseBiome == 4)
                             GenerateCurve(cell, chooseBiome);
                     }
-                    if (taigaMinChance >= cell.SpawnChance && winterMinChance <= cell.SpawnChance)
+                    if (BiomeChances.taigaMinChance >= cell.SpawnChance && BiomeChances.winterMinChance <= cell.SpawnChance)
                         cell.SetTypeAndTexture(CellType.winter);
                 }
 

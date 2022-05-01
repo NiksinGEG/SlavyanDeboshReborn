@@ -15,4 +15,6 @@ public struct Convertor
     public int rockProcent;
 
     public int mainlandsCount;
+
+    public int mixingBiomesCount;
 }
