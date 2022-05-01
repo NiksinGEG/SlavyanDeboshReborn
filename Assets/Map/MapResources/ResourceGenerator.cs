@@ -205,7 +205,9 @@ namespace Assets.Map.MapResources
             int startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
             while(grid.cellList[startCell].Type != CellType.terrain)
                 startCell = UnityEngine.Random.Range(0, grid.cellList.Length);
+
             int treeChunkCount = GetPercent(GetTerrainCellsCount(grid), GlobalVariables.convertor.standartTreeProcent);
+
             while(treeChunkCount >= 0)
             {
                 if(grid.cellList[startCell].Type == CellType.terrain)
@@ -346,10 +348,7 @@ namespace Assets.Map.MapResources
                             if (isRock)
                                 treeCountOnCell = UnityEngine.Random.Range(2, 3);
                             else
-                            {
                                 treeCountOnCell = UnityEngine.Random.Range(8, 10);
-                                //cell.SetTypeAndTexture(CellType.tropic_dirt);
-                            }
 
                             for (int i = 0; i < treeCountOnCell; i++)
                             {
@@ -546,17 +545,6 @@ namespace Assets.Map.MapResources
                         }
                     }
                 }
-        }
-
-        private void GenerateGrass(HexGrid grid)
-        {
-            foreach(var cell in grid.cellList)
-            {
-                if(cell.Type == CellType.terrain || cell.Type == CellType.forest_dirt)
-                {
-
-                }
-            }
         }
 
         public void GenerateResource(HexGrid grid)

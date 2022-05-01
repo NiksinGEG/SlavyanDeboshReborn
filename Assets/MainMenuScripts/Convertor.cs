@@ -11,4 +11,8 @@ public struct Convertor
 
     public int terrainChunkCountX;
     public int terrainChunkCountY;
+
+    public int rockProcent;
+
+    public int mainlandsCount;
 }

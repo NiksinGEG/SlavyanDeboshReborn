@@ -28,6 +28,11 @@ namespace Assets.Map.WorldMap
 
         static CellList neighbourCells;
 
+        private static int GetPercent(int number, int percent)
+        {
+            return (number * percent) / 100;
+        }
+
         static void SetChance(CellList cells)
         {
             int tmp = 1;
@@ -102,11 +107,12 @@ namespace Assets.Map.WorldMap
             }
             return cells;
         }
+        
         static void GetTerrainCellsCount(CellList cells)
         {
             terrainCells = 0;
             for (int i = 0; i < cells.Length; i++)
-                if (cells[i].Type == CellType.terrain)
+                if (cells[i].Type != CellType.water)
                     terrainCells++;
         }
 
@@ -289,7 +295,7 @@ namespace Assets.Map.WorldMap
         }
         private static CellList GenerateMainlands(CellList cells)
         {
-            int mainlandCount = UnityEngine.Random.Range(3, 5);
+            int mainlandCount = GlobalVariables.convertor.mainlandsCount;
             int startCell = UnityEngine.Random.Range(0, cells.Length);
             int tryCount = 0;
             for (int i = 0; i < mainlandCount; i++)
@@ -342,7 +348,7 @@ namespace Assets.Map.WorldMap
             }
             return cells;
         }
-        private static CellList GenerateTransition(CellList cells, int startCell)
+        private static CellList GenerateTransition(CellList cells, int startCell, int maxCount)
         {
             neighbourCells = cells.GetNeighbours(startCell);
             int minRockEleation = cells[startCell].Elevation;
@@ -355,6 +361,7 @@ namespace Assets.Map.WorldMap
                 {
                     int index = cell.coords.MakeIndex(cells.CellCountX);
                     cells[index].Elevation = minRockEleation - 1;
+                    maxCount--;
                 }
             }
             CellList neighbourTerrainCells;
@@ -370,6 +377,7 @@ namespace Assets.Map.WorldMap
                         {
                             int tIndex = tCell.coords.MakeIndex(cells.CellCountX);
                             cells[tIndex].Elevation = indexCellElevation - 1;
+                            maxCount--;
                         }
                 }
             }
@@ -378,12 +386,12 @@ namespace Assets.Map.WorldMap
 
         private static CellList GenerateRock(CellList cells)
         {
-            int maxCount = UnityEngine.Random.Range(0, terrainCells / 20);
+            int maxCount = GetPercent(terrainCells, GlobalVariables.convertor.rockProcent);
             int startCell = UnityEngine.Random.Range(0, cells.Length);
             while (cells[startCell].Type == CellType.water)
                 startCell = UnityEngine.Random.Range(0, cells.Length);
             int tryCount = 0;
-            while (maxCount != 0)
+            while (maxCount >= 0)
             {
 
                 neighbourCells = cells.GetNeighbours(startCell);
@@ -397,7 +405,7 @@ namespace Assets.Map.WorldMap
                     int rndEvaluate = UnityEngine.Random.Range(3, 4);
                     cells[index].Elevation = rndEvaluate;
                     cells[index].Texture = CellTexture.winter_1;
-                    cells = GenerateTransition(cells, index);
+                    cells = GenerateTransition(cells, index, maxCount);
                     startCell = index;
                     maxCount--;
                 }

@@ -18,15 +18,8 @@ public class MainMap : MonoBehaviour
         grid.transform.position = Vector3.zero;
         grid.transform.SetParent(transform);
 
-
-
-        //resGen = FindObjectOfType<ResourceGenerator>();
-        //resGen.GenerateResource(grid);
-
-
-        //resGen.CombineMeshes();
-        //GenerateWay(grid);
-
+        resGen = FindObjectOfType<ResourceGenerator>();
+        resGen.GenerateResource(grid);
     }
 
 }

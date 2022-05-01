@@ -21,6 +21,11 @@ public class MainMenuScript : MonoBehaviour
     public InputField standartTreeProcentField;
     public InputField winterTreeProcentField;
 
+    public Slider rockProcentSlider;
+    public InputField rockProcentField;
+
+    public Slider mainlandsCountSlider;
+    public InputField mainlandsCountField;
 
     public InputField seed_field;
     public Text Address_text;
@@ -171,8 +176,52 @@ public class MainMenuScript : MonoBehaviour
         GlobalVariables.convertor.terrainChunkCountY = Convert.ToInt32(chunkCountYField.text);
     }
 
+    public void SwitchRockProcentFieldValue()
+    {
+        rockProcentField.text = rockProcentSlider.value.ToString();
+        GlobalVariables.convertor.rockProcent = Convert.ToInt32(rockProcentField.text);
+    }
+
+    public void SwitchRockProcentSliderValue()
+    {
+        try
+        {
+            rockProcentSlider.value = Convert.ToInt32(rockProcentField.text);
+        }
+        catch
+        {
+            rockProcentSlider.value = Convert.ToInt32(rockProcentField.text = "20");
+        }
+    }
+
+    public void SwitchMainlandsCountFieldValue()
+    {
+        mainlandsCountField.text = mainlandsCountSlider.value.ToString();
+        GlobalVariables.convertor.mainlandsCount = Convert.ToInt32(mainlandsCountField.text);
+    }
+
+    public void SwitchMainlandsCountSliderValue()
+    {
+        try
+        {
+            mainlandsCountSlider.value = Convert.ToInt32(mainlandsCountField.text);
+        }
+        catch
+        {
+            mainlandsCountSlider.value = Convert.ToInt32(mainlandsCountField.text = "3");
+        }
+    }
+
     public void OpenGenerationMenu()
     {
         ShowMenu("Generation");
+        GlobalVariables.convertor.terrainChunkCountX = 35;
+        GlobalVariables.convertor.terrainChunkCountY = 21;
+
+        GlobalVariables.convertor.tropicTreeProcent = 50;
+        GlobalVariables.convertor.standartTreeProcent = 50;
+        GlobalVariables.convertor.winterTreeProcent = 50;
+        GlobalVariables.convertor.rockProcent = 20;
+        GlobalVariables.convertor.mainlandsCount = 3;
     }
 }
