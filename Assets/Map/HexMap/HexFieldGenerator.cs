@@ -295,7 +295,7 @@ namespace Assets.Map.WorldMap
         }
         private static CellList GenerateMainlands(CellList cells)
         {
-            int mainlandCount = GlobalVariables.convertor.mainlandsCount;
+            int mainlandCount = GlobalVariables.generationSettings.mainlandsCount;
             int startCell = UnityEngine.Random.Range(0, cells.Length);
             int tryCount = 0;
             for (int i = 0; i < mainlandCount; i++)
@@ -386,7 +386,7 @@ namespace Assets.Map.WorldMap
 
         private static CellList GenerateRock(CellList cells)
         {
-            int maxCount = GetPercent(terrainCells, GlobalVariables.convertor.rockProcent);
+            int maxCount = GetPercent(terrainCells, GlobalVariables.generationSettings.rockProcent);
             int startCell = UnityEngine.Random.Range(0, cells.Length);
             while (cells[startCell].Type == CellType.water)
                 startCell = UnityEngine.Random.Range(0, cells.Length);

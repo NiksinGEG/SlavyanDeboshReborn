@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct Convertor
+public struct GenerationSettings
 {
     public int tropicTreeProcent;
     public int standartTreeProcent;

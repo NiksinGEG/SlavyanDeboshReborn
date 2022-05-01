@@ -29,15 +29,15 @@ namespace Assets.Map.WorldMap
 
 		void Awake()
 		{
-			if(GlobalVariables.convertor.terrainChunkCountX == 0 || GlobalVariables.convertor.terrainChunkCountY == 0)
+			if(GlobalVariables.generationSettings.terrainChunkCountX == 0 || GlobalVariables.generationSettings.terrainChunkCountY == 0)
             {
 				chunkCountX = 35;
 				chunkCountZ = 21;
             }
 			else
             {
-				chunkCountX = GlobalVariables.convertor.terrainChunkCountX;//35
-				chunkCountZ = GlobalVariables.convertor.terrainChunkCountY;//35
+				chunkCountX = GlobalVariables.generationSettings.terrainChunkCountX;//35
+				chunkCountZ = GlobalVariables.generationSettings.terrainChunkCountY;//35
             }
 
 

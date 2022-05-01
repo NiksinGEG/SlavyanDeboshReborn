@@ -9,7 +9,7 @@ public static class GlobalVariables
     public static int Port = 1849;
     public static string HostAddress;
 
-    public static Convertor convertor;
+    public static GenerationSettings generationSettings;
 
     public static NetworkStream NetStream;
 }
