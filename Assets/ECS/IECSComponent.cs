@@ -24,4 +24,11 @@ public class IECSComponent : MonoBehaviour
         ECSInstance.Instance().Components.Remove(component);
         Destroy(component);
     }
+
+    public virtual string Serialize()
+    {
+        return ToString();
+    }
+
+    public virtual void Set(string input) { }
 }
