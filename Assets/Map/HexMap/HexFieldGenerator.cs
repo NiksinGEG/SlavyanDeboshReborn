@@ -204,24 +204,35 @@ namespace Assets.Map.WorldMap
 
 
             //Генерируем сначала водный рельеф
-            sw.Start();
+
             Loger.Log("Logs\\HexMapGenerator.log", $"{DateTime.Now} - GenerateStartTerrain: START");
+            sw.Start();
             cells = GenerateStartTerrain(cells);
             sw.Stop();
             Loger.Log("Logs\\HexMapGenerator.log", $"{DateTime.Now} - GenerateStartTerrain: FINISH({sw.ElapsedMilliseconds}ms)");
 
             //Генерируем остальное
             //Сначала материковая часть
-            sw.Start();
+
             Loger.Log("Logs\\HexMapGenerator.log", $"{DateTime.Now} - GenerateMainlands: START");
+            sw.Start();
             cells = GenerateMainlands(cells);
             sw.Stop();
             Loger.Log("Logs\\HexMapGenerator.log", $"{DateTime.Now} - GenerateMainlands: FINISH({sw.ElapsedMilliseconds}ms)");
 
-
-            cells = DeleteFakeRivers(cells); 
             
+            Loger.Log("Logs\\HexMapGenerator.log", $"{DateTime.Now} - DeleteFakeRivers: START");
+            sw.Start();
+            cells = DeleteFakeRivers(cells);
+            sw.Stop();
+            Loger.Log("Logs\\HexMapGenerator.log", $"{DateTime.Now} - DeleteFakeRivers: FINISH({sw.ElapsedMilliseconds}ms)");
+
+
+            Loger.Log("Logs\\HexMapGenerator.log", $"{DateTime.Now} - GenerateRock: START");
+            sw.Start();
             cells = GenerateRock(cells);
+            sw.Stop();
+            Loger.Log("Logs\\HexMapGenerator.log", $"{DateTime.Now} - GenerateRock: FINISH({sw.ElapsedMilliseconds}ms)");
 
             //После удаления дерьма нужно 
             //Берем "экватор" и устанавливаем шансы на спавн. Чем больше, тем теплее)
@@ -304,17 +315,13 @@ namespace Assets.Map.WorldMap
             while (maxCount != 0)
             {
                 int nextCell = startCell;
-                neighbourCells = cells.GetNeighbours(nextCell);
+                neighbourCells = cells[nextCell].neighbours;
                 neighbourCells.Add(cells[startCell], 0, 0);
-                Loger.Log("Logs\\HexMapGenerator.log", $"\t\t{DateTime.Now} - ChooseNextMainlandCell: START");
                 nextCell = ChooseNextMainlandCell(nextCell, tryCount);
-                Loger.Log("Logs\\HexMapGenerator.log", $"\t\t{DateTime.Now} - ChooseNextMainlandCell: FINISH");
-                int index = neighbourCells[nextCell].coords.MakeIndex(cells.CellCountX);
-                cells[index].SetTypeAndTexture(CellType.terrain);
-                int rndEvaluate = UnityEngine.Random.Range(0, 1);
-                cells[index].Elevation = rndEvaluate;
-                waterList.Remove(cells[index]);
-                startCell = index;
+                cells[neighbourCells[nextCell].CellIndex].SetTypeAndTexture(CellType.terrain);;
+                cells[neighbourCells[nextCell].CellIndex].Elevation = 0;
+                waterList.Remove(cells[neighbourCells[nextCell].CellIndex]);
+                startCell = neighbourCells[nextCell].CellIndex;
                 maxCount--;
                 if (tryCount == 3)
                     startCell = waterList[UnityEngine.Random.Range(0, waterList.Count)].CellIndex;
@@ -410,7 +417,12 @@ namespace Assets.Map.WorldMap
 
             }
             foreach (var cell in startRockCells)
+            {
+                Loger.Log("Logs\\HexMapGenerator.log", $"\t\t{DateTime.Now} - GenerateTransition: START");
                 GenerateTransition(cells, cell.CellIndex, ref maxCount);
+                Loger.Log("Logs\\HexMapGenerator.log", $"\t\t{DateTime.Now} - GenerateTransition: FINISH");
+            }
+
         }
 
         //Функция генерации горного рельефа
@@ -422,7 +434,9 @@ namespace Assets.Map.WorldMap
 
             while (maxCount >= 0)
             {
+                Loger.Log("Logs\\HexMapGenerator.log", $"\t{DateTime.Now} - GenerateRockBiome: START");
                 GenerateRockBiome(ref cells, ref terrainList, ref startCell, ref maxCount);
+                Loger.Log("Logs\\HexMapGenerator.log", $"\t{DateTime.Now} - GenerateRockBiome: FINISH");
                 startCell = terrainList[UnityEngine.Random.Range(0, terrainList.Count)].CellIndex;
             }
             cells = GenerateTrueRock(cells);

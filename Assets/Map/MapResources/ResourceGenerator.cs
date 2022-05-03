@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using UnityEngine;
 
+using Assets.Scripts.Logger;
 using Assets.Map.WorldMap;
 
 namespace Assets.Map.MapResources
@@ -12,8 +11,6 @@ namespace Assets.Map.MapResources
     public class ResourceGenerator : MonoBehaviour
     {
         PrefabManager manager;
-        [SerializeField] List<MapResource> grassList;
-        [SerializeField] List<MapResource> tmp;
 
         public struct BiomesCellLists
         {
@@ -343,7 +340,7 @@ namespace Assets.Map.MapResources
             }
         }
 
-        private void GenerateTerrainBush(HexGrid grid)
+        private void GenerateTerrainBush()
         {
             foreach (var cell in biomesCellLists.terrainList)
             {
@@ -360,7 +357,7 @@ namespace Assets.Map.MapResources
             }
         }
 
-        private void GenerateTropicBush(HexGrid grid)
+        private void GenerateTropicBush()
         {
             foreach (var cell in biomesCellLists.tropicList)
             {
@@ -377,7 +374,7 @@ namespace Assets.Map.MapResources
             }
         }
 
-        private void GenerateDesertBush(HexGrid grid)
+        private void GenerateDesertBush()
         {
             foreach (var cell in biomesCellLists.desertList)
             {
@@ -394,7 +391,7 @@ namespace Assets.Map.MapResources
             }
         }
 
-        private void GenerateWinterBush(HexGrid grid)
+        private void GenerateWinterBush()
         {
             foreach (var cell in biomesCellLists.winterList)
             {
@@ -413,18 +410,68 @@ namespace Assets.Map.MapResources
 
         public void GenerateResource(HexGrid grid)
         {
+            Loger.DeleteLog("Logs\\ResourceGenerator.log");
+            Stopwatch sw = new Stopwatch();
+
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - InitSupportLists: START");
+            sw.Start();
             InitSupportLists(grid);
+            sw.Stop();
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - InitSupportLists: FINISH({sw.ElapsedMilliseconds}ms)");
 
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateRock: START");
+            sw.Start();
             GenerateRock(grid);
-            GenerateTerrainTree(grid);
-            GenerateTropicTree(grid);
-            GenerateWinterTree(grid);
+            sw.Stop();
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateRock: FINISH({sw.ElapsedMilliseconds}ms)");
 
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateTerrainTree: START");
+            sw.Start();
+            GenerateTerrainTree(grid);
+            sw.Stop();
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateTerrainTree: FINISH({sw.ElapsedMilliseconds}ms)");
+
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateTropicTree: START");
+            sw.Start();
+            GenerateTropicTree(grid);
+            sw.Stop();
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateTropicTree: FINISH({sw.ElapsedMilliseconds}ms)");
+
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateWinterTree: START");
+            sw.Start();
+            GenerateWinterTree(grid);
+            sw.Stop();
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateWinterTree: FINISH({sw.ElapsedMilliseconds}ms)");
+
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateForestBush: START");
+            sw.Start();
             GenerateForestBush(grid);
-            GenerateDesertBush(grid);
-            GenerateTropicBush(grid);
-            GenerateTerrainBush(grid);
-            GenerateWinterBush(grid);
+            sw.Stop();
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateForestBush: FINISH({sw.ElapsedMilliseconds}ms)");
+
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateDesertBush: START");
+            sw.Start();
+            GenerateDesertBush();
+            sw.Stop();
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateDesertBush: FINISH({sw.ElapsedMilliseconds}ms)");
+
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateTropicBush: START");
+            sw.Start();
+            GenerateTropicBush();
+            sw.Stop();
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateTropicBush: FINISH({sw.ElapsedMilliseconds}ms)");
+
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateTerrainBush: START");
+            sw.Start();
+            GenerateTerrainBush();
+            sw.Stop();
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateTerrainBush: FINISH({sw.ElapsedMilliseconds}ms)");
+
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateWinterBush: START");
+            sw.Start();
+            GenerateWinterBush();
+            sw.Stop();
+            Loger.Log("Logs\\ResourceGenerator.log", $"{DateTime.Now} - GenerateWinterBush: FINISH({sw.ElapsedMilliseconds}ms)");
         }
     }
 }
