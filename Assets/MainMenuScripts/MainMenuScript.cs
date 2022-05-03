@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -35,14 +37,37 @@ public class MainMenuScript : MonoBehaviour
 
     public InputField seed_field;
     public Text Address_text;
-    public InputField host_addr_field;
+    //public InputField host_addr_field;
 
     public Text Client_output;
     public Text Host_output;
 
+    //—юда будут пихатьс€ считанные хосты
+    public HostList Host_List;
+
+    IPAddress Host_Addr;
+    string HostAddr;
+
+    List<Tuple<string, string>> Hosts = new List<Tuple<string, string>>();
+
+    bool connected = false;
+
     private void Awake()
     {
         ShowMenu("Main");
+    }
+
+    public void Update()
+    {
+        try
+        {
+            foreach (var tupl in Hosts)
+            {
+                if (!Host_List.HasHost(tupl.Item2))
+                    Host_List.Add(tupl.Item1, tupl.Item2);
+            }
+        }
+        catch { }
     }
 
     private void ShowMenu(string name)
@@ -86,9 +111,11 @@ public class MainMenuScript : MonoBehaviour
         Host_output.text = $"Genered seed {GlobalVariables.Seed}...";
         //IPHostEntry entry = Dns.GetHostEntry(Dns.GetHostName());
         //IPAddress host_addr = IPAddress.Parse("127.0.0.1");//entry.AddressList[0];
+        Broadcasting();
         TcpListener listener = new TcpListener(IPAddress.Any, GlobalVariables.Port);
         listener.Start();
         TcpClient cli = listener.AcceptTcpClient();
+        connected = true;
         NetworkStream stream = cli.GetStream();
         byte[] query = System.BitConverter.GetBytes(GlobalVariables.Seed);
         stream.Write(query, 0, query.Length);
@@ -99,11 +126,12 @@ public class MainMenuScript : MonoBehaviour
     public void ConnectBtnPressed()
     {
         ShowMenu("Connecting");
+        ListenHostsAsync();
     }
 
-    public void ConnectToGame()
+    public void ConnectToGame(string addr)
     {
-        string addr = host_addr_field.text;
+        //string addr = host_addr_field.text;
 
         TcpClient client = new TcpClient();
         //IPHostEntry entry = Dns.GetHostEntry(addr);
@@ -111,6 +139,7 @@ public class MainMenuScript : MonoBehaviour
         Client_output.text = "Connecting...";
         //client.Connect(host_addr, GlobalVariables.Port);
         client.Connect(addr, GlobalVariables.Port);
+        connected = true;
         Client_output.text = "Connected! Reading seed...";
         NetworkStream stream = client.GetStream();
         Client_output.text = "Got stream...";
@@ -254,5 +283,72 @@ public class MainMenuScript : MonoBehaviour
 
         GlobalVariables.Seed = new System.Random().Next(3000000);
         seedField.text = GlobalVariables.Seed.ToString();
+    }
+
+    public async void ListenHostsAsync()
+    {
+        UdpClient uc = new UdpClient();
+        uc.Client.Bind(new IPEndPoint(IPAddress.Any, GlobalVariables.Port));
+        await Task.Run(() =>
+        {
+            while(!connected)
+            {
+                IPEndPoint remote = new IPEndPoint(IPAddress.Any, GlobalVariables.Port);
+                byte[] responce = uc.Receive(ref remote);
+                string r = Encoding.UTF8.GetString(responce);//BitConverter.ToString(responce);
+                Debug.Log("Recieved: " + r);
+                if (r.Contains("SDHost"))
+                {
+                    string name = r.Substring(6);
+                    string addr = remote.Address.MapToIPv4().ToString();
+                    if (!Host_List.HasHost("ZASTALINA"))
+                        Hosts.Add(new Tuple<string, string>(addr, name));
+                        //Host_List.Add(addr, name);
+                }
+            }
+        });
+        
+    }
+
+    public async void Broadcasting()
+    {
+        //IPEndPoint remote = new IPEndPoint(IPAddress.Any, GlobalVariables.Port);
+        
+        //IPEndPoint ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), GlobalVariables.Port);
+        //IPEndPoint ep = new IPEndPoint(IPAddress.Any, GlobalVariables.Port);
+        
+        
+        //IPAddress host_addr = entry.AddressList[0];
+        
+        
+        
+        
+        //BitConverter.GetBytes(message.ToCharArray());
+        await Task.Run(() =>
+        {
+            while (!connected)
+            {
+                IPHostEntry entry = Dns.GetHostEntry(IPAddress.Parse("127.0.0.1"));
+                foreach (var a in entry.AddressList)
+                {
+                    IPAddress addr = a.MapToIPv4();
+                    IPEndPoint ep = new IPEndPoint(addr, GlobalVariables.Port);
+                    UdpClient uc = new UdpClient();
+                    try
+                    {
+                        uc.Client.Bind(ep);
+                        string message = "SDHostZASTALINA";
+                        byte[] tosend = Encoding.UTF8.GetBytes(message);
+                        uc.Send(tosend, tosend.Length, "255.255.255.255", GlobalVariables.Port);
+                        Debug.Log("Sended on " + addr.ToString());
+                    }
+                    catch (SocketException ex)
+                    {
+                        Debug.Log(ex.Message + "\n" + "Error on " + addr.ToString());
+                    }
+                }
+            }
+        });
+            
     }
 }

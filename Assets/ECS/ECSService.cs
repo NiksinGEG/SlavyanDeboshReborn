@@ -22,8 +22,6 @@ public class ECSService : MonoBehaviour
         Systems.Add(new NetSystem(this));
     }
 
-
-
     void Awake()
     {
         InitSystems();
