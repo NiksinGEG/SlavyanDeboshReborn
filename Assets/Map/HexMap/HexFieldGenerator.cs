@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using UnityEngine;
+using Assets.Scripts.Logger;
 
 namespace Assets.Map.WorldMap
 {
@@ -72,7 +72,6 @@ namespace Assets.Map.WorldMap
                 }
                 tmp++;
             }
-            Debug.Log($"Max spawn chance: {maxChance}");
         }
 
         static void SetBiomesChance()
@@ -198,12 +197,28 @@ namespace Assets.Map.WorldMap
 
         public static CellList GenerateHexMap(CellList cells)
         {
+            //Инициализация логгера и счетчика
+            Loger.getInstance();
+            Loger.DeleteLog("Logs\\HexMapGenerator.log");
+            Stopwatch sw = new Stopwatch();
+
+
             //Генерируем сначала водный рельеф
+            sw.Start();
+            Loger.Log("Logs\\HexMapGenerator.log", $"{DateTime.Now} - GenerateStartTerrain: START");
             cells = GenerateStartTerrain(cells);
+            sw.Stop();
+            Loger.Log("Logs\\HexMapGenerator.log", $"{DateTime.Now} - GenerateStartTerrain: FINISH({sw.ElapsedMilliseconds}ms)");
 
             //Генерируем остальное
             //Сначала материковая часть
+            sw.Start();
+            Loger.Log("Logs\\HexMapGenerator.log", $"{DateTime.Now} - GenerateMainlands: START");
             cells = GenerateMainlands(cells);
+            sw.Stop();
+            Loger.Log("Logs\\HexMapGenerator.log", $"{DateTime.Now} - GenerateMainlands: FINISH({sw.ElapsedMilliseconds}ms)");
+
+
             cells = DeleteFakeRivers(cells); 
             
             cells = GenerateRock(cells);
@@ -291,7 +306,9 @@ namespace Assets.Map.WorldMap
                 int nextCell = startCell;
                 neighbourCells = cells.GetNeighbours(nextCell);
                 neighbourCells.Add(cells[startCell], 0, 0);
+                Loger.Log("Logs\\HexMapGenerator.log", $"\t\t{DateTime.Now} - ChooseNextMainlandCell: START");
                 nextCell = ChooseNextMainlandCell(nextCell, tryCount);
+                Loger.Log("Logs\\HexMapGenerator.log", $"\t\t{DateTime.Now} - ChooseNextMainlandCell: FINISH");
                 int index = neighbourCells[nextCell].coords.MakeIndex(cells.CellCountX);
                 cells[index].SetTypeAndTexture(CellType.terrain);
                 int rndEvaluate = UnityEngine.Random.Range(0, 1);
@@ -313,7 +330,9 @@ namespace Assets.Map.WorldMap
             int startCell = UnityEngine.Random.Range(0, waterList.Count);
             for (int i = 0; i < mainlandCount; i++)
             {
+                Loger.Log("Logs\\HexMapGenerator.log", $"\t{DateTime.Now} - GenerateMainland: START");
                 GenerateMainland(cells, waterList, startCell);
+                Loger.Log("Logs\\HexMapGenerator.log", $"\t{DateTime.Now} - GenerateMainland: FINISH");
                 startCell = waterList[UnityEngine.Random.Range(0, waterList.Count)].CellIndex;
             }
             return cells;
