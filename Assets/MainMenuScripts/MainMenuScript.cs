@@ -252,7 +252,7 @@ public class MainMenuScript : MonoBehaviour
         }
         catch
         {
-            mixingBiomesSlider.value = Convert.ToInt32(mixingBiomesField.text = "7");
+            mixingBiomesSlider.value = Convert.ToInt32(mixingBiomesField.text = "3");
         }
     }
 
@@ -274,12 +274,12 @@ public class MainMenuScript : MonoBehaviour
         GlobalVariables.generationSettings.terrainChunkCountX = 35;
         GlobalVariables.generationSettings.terrainChunkCountY = 21;
 
-        GlobalVariables.convertor.tropicTreeProcent = 50;
-        GlobalVariables.convertor.standartTreeProcent = 50;
-        GlobalVariables.convertor.winterTreeProcent = 50;
-        GlobalVariables.convertor.rockProcent = 5;
-        GlobalVariables.convertor.mainlandsCount = 3;
-        GlobalVariables.convertor.mixingBiomesCount = 7;
+        GlobalVariables.generationSettings.tropicTreeProcent = 50;
+        GlobalVariables.generationSettings.standartTreeProcent = 50;
+        GlobalVariables.generationSettings.winterTreeProcent = 50;
+        GlobalVariables.generationSettings.rockProcent = 5;
+        GlobalVariables.generationSettings.mainlandsCount = 3;
+        GlobalVariables.generationSettings.mixingBiomesCount = 3;
 
         GlobalVariables.Seed = new System.Random().Next(3000000);
         seedField.text = GlobalVariables.Seed.ToString();
