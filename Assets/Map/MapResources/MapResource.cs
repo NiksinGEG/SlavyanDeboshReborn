@@ -5,7 +5,6 @@ using UnityEngine;
 public class MapResource : MonoBehaviour
 {
     Vector3 centerPos;
-
     /// <summary>
     /// Устанавливает позицию ресурса внутри гекса. x и z - вещественные числа от -1 до 1
     /// </summary>
@@ -22,15 +21,26 @@ public class MapResource : MonoBehaviour
     {
         centerPos = transform.position;
     }
-    // Start is called before the first frame update
-    void Start()
+
+    public void Select()
     {
-        
+        GetComponent<Selectable>().IsSelected = !GetComponent<Selectable>().IsSelected;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void WhileSelected()
     {
-        
+        Material mat = gameObject.GetComponent<Renderer>().material;
+        float o_width = mat.GetFloat("_Outline");
+        if (o_width < 0.3f)
+            o_width += 0.05f;
+        mat.SetFloat("_Outline", o_width);
+    }
+    public void WhileDeselected()
+    {
+        Material mat = gameObject.GetComponent<Renderer>().material;
+        float o_width = mat.GetFloat("_Outline");
+        if (o_width > 0f)
+            o_width -= 0.05f;
+        mat.SetFloat("_Outline", o_width);
     }
 }

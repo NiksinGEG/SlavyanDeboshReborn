@@ -20,6 +20,12 @@ namespace Assets.Map.WorldMap
     {
         NE, E, SE, SW, W, NW
     }
+    public enum CellTexture { water,tropic_1, tropic_2, tropic_3, tropic_4, tropic_5, terrain_1, 
+       terrain_2, terrain_3, terrain_4, terrain_5,sand_1, sand_2, sand_3, sand_4, sand_5,
+       taiga_1, taiga_2, taiga_3, taiga_4, taiga_5, winter_1, winter_2, winter_3, winter_4, winter_5, 
+       winter_rock, rock, tropic_dirt, forest_dirt}
+    public enum CellType { water, tropic, terrain, taiga, winter, rock, sand, forest_dirt, tropic_dirt}
+
     public static class HexDirectionExtensions
     {
         public static HexDirection Previous(this HexDirection direction)
@@ -38,11 +44,14 @@ namespace Assets.Map.WorldMap
 
     public class HexCell : MonoBehaviour
     {
-        [SerializeField] int cellIndex;
 
-        public enum CellTypes { water, terrain, rock, sand, dirt }
-        private CellTypes cellType;
-        public CellTypes CellType { get; set; }
+        
+
+        [SerializeField] public int spawnChance;
+        public int SpawnChance { get; set; }
+
+        public CellType Type { get; set; }
+        public CellTexture Texture { get; set; }
         
 
         public List<Vector3> vertices;
@@ -53,22 +62,7 @@ namespace Assets.Map.WorldMap
 
         [SerializeField] public HexCoords coords;
 
-        /*
-        //Цвета клеток для дегенерации
-        [SerializeField] public Color desertColor = Color.yellow;
-        [SerializeField] public Color terrainColor = Color.green;
-        [SerializeField] public Color rockColor = Color.gray;
-        [SerializeField] public Color waterColor = Color.blue;
-        */
-
-
-        //Тестовый цвет
-        [SerializeField] public Color neighboorColor = Color.red;
-
         public EventHandler<HexCellEventArgs> MouseLeftClick;
-
-        private Color cellColor;
-        public Color CellColor { get; set; }
 
         private int elevation;
         public int Elevation
@@ -92,9 +86,44 @@ namespace Assets.Map.WorldMap
                 Bridges[i] = false;
         }
 
+        public void SetTypeAndTexture(CellType cellType)
+        {
+            this.Type = cellType;
+            switch ((int)this.Type)
+            {
+                case 0:
+                    this.Texture = (CellTexture)(UnityEngine.Random.Range(11, 15));
+                    break;
+                case 1:
+                    this.Texture = (CellTexture)(UnityEngine.Random.Range(1, 5));
+                    break;
+                case 2:
+                    this.Texture = (CellTexture)(UnityEngine.Random.Range(6, 10));
+                    break;
+                case 3:
+                    this.Texture = (CellTexture)(UnityEngine.Random.Range(16, 20));
+                    break;
+                case 4:
+                    this.Texture = (CellTexture)(UnityEngine.Random.Range(21, 25));
+                    break;
+                case 5:
+                    this.Texture = CellTexture.rock;
+                    break;
+                case 6:
+                    this.Texture = (CellTexture)(UnityEngine.Random.Range(12, 16));
+                    break;
+                case 7:
+                    this.Texture = CellTexture.forest_dirt;
+                    break;
+                case 8:
+                    this.Texture = CellTexture.tropic_dirt;
+                    break;
+            }      
+        }
+
         public void Choose(object sender, HexCellEventArgs e)
         {
-            cellColor = Color.cyan;
+            
         }
 
         /// <summary>

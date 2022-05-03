@@ -83,7 +83,7 @@ namespace Assets.Map.WorldMap
 			AddTriangle(center, v1, v2);
 			AddTriangleColor(SplatColor1);
 
-			Vector3 type1 = new Vector3((float)cell.CellType, (float)cell.CellType, (float)cell.CellType);
+			Vector3 type1 = new Vector3((float)cell.Texture, (float)cell.Texture, (float)cell.Texture);
 			AddTriangleType(type1);
 
 			HexCell neighbour = cell.GetNeighbour((int)direction) ?? cell;
@@ -111,12 +111,12 @@ namespace Assets.Map.WorldMap
 			{
 				if (neighbour.Bridges.Length == 0 || !neighbour.Bridges[neighbour.GetDirection(cell)])
 				{
-					type2 = new Vector3((float)cell.CellType, (float)neighbour.CellType, (float)cell.CellType);
+					type2 = new Vector3((float)cell.Texture, (float)neighbour.Texture, (float)cell.Texture);
 					AddQuadColor(SplatColor1, (SplatColor1 + SplatColor2) / 2.0f);
 				}
 				else
 				{
-					type2 = new Vector3((float)neighbour.CellType, (float)cell.CellType, (float)cell.CellType);
+					type2 = new Vector3((float)neighbour.Texture, (float)cell.Texture, (float)cell.Texture);
 					AddQuadColor(SplatColor2, (SplatColor1 + SplatColor2) / 2.0f);
 				}
 			}
@@ -131,8 +131,8 @@ namespace Assets.Map.WorldMap
 			Vector3 v6 = center + HexMetrics.GetSecondCorner(direction);
 			v6.y = (cell.Elevation * HexMetrics.elevationStep + neighbour.Elevation * HexMetrics.elevationStep + nextNeighbour.Elevation * HexMetrics.elevationStep) / 3f;
 
-			Vector3 type3 = new Vector3((float)cell.CellType, (float)cell.CellType, (float)cell.CellType);
-			Vector3 type4 = new Vector3((float)cell.CellType, (float)cell.CellType, (float)cell.CellType);
+			Vector3 type3 = new Vector3((float)cell.Texture, (float)cell.Texture, (float)cell.Texture);
+			Vector3 type4 = new Vector3((float)cell.Texture, (float)cell.Texture, (float)cell.Texture);
 			Color[] left_c = new Color[3];
 			Color[] right_c = new Color[3];
 
@@ -144,67 +144,67 @@ namespace Assets.Map.WorldMap
 					left_c[0] = SplatColor1;
 					left_c[2] = Combine(SplatColor1, SplatColor3);
 
-					type3 = new Vector3((float)cell.CellType, (float)prevNeighbour.CellType, (float)neighbour.CellType);
+					type3 = new Vector3((float)cell.Texture, (float)prevNeighbour.Texture, (float)neighbour.Texture);
 
 					right_c[0] = SplatColor1;
 					right_c[1] = Combine(SplatColor1, SplatColor3);
 
-					type4 = new Vector3((float)cell.CellType, (float)nextNeighbour.CellType, (float)neighbour.CellType);
+					type4 = new Vector3((float)cell.Texture, (float)nextNeighbour.Texture, (float)neighbour.Texture);
 					break;
 				case 1:
 					left_c[0] = SplatColor1;
 					left_c[2] = Combine(SplatColor1, SplatColor2);
 
-					type3 = new Vector3((float)cell.CellType, (float)neighbour.CellType, (float)prevNeighbour.CellType);
+					type3 = new Vector3((float)cell.Texture, (float)neighbour.Texture, (float)prevNeighbour.Texture);
 
 					right_c[0] = SplatColor2;
 					right_c[1] = Combine(SplatColor2, SplatColor3);
 
-					type4 = new Vector3((float)nextNeighbour.CellType, (float)cell.CellType, (float)neighbour.CellType);
+					type4 = new Vector3((float)nextNeighbour.Texture, (float)cell.Texture, (float)neighbour.Texture);
 					break;
 				case 2:
 					left_c[0] = SplatColor2;
 					left_c[2] = Combine(SplatColor2, SplatColor1);
 
-					type3 = new Vector3((float)neighbour.CellType, (float)cell.CellType, (float)prevNeighbour.CellType);
+					type3 = new Vector3((float)neighbour.Texture, (float)cell.Texture, (float)prevNeighbour.Texture);
 
 					right_c[0] = SplatColor3;
 					right_c[1] = Combine(SplatColor3, SplatColor2);
 
-					type4 = new Vector3((float)nextNeighbour.CellType, (float)neighbour.CellType, (float)cell.CellType);
+					type4 = new Vector3((float)nextNeighbour.Texture, (float)neighbour.Texture, (float)cell.Texture);
 					break;
 				case 3:
 					left_c[0] = SplatColor3;
 					left_c[2] = Combine(SplatColor3, SplatColor1);
 
-					type3 = new Vector3((float)neighbour.CellType, (float)prevNeighbour.CellType, (float)cell.CellType);
+					type3 = new Vector3((float)neighbour.Texture, (float)prevNeighbour.Texture, (float)cell.Texture);
 
 					right_c[0] = SplatColor3;
 					right_c[1] = Combine(SplatColor3, SplatColor1);
 
-					type4 = new Vector3((float)neighbour.CellType, (float)nextNeighbour.CellType, (float)cell.CellType);
+					type4 = new Vector3((float)neighbour.Texture, (float)nextNeighbour.Texture, (float)cell.Texture);
 					break;
 				case 4:
 					left_c[0] = SplatColor3;
 					left_c[2] = Combine(SplatColor3, SplatColor2);
 
-					type3 = new Vector3((float)prevNeighbour.CellType, (float)neighbour.CellType, (float)cell.CellType);
+					type3 = new Vector3((float)prevNeighbour.Texture, (float)neighbour.Texture, (float)cell.Texture);
 
 					right_c[0] = SplatColor2;
 					right_c[1] = Combine(SplatColor2, SplatColor1);
 
-					type4 = new Vector3((float)neighbour.CellType, (float)cell.CellType, (float)nextNeighbour.CellType);
+					type4 = new Vector3((float)neighbour.Texture, (float)cell.Texture, (float)nextNeighbour.Texture);
 					break;
 				case 5:
 					left_c[0] = SplatColor2;
 					left_c[2] = Combine(SplatColor2, SplatColor3);
 
-					type3 = new Vector3((float)prevNeighbour.CellType, (float)cell.CellType, (float)neighbour.CellType);
+					type3 = new Vector3((float)prevNeighbour.Texture, (float)cell.Texture, (float)neighbour.Texture);
 
 					right_c[0] = SplatColor1;
 					right_c[1] = Combine(SplatColor1, SplatColor2);
 
-					type4 = new Vector3((float)cell.CellType, (float)neighbour.CellType, (float)nextNeighbour.CellType);
+					type4 = new Vector3((float)cell.Texture, (float)neighbour.Texture, (float)nextNeighbour.Texture);
 					break;
             }
 

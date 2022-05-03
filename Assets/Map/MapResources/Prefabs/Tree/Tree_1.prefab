@@ -9,10 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3334299294348212472}
-  - component: {fileID: 4666561281727806939}
   - component: {fileID: -3369142624235777345}
-  - component: {fileID: 6900500004789031177}
-  - component: {fileID: 8159262411440876279}
+  - component: {fileID: -8167516905708929707}
+  - component: {fileID: 3604163818633755237}
+  - component: {fileID: 5248083248997379584}
+  - component: {fileID: 2295813194459288928}
   m_Layer: 0
   m_Name: Tree_1
   m_TagString: Untagged
@@ -34,14 +35,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &4666561281727806939
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8025185576591580775}
-  m_Mesh: {fileID: 6778828732824202268, guid: dd8023854e6bcc14a97a9a88fab2d26c, type: 3}
 --- !u!114 &-3369142624235777345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54,7 +47,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5128935531656d64e9e6bf06d5f3fe9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!23 &6900500004789031177
+--- !u!114 &-8167516905708929707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8025185576591580775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bec5ccfbb28dc864b8a2efdc421df6cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!33 &3604163818633755237
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8025185576591580775}
+  m_Mesh: {fileID: 6778828732824202268, guid: dd8023854e6bcc14a97a9a88fab2d26c, type: 3}
+--- !u!23 &5248083248997379584
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -73,7 +86,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 93005dc64922339498952ff2ea237f48, type: 2}
+  - {fileID: 2100000, guid: 8acf196124e542e448de6df5c75366d0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -95,7 +108,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &8159262411440876279
+--- !u!64 &2295813194459288928
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -12,13 +12,12 @@ GameObject:
   - component: {fileID: 8696275222865687723}
   - component: {fileID: 262603720723948015}
   - component: {fileID: 5863489991694937720}
-  - component: {fileID: 8587671609007010759}
   m_Layer: 0
   m_Name: Grass_7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &1861007426268353080
 Transform:
@@ -95,17 +94,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &8587671609007010759
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1450564729515518824}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 6327269331104252308, guid: d57a9864d664da047a261b6d38adecd1, type: 3}
