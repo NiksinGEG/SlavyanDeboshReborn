@@ -42,7 +42,7 @@ public class MainMenuScript : MonoBehaviour
     public Text Client_output;
     public Text Host_output;
 
-    //Сюда будут пихаться считанные хосты
+    //пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
     public HostList Host_List;
 
     IPAddress Host_Addr;
