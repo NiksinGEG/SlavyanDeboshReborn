@@ -23,29 +23,4 @@ public struct GenerationSettings
     public int mainlandsCount;
 
     public int mixingBiomesCount;
-
-    /*public byte[] GetBytes()
-    {
-        byte[] bytes = new byte[Marshal.SizeOf(typeof(GenerationSettings))];
-        GCHandle pinStructure = GCHandle.Alloc(this, GCHandleType.Pinned);
-        try
-        {
-            Marshal.Copy(pinStructure.AddrOfPinnedObject(), bytes, 0, bytes.Length);
-            return bytes;
-        }
-        finally
-        {
-            pinStructure.Free();
-        }
-    }
-
-    public static int GetSize()
-    {
-        return 10 * sizeof(int);
-    }
-
-    public void Set(byte[] byteArr)
-    {
-
-    }*/
 }

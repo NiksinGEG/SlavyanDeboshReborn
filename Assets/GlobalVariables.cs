@@ -11,4 +11,7 @@ public static class GlobalVariables
     public static GenerationSettings generationSettings;
 
     public static NetworkStream NetStream;
+
+    public static string SelfName = "";
+    public static string EnemyName = "";
 }

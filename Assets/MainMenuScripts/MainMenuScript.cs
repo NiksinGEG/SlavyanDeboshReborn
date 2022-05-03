@@ -42,6 +42,8 @@ public class MainMenuScript : MonoBehaviour
     public Text Client_output;
     public Text Host_output;
 
+    public InputField hostNameField;
+
     public HostList Host_List;
 
     List<Tuple<string, string>> Hosts = new List<Tuple<string, string>>();
@@ -98,6 +100,8 @@ public class MainMenuScript : MonoBehaviour
 
     public void CreateGame()
     {
+        GlobalVariables.SelfName = hostNameField.text;
+
         Host_output.text = $"Genered seed {GlobalVariables.generationSettings.Seed}...";
         Debug.Log($"Genered seed {GlobalVariables.generationSettings.Seed}...");
         Broadcasting();
@@ -290,7 +294,7 @@ public class MainMenuScript : MonoBehaviour
                 {
                     string name = r.Substring(6);
                     string addr = remote.Address.MapToIPv4().ToString();
-                    if (!Host_List.HasHost("ZASTALINA"))
+                    if (!Host_List.HasHost(name))
                         Hosts.Add(new Tuple<string, string>(addr, name));
                 }
             }
@@ -313,7 +317,7 @@ public class MainMenuScript : MonoBehaviour
                     try
                     {
                         uc.Client.Bind(ep);
-                        string message = "SDHostZASTALINA";
+                        string message = $"SDHost{GlobalVariables.SelfName}";
                         byte[] tosend = Encoding.UTF8.GetBytes(message);
                         uc.Send(tosend, tosend.Length, "255.255.255.255", GlobalVariables.Port);
                         Debug.Log("Sended on " + addr.ToString());
