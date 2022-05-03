@@ -1,5 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,16 +12,62 @@ using System.Net.Sockets;
 
 public class MainMenuScript : MonoBehaviour
 {
+    public InputField chunkCountXField;
+    public InputField chunkCountYField;
+
+    public Slider tropicTreeProcentSlider;
+    public Slider standartTreeProcentSlider;
+    public Slider winterTreeProcentSlider;
+
+    public InputField tropicTreeProcentField;
+    public InputField standartTreeProcentField;
+    public InputField winterTreeProcentField;
+
+    public Slider rockProcentSlider;
+    public InputField rockProcentField;
+
+    public Slider mainlandsCountSlider;
+    public InputField mainlandsCountField;
+
+    public Slider mixingBiomesSlider;
+    public InputField mixingBiomesField;
+
+    public InputField seedField;
+    public Button seedGenerateBtn;
+
     public InputField seed_field;
     public Text Address_text;
-    public InputField host_addr_field;
+    //public InputField host_addr_field;
 
     public Text Client_output;
     public Text Host_output;
 
+    //���� ����� �������� ��������� �����
+    public HostList Host_List;
+
+    IPAddress Host_Addr;
+    string HostAddr;
+
+    List<Tuple<string, string>> Hosts = new List<Tuple<string, string>>();
+
+    bool connected = false;
+
     private void Awake()
     {
         ShowMenu("Main");
+    }
+
+    public void Update()
+    {
+        try
+        {
+            foreach (var tupl in Hosts)
+            {
+                if (!Host_List.HasHost(tupl.Item2))
+                    Host_List.Add(tupl.Item1, tupl.Item2);
+            }
+        }
+        catch { }
     }
 
     private void ShowMenu(string name)
@@ -38,7 +87,6 @@ public class MainMenuScript : MonoBehaviour
         System.Random rnd = new System.Random();
         GlobalVariables.Seed = rnd.Next(3000000);
         var creating_menu = Resources.FindObjectsOfTypeAll<Menu>()[0];
-        seed_field.text = GlobalVariables.Seed.ToString();
 
         //IPHostEntry entry = Dns.GetHostEntry(Dns.GetHostName());
         //IPAddress host_addr;// = entry.AddressList[0];
@@ -60,20 +108,14 @@ public class MainMenuScript : MonoBehaviour
 
     public void CreateGame()
     {
-        try
-        {
-            GlobalVariables.Seed = System.Convert.ToInt32(seed_field.text);
-        }
-        catch
-        {
-            GlobalVariables.Seed = new System.Random().Next(3000000);
-        }
         Host_output.text = $"Genered seed {GlobalVariables.Seed}...";
         //IPHostEntry entry = Dns.GetHostEntry(Dns.GetHostName());
         //IPAddress host_addr = IPAddress.Parse("127.0.0.1");//entry.AddressList[0];
+        Broadcasting();
         TcpListener listener = new TcpListener(IPAddress.Any, GlobalVariables.Port);
         listener.Start();
         TcpClient cli = listener.AcceptTcpClient();
+        connected = true;
         NetworkStream stream = cli.GetStream();
         byte[] query = System.BitConverter.GetBytes(GlobalVariables.Seed);
         stream.Write(query, 0, query.Length);
@@ -84,11 +126,12 @@ public class MainMenuScript : MonoBehaviour
     public void ConnectBtnPressed()
     {
         ShowMenu("Connecting");
+        ListenHostsAsync();
     }
 
-    public void ConnectToGame()
+    public void ConnectToGame(string addr)
     {
-        string addr = host_addr_field.text;
+        //string addr = host_addr_field.text;
 
         TcpClient client = new TcpClient();
         //IPHostEntry entry = Dns.GetHostEntry(addr);
@@ -96,13 +139,15 @@ public class MainMenuScript : MonoBehaviour
         Client_output.text = "Connecting...";
         //client.Connect(host_addr, GlobalVariables.Port);
         client.Connect(addr, GlobalVariables.Port);
+        connected = true;
         Client_output.text = "Connected! Reading seed...";
         NetworkStream stream = client.GetStream();
         Client_output.text = "Got stream...";
         byte[] resp = new byte[sizeof(int)];
         stream.Read(resp, 0, sizeof(int));
+        Debug.Log("readed" + BitConverter.ToInt32(resp, 0).ToString());
         Client_output.text = $"Recieved response...";
-        GlobalVariables.Seed = System.BitConverter.ToInt32(resp, 0);
+        GlobalVariables.Seed = BitConverter.ToInt32(resp, 0);
 
         Client_output.text = $"Readed seed {GlobalVariables.Seed}!";
 
@@ -111,11 +156,9 @@ public class MainMenuScript : MonoBehaviour
 
     public void EnterDevelopMode()
     {
-        GlobalVariables.Seed = new System.Random().Next(1000);
+        UnityEngine.Random.InitState(GlobalVariables.Seed);
         SceneManager.LoadScene("SampleScene");
     }
-<<<<<<< Updated upstream
-=======
 
     public void SwitchTropicTreeProcentFieldValue()
     {
@@ -174,7 +217,7 @@ public class MainMenuScript : MonoBehaviour
         }
         catch
         {
-            rockProcentSlider.value = Convert.ToInt32(rockProcentField.text = "20");
+            rockProcentSlider.value = Convert.ToInt32(rockProcentField.text = "5");
         }
     }
 
@@ -209,7 +252,7 @@ public class MainMenuScript : MonoBehaviour
         }
         catch
         {
-            mixingBiomesSlider.value = Convert.ToInt32(mixingBiomesField.text = "7");
+            mixingBiomesSlider.value = Convert.ToInt32(mixingBiomesField.text = "3");
         }
     }
 
@@ -234,12 +277,78 @@ public class MainMenuScript : MonoBehaviour
         GlobalVariables.generationSettings.tropicTreeProcent = 50;
         GlobalVariables.generationSettings.standartTreeProcent = 50;
         GlobalVariables.generationSettings.winterTreeProcent = 50;
-        GlobalVariables.generationSettings.rockProcent = 20;
+        GlobalVariables.generationSettings.rockProcent = 5;
         GlobalVariables.generationSettings.mainlandsCount = 3;
-        GlobalVariables.generationSettings.mixingBiomesCount = 7;
+        GlobalVariables.generationSettings.mixingBiomesCount = 3;
 
         GlobalVariables.Seed = new System.Random().Next(3000000);
         seedField.text = GlobalVariables.Seed.ToString();
     }
->>>>>>> Stashed changes
+
+    public async void ListenHostsAsync()
+    {
+        UdpClient uc = new UdpClient();
+        uc.Client.Bind(new IPEndPoint(IPAddress.Any, GlobalVariables.Port));
+        await Task.Run(() =>
+        {
+            while(!connected)
+            {
+                IPEndPoint remote = new IPEndPoint(IPAddress.Any, GlobalVariables.Port);
+                byte[] responce = uc.Receive(ref remote);
+                string r = Encoding.UTF8.GetString(responce);//BitConverter.ToString(responce);
+                Debug.Log("Recieved: " + r);
+                if (r.Contains("SDHost"))
+                {
+                    string name = r.Substring(6);
+                    string addr = remote.Address.MapToIPv4().ToString();
+                    if (!Host_List.HasHost("ZASTALINA"))
+                        Hosts.Add(new Tuple<string, string>(addr, name));
+                        //Host_List.Add(addr, name);
+                }
+            }
+        });
+        
+    }
+
+    public async void Broadcasting()
+    {
+        //IPEndPoint remote = new IPEndPoint(IPAddress.Any, GlobalVariables.Port);
+        
+        //IPEndPoint ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), GlobalVariables.Port);
+        //IPEndPoint ep = new IPEndPoint(IPAddress.Any, GlobalVariables.Port);
+        
+        
+        //IPAddress host_addr = entry.AddressList[0];
+        
+        
+        
+        
+        //BitConverter.GetBytes(message.ToCharArray());
+        await Task.Run(() =>
+        {
+            while (!connected)
+            {
+                IPHostEntry entry = Dns.GetHostEntry(IPAddress.Parse("127.0.0.1"));
+                foreach (var a in entry.AddressList)
+                {
+                    IPAddress addr = a.MapToIPv4();
+                    IPEndPoint ep = new IPEndPoint(addr, GlobalVariables.Port);
+                    UdpClient uc = new UdpClient();
+                    try
+                    {
+                        uc.Client.Bind(ep);
+                        string message = "SDHostZASTALINA";
+                        byte[] tosend = Encoding.UTF8.GetBytes(message);
+                        uc.Send(tosend, tosend.Length, "255.255.255.255", GlobalVariables.Port);
+                        Debug.Log("Sended on " + addr.ToString());
+                    }
+                    catch (SocketException ex)
+                    {
+                        Debug.Log(ex.Message + "\n" + "Error on " + addr.ToString());
+                    }
+                }
+            }
+        });
+            
+    }
 }

@@ -1,0 +1,20 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public struct GenerationSettings
+{
+    public int tropicTreeProcent;
+    public int standartTreeProcent;
+    public int taigaTreeProcent;
+    public int winterTreeProcent;
+
+    public int terrainChunkCountX;
+    public int terrainChunkCountY;
+
+    public int rockProcent;
+
+    public int mainlandsCount;
+
+    public int mixingBiomesCount;
+}
