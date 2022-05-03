@@ -114,4 +114,132 @@ public class MainMenuScript : MonoBehaviour
         GlobalVariables.Seed = new System.Random().Next(1000);
         SceneManager.LoadScene("SampleScene");
     }
+<<<<<<< Updated upstream
+=======
+
+    public void SwitchTropicTreeProcentFieldValue()
+    {
+        tropicTreeProcentField.text = tropicTreeProcentSlider.value.ToString();
+        GlobalVariables.generationSettings.tropicTreeProcent = Convert.ToInt32(tropicTreeProcentField.text);
+    }
+
+    public void SwitchTropicTreeProcentSliderValue()
+    {
+        tropicTreeProcentSlider.value = Convert.ToInt32(tropicTreeProcentField.text);
+    }
+
+    public void SwitchStandartTreeProcentFieldValue()
+    {
+        standartTreeProcentField.text = standartTreeProcentSlider.value.ToString();
+        GlobalVariables.generationSettings.standartTreeProcent = Convert.ToInt32(standartTreeProcentField.text);
+    }
+
+    public void SwitchStandartTreeProcentSliderValue()
+    {
+        standartTreeProcentSlider.value = Convert.ToInt32(standartTreeProcentField.text);
+    }
+
+    public void SwitchWinterTreeProcentFieldValue()
+    {
+        winterTreeProcentField.text = winterTreeProcentSlider.value.ToString();
+        GlobalVariables.generationSettings.winterTreeProcent = Convert.ToInt32(winterTreeProcentField.text);
+    }
+
+    public void SwitchWinterTreeProcentSliderValue()
+    {
+        winterTreeProcentSlider.value = Convert.ToInt32(winterTreeProcentField.text);
+    }
+
+    public void SwitchXField()
+    {
+        GlobalVariables.generationSettings.terrainChunkCountX = Convert.ToInt32(chunkCountXField.text);
+    }
+
+    public void SwitchYField()
+    {
+        GlobalVariables.generationSettings.terrainChunkCountY = Convert.ToInt32(chunkCountYField.text);
+    }
+
+    public void SwitchRockProcentFieldValue()
+    {
+        rockProcentField.text = rockProcentSlider.value.ToString();
+        GlobalVariables.generationSettings.rockProcent = Convert.ToInt32(rockProcentField.text);
+    }
+
+    public void SwitchRockProcentSliderValue()
+    {
+        try
+        {
+            rockProcentSlider.value = Convert.ToInt32(rockProcentField.text);
+        }
+        catch
+        {
+            rockProcentSlider.value = Convert.ToInt32(rockProcentField.text = "20");
+        }
+    }
+
+    public void SwitchMainlandsCountFieldValue()
+    {
+        mainlandsCountField.text = mainlandsCountSlider.value.ToString();
+        GlobalVariables.generationSettings.mainlandsCount = Convert.ToInt32(mainlandsCountField.text);
+    }
+
+    public void SwitchMainlandsCountSliderValue()
+    {
+        try
+        {
+            mainlandsCountSlider.value = Convert.ToInt32(mainlandsCountField.text);
+        }
+        catch
+        {
+            mainlandsCountSlider.value = Convert.ToInt32(mainlandsCountField.text = "3");
+        }
+    }
+
+    public void SwitchMixingBiomesFieldValue()
+    {
+        mixingBiomesField.text = mixingBiomesSlider.value.ToString();
+    }
+
+    public void SwitchMixingBiomesSliderValue()
+    {
+        try
+        {
+            mixingBiomesSlider.value = Convert.ToInt32(mixingBiomesField.text);
+        }
+        catch
+        {
+            mixingBiomesSlider.value = Convert.ToInt32(mixingBiomesField.text = "7");
+        }
+    }
+
+    public void SwitchSeedFieldValue()
+    {
+        GlobalVariables.Seed = Convert.ToInt32(seedField.text);
+        UnityEngine.Random.InitState(GlobalVariables.Seed);
+    }
+
+    public void GenerateSeedOnClick()
+    {
+        GlobalVariables.Seed = new System.Random().Next(3000000);
+        seedField.text = GlobalVariables.Seed.ToString();
+    }
+
+    public void OpenGenerationMenu()
+    {
+        ShowMenu("Generation");
+        GlobalVariables.generationSettings.terrainChunkCountX = 35;
+        GlobalVariables.generationSettings.terrainChunkCountY = 21;
+
+        GlobalVariables.generationSettings.tropicTreeProcent = 50;
+        GlobalVariables.generationSettings.standartTreeProcent = 50;
+        GlobalVariables.generationSettings.winterTreeProcent = 50;
+        GlobalVariables.generationSettings.rockProcent = 20;
+        GlobalVariables.generationSettings.mainlandsCount = 3;
+        GlobalVariables.generationSettings.mixingBiomesCount = 7;
+
+        GlobalVariables.Seed = new System.Random().Next(3000000);
+        seedField.text = GlobalVariables.Seed.ToString();
+    }
+>>>>>>> Stashed changes
 }
