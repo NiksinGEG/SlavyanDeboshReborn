@@ -9,6 +9,7 @@ using UnityEngine.UI;
 using System.Web;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
 
 public class MainMenuScript : MonoBehaviour
 {
@@ -37,16 +38,11 @@ public class MainMenuScript : MonoBehaviour
 
     public InputField seed_field;
     public Text Address_text;
-    //public InputField host_addr_field;
 
     public Text Client_output;
     public Text Host_output;
 
-    //���� ����� �������� ��������� �����
     public HostList Host_List;
-
-    IPAddress Host_Addr;
-    string HostAddr;
 
     List<Tuple<string, string>> Hosts = new List<Tuple<string, string>>();
 
@@ -85,13 +81,7 @@ public class MainMenuScript : MonoBehaviour
     public void StartBtnPressed()
     {
         System.Random rnd = new System.Random();
-        GlobalVariables.Seed = rnd.Next(3000000);
-        var creating_menu = Resources.FindObjectsOfTypeAll<Menu>()[0];
-
-        //IPHostEntry entry = Dns.GetHostEntry(Dns.GetHostName());
-        //IPAddress host_addr;// = entry.AddressList[0];
-
-        Address_text.text = "Your address: ?";// + GlobalVariables.HostAddress.ToString();
+        GlobalVariables.generationSettings.Seed = rnd.Next(3000000);
 
         ShowMenu("Creation");
     }
@@ -108,17 +98,19 @@ public class MainMenuScript : MonoBehaviour
 
     public void CreateGame()
     {
-        Host_output.text = $"Genered seed {GlobalVariables.Seed}...";
-        //IPHostEntry entry = Dns.GetHostEntry(Dns.GetHostName());
-        //IPAddress host_addr = IPAddress.Parse("127.0.0.1");//entry.AddressList[0];
+        Host_output.text = $"Genered seed {GlobalVariables.generationSettings.Seed}...";
+        Debug.Log($"Genered seed {GlobalVariables.generationSettings.Seed}...");
         Broadcasting();
         TcpListener listener = new TcpListener(IPAddress.Any, GlobalVariables.Port);
         listener.Start();
+        Debug.Log("Waiting client...");
         TcpClient cli = listener.AcceptTcpClient();
         connected = true;
-        NetworkStream stream = cli.GetStream();
-        byte[] query = System.BitConverter.GetBytes(GlobalVariables.Seed);
-        stream.Write(query, 0, query.Length);
+        Debug.Log("Connected...");
+        GlobalVariables.NetStream = cli.GetStream();
+        BinaryFormatter formatter = new BinaryFormatter();
+        formatter.Serialize(GlobalVariables.NetStream, GlobalVariables.generationSettings);
+        Debug.Log("Sended...");
         listener.Stop();
         SceneManager.LoadScene("SampleScene");
     }
@@ -131,32 +123,29 @@ public class MainMenuScript : MonoBehaviour
 
     public void ConnectToGame(string addr)
     {
-        //string addr = host_addr_field.text;
-
         TcpClient client = new TcpClient();
-        //IPHostEntry entry = Dns.GetHostEntry(addr);
-        //IPAddress host_addr = entry.AddressList[0];
         Client_output.text = "Connecting...";
-        //client.Connect(host_addr, GlobalVariables.Port);
+        Debug.Log("Connecting...");
         client.Connect(addr, GlobalVariables.Port);
+        Debug.Log("Connected...");
         connected = true;
         Client_output.text = "Connected! Reading seed...";
-        NetworkStream stream = client.GetStream();
+        GlobalVariables.NetStream = client.GetStream();
         Client_output.text = "Got stream...";
-        byte[] resp = new byte[sizeof(int)];
-        stream.Read(resp, 0, sizeof(int));
-        Debug.Log("readed" + BitConverter.ToInt32(resp, 0).ToString());
+        Debug.Log("Got stream...");
+        var formatter = new BinaryFormatter();
+        GlobalVariables.generationSettings = (GenerationSettings)formatter.Deserialize(GlobalVariables.NetStream);
         Client_output.text = $"Recieved response...";
-        GlobalVariables.Seed = BitConverter.ToInt32(resp, 0);
+        Debug.Log($"Got seed: {GlobalVariables.generationSettings.Seed}");
 
-        Client_output.text = $"Readed seed {GlobalVariables.Seed}!";
+        Client_output.text = $"Readed config!";
 
-        SceneManager.LoadScene("SampleScene");
+        EnterGame();
     }
 
-    public void EnterDevelopMode()
+    public void EnterGame()
     {
-        UnityEngine.Random.InitState(GlobalVariables.Seed);
+        UnityEngine.Random.InitState(GlobalVariables.generationSettings.Seed);
         SceneManager.LoadScene("SampleScene");
     }
 
@@ -258,14 +247,14 @@ public class MainMenuScript : MonoBehaviour
 
     public void SwitchSeedFieldValue()
     {
-        GlobalVariables.Seed = Convert.ToInt32(seedField.text);
-        UnityEngine.Random.InitState(GlobalVariables.Seed);
+        GlobalVariables.generationSettings.Seed = Convert.ToInt32(seedField.text);
+        UnityEngine.Random.InitState(GlobalVariables.generationSettings.Seed);
     }
 
     public void GenerateSeedOnClick()
     {
-        GlobalVariables.Seed = new System.Random().Next(3000000);
-        seedField.text = GlobalVariables.Seed.ToString();
+        GlobalVariables.generationSettings.Seed = new System.Random().Next(3000000);
+        seedField.text = GlobalVariables.generationSettings.Seed.ToString();
     }
 
     public void OpenGenerationMenu()
@@ -281,8 +270,8 @@ public class MainMenuScript : MonoBehaviour
         GlobalVariables.generationSettings.mainlandsCount = 3;
         GlobalVariables.generationSettings.mixingBiomesCount = 3;
 
-        GlobalVariables.Seed = new System.Random().Next(3000000);
-        seedField.text = GlobalVariables.Seed.ToString();
+        GlobalVariables.generationSettings.Seed = new System.Random().Next(3000000);
+        seedField.text = GlobalVariables.generationSettings.Seed.ToString();
     }
 
     public async void ListenHostsAsync()
@@ -295,7 +284,7 @@ public class MainMenuScript : MonoBehaviour
             {
                 IPEndPoint remote = new IPEndPoint(IPAddress.Any, GlobalVariables.Port);
                 byte[] responce = uc.Receive(ref remote);
-                string r = Encoding.UTF8.GetString(responce);//BitConverter.ToString(responce);
+                string r = Encoding.UTF8.GetString(responce);
                 Debug.Log("Recieved: " + r);
                 if (r.Contains("SDHost"))
                 {
@@ -303,7 +292,6 @@ public class MainMenuScript : MonoBehaviour
                     string addr = remote.Address.MapToIPv4().ToString();
                     if (!Host_List.HasHost("ZASTALINA"))
                         Hosts.Add(new Tuple<string, string>(addr, name));
-                        //Host_List.Add(addr, name);
                 }
             }
         });
@@ -312,18 +300,6 @@ public class MainMenuScript : MonoBehaviour
 
     public async void Broadcasting()
     {
-        //IPEndPoint remote = new IPEndPoint(IPAddress.Any, GlobalVariables.Port);
-        
-        //IPEndPoint ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), GlobalVariables.Port);
-        //IPEndPoint ep = new IPEndPoint(IPAddress.Any, GlobalVariables.Port);
-        
-        
-        //IPAddress host_addr = entry.AddressList[0];
-        
-        
-        
-        
-        //BitConverter.GetBytes(message.ToCharArray());
         await Task.Run(() =>
         {
             while (!connected)
@@ -349,6 +325,5 @@ public class MainMenuScript : MonoBehaviour
                 }
             }
         });
-            
     }
 }
