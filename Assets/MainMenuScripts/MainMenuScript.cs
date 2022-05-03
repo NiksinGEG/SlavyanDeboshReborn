@@ -9,6 +9,7 @@ using UnityEngine.UI;
 using System.Web;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
 
 public class MainMenuScript : MonoBehaviour
 {
@@ -41,7 +42,6 @@ public class MainMenuScript : MonoBehaviour
     public Text Client_output;
     public Text Host_output;
 
-    //���� ����� �������� ��������� �����
     public HostList Host_List;
 
     List<Tuple<string, string>> Hosts = new List<Tuple<string, string>>();
@@ -81,7 +81,7 @@ public class MainMenuScript : MonoBehaviour
     public void StartBtnPressed()
     {
         System.Random rnd = new System.Random();
-        GlobalVariables.Seed = rnd.Next(3000000);
+        GlobalVariables.generationSettings.Seed = rnd.Next(3000000);
 
         ShowMenu("Creation");
     }
@@ -98,15 +98,19 @@ public class MainMenuScript : MonoBehaviour
 
     public void CreateGame()
     {
-        Host_output.text = $"Genered seed {GlobalVariables.Seed}...";
+        Host_output.text = $"Genered seed {GlobalVariables.generationSettings.Seed}...";
+        Debug.Log($"Genered seed {GlobalVariables.generationSettings.Seed}...");
         Broadcasting();
         TcpListener listener = new TcpListener(IPAddress.Any, GlobalVariables.Port);
         listener.Start();
+        Debug.Log("Waiting client...");
         TcpClient cli = listener.AcceptTcpClient();
         connected = true;
-        NetworkStream stream = cli.GetStream();
-        byte[] query = BitConverter.GetBytes(GlobalVariables.Seed);
-        stream.Write(query, 0, query.Length);
+        Debug.Log("Connected...");
+        GlobalVariables.NetStream = cli.GetStream();
+        BinaryFormatter formatter = new BinaryFormatter();
+        formatter.Serialize(GlobalVariables.NetStream, GlobalVariables.generationSettings);
+        Debug.Log("Sended...");
         listener.Stop();
         SceneManager.LoadScene("SampleScene");
     }
@@ -121,25 +125,27 @@ public class MainMenuScript : MonoBehaviour
     {
         TcpClient client = new TcpClient();
         Client_output.text = "Connecting...";
+        Debug.Log("Connecting...");
         client.Connect(addr, GlobalVariables.Port);
+        Debug.Log("Connected...");
         connected = true;
         Client_output.text = "Connected! Reading seed...";
-        NetworkStream stream = client.GetStream();
+        GlobalVariables.NetStream = client.GetStream();
         Client_output.text = "Got stream...";
-        byte[] resp = new byte[sizeof(int)];
-        stream.Read(resp, 0, sizeof(int));
-        Debug.Log("readed" + BitConverter.ToInt32(resp, 0).ToString());
+        Debug.Log("Got stream...");
+        var formatter = new BinaryFormatter();
+        GlobalVariables.generationSettings = (GenerationSettings)formatter.Deserialize(GlobalVariables.NetStream);
         Client_output.text = $"Recieved response...";
-        GlobalVariables.Seed = BitConverter.ToInt32(resp, 0);
+        Debug.Log($"Got seed: {GlobalVariables.generationSettings.Seed}");
 
-        Client_output.text = $"Readed seed {GlobalVariables.Seed}!";
+        Client_output.text = $"Readed config!";
 
-        SceneManager.LoadScene("SampleScene");
+        EnterGame();
     }
 
-    public void EnterDevelopMode()
+    public void EnterGame()
     {
-        UnityEngine.Random.InitState(GlobalVariables.Seed);
+        UnityEngine.Random.InitState(GlobalVariables.generationSettings.Seed);
         SceneManager.LoadScene("SampleScene");
     }
 
@@ -241,14 +247,14 @@ public class MainMenuScript : MonoBehaviour
 
     public void SwitchSeedFieldValue()
     {
-        GlobalVariables.Seed = Convert.ToInt32(seedField.text);
-        UnityEngine.Random.InitState(GlobalVariables.Seed);
+        GlobalVariables.generationSettings.Seed = Convert.ToInt32(seedField.text);
+        UnityEngine.Random.InitState(GlobalVariables.generationSettings.Seed);
     }
 
     public void GenerateSeedOnClick()
     {
-        GlobalVariables.Seed = new System.Random().Next(3000000);
-        seedField.text = GlobalVariables.Seed.ToString();
+        GlobalVariables.generationSettings.Seed = new System.Random().Next(3000000);
+        seedField.text = GlobalVariables.generationSettings.Seed.ToString();
     }
 
     public void OpenGenerationMenu()
@@ -264,8 +270,8 @@ public class MainMenuScript : MonoBehaviour
         GlobalVariables.generationSettings.mainlandsCount = 3;
         GlobalVariables.generationSettings.mixingBiomesCount = 3;
 
-        GlobalVariables.Seed = new System.Random().Next(3000000);
-        seedField.text = GlobalVariables.Seed.ToString();
+        GlobalVariables.generationSettings.Seed = new System.Random().Next(3000000);
+        seedField.text = GlobalVariables.generationSettings.Seed.ToString();
     }
 
     public async void ListenHostsAsync()
