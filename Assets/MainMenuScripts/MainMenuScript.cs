@@ -50,9 +50,11 @@ public class MainMenuScript : MonoBehaviour
 
     bool connected = false;
 
+    public MenuManager menuManager;
+
     private void Awake()
     {
-        ShowMenu("Main");
+        menuManager.ShowMenu("Main");
     }
 
     public void Update()
@@ -68,29 +70,17 @@ public class MainMenuScript : MonoBehaviour
         catch { }
     }
 
-    private void ShowMenu(string name)
-    {
-        var menus = Resources.FindObjectsOfTypeAll<Menu>();
-        for(int i = 0; i < menus.Length; i++)
-        {
-            if (menus[i].Name.Equals(name))
-                menus[i].gameObject.SetActive(true);
-            else
-                menus[i].gameObject.SetActive(false);
-        }
-    }
-
     public void StartBtnPressed()
     {
         System.Random rnd = new System.Random();
         GlobalVariables.generationSettings.Seed = rnd.Next(3000000);
 
-        ShowMenu("Creation");
+        menuManager.ShowMenu("Creation");
     }
 
     public void BackToMain()
     {
-        ShowMenu("Main");
+        menuManager.ShowMenu("Main");
     }
 
     public void ExitBtnPressed()
@@ -121,7 +111,7 @@ public class MainMenuScript : MonoBehaviour
 
     public void ConnectBtnPressed()
     {
-        ShowMenu("Connecting");
+        menuManager.ShowMenu("Connecting");
         ListenHostsAsync();
     }
 
@@ -263,7 +253,7 @@ public class MainMenuScript : MonoBehaviour
 
     public void OpenGenerationMenu()
     {
-        ShowMenu("Generation");
+        menuManager.ShowMenu("Generation");
         GlobalVariables.generationSettings.terrainChunkCountX = 35;
         GlobalVariables.generationSettings.terrainChunkCountY = 21;
 
