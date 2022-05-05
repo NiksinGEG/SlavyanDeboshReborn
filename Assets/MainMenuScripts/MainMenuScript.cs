@@ -281,7 +281,7 @@ public class MainMenuScript : MonoBehaviour
                 IPEndPoint remote = new IPEndPoint(IPAddress.Any, GlobalVariables.Port);
                 byte[] responce = uc.Receive(ref remote);
                 string r = Encoding.UTF8.GetString(responce);
-                Debug.Log("Recieved: " + r);
+                //Debug.Log("Recieved: " + r);
                 if (r.Contains("SDHost"))
                 {
                     string name = r.Substring(6);
@@ -312,7 +312,7 @@ public class MainMenuScript : MonoBehaviour
                         string message = $"SDHost{GlobalVariables.SelfName}";
                         byte[] tosend = Encoding.UTF8.GetBytes(message);
                         uc.Send(tosend, tosend.Length, "255.255.255.255", GlobalVariables.Port);
-                        Debug.Log("Sended on " + addr.ToString());
+                        //Debug.Log("Sended on " + addr.ToString());
                     }
                     catch (SocketException ex)
                     {

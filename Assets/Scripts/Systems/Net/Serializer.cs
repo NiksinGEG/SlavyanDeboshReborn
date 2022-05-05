@@ -150,8 +150,8 @@ namespace Assets.Scripts.Systems.Net
 
         public float GetFloat(string valName)
         {
-            
-            return float.Parse(keyValues[valName], CultureInfo.InvariantCulture);
+            var val = keyValues[valName].Replace(',', '.');
+            return float.Parse(val, CultureInfo.InvariantCulture);
         }
 
         public double GetDouble(string valName)
