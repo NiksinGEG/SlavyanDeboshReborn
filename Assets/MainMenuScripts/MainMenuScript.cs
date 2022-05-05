@@ -10,6 +10,7 @@ using System.Web;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
+using Assets.Scripts.Logger;
 
 public class MainMenuScript : MonoBehaviour
 {
@@ -140,6 +141,7 @@ public class MainMenuScript : MonoBehaviour
     public void EnterGame()
     {
         UnityEngine.Random.InitState(GlobalVariables.generationSettings.Seed);
+        Loger.Log("Logs\\MainMenu.log", "Entering game...");
         SceneManager.LoadScene("SampleScene");
     }
 
