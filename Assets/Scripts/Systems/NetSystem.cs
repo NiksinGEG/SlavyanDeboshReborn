@@ -58,10 +58,15 @@ public class NetSystem : IECSSystem
                     continue;
                 string s = "";
                 byte[] buf = new byte[1];
+                Debug.Log("Net system recieving...");
                 GlobalVariables.NetStream.Read(buf, 0, 1);
+                Debug.Log("Net system start reading...");
                 char c = Encoding.UTF8.GetString(buf)[0];
                 if (c != '{')
-                    return;
+                {
+                    Debug.Log($"Wrong format char: '{c}'");
+                    continue;
+                } 
                 s += c;
                 int pars = 1;
                 while (pars > 0)
