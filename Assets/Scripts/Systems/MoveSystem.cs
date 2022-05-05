@@ -45,7 +45,7 @@ public class MoveSystem : IECSSystem
 
     private void UpdateComponent(Movable c)
     {
-        if (c.WayCells.Count == 0)
+        if (c.WayCells.Count == 0 || c.WayCells == null)
             return;
         var newT = UpdateT(c);
         if (newT > 1f)

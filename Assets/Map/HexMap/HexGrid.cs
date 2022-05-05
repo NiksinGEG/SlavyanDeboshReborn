@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets.Scripts.Path;
+
 
 namespace Assets.Map.WorldMap
 {
@@ -304,29 +306,26 @@ namespace Assets.Map.WorldMap
 			return truePath;
         }
 
+
+
 		public List<HexCell> GetWay(int type, HexCell startCell, HexCell endCell)
 		{
-			int[,] weightMatrix = new int[cellCountX * cellCountZ, cellCountX * cellCountZ];
-			weightMatrix = CreateWeghtMatrix(weightMatrix);
-			switch(type)
-            {
+			switch (type)
+			{
 				case 0:
-                    weightMatrix = CreateWaterMatrix(weightMatrix);
+					if (endCell.Type != CellType.water)
+					{
+						return null;
+					}
 					break;
 				case 1:
-					weightMatrix = CreateTerrainMatrix(weightMatrix);
+					if (endCell.Type == CellType.water)
+					{
+						return null;
+					}
 					break;
-				case 2:
-					break;
-            }
-			int[] D = new int[cellCountX * cellCountZ];
-			int[] V = new int[cellCountX * cellCountZ];
-			int[] T = new int[cellCountX * cellCountZ];
-			InitSupportArrays(D, V, T, cellCountX * cellCountZ);
-
-			T = DikstraAlg(weightMatrix, cellCountX * cellCountZ, D, V, T, startCell.CellIndex, endCell.CellIndex);
-			
-			return AddPathOnTravelList(T,startCell.CellIndex, endCell.CellIndex, type);
+			}
+			return A_Star.FindPath(type, startCell, endCell);
 		}
 	}
 	
