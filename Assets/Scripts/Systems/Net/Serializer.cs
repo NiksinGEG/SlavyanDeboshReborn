@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,6 +23,31 @@ namespace Assets.Scripts.Systems.Net
             keyValues = Parse(input);
         }
 
+        //s - строка в формате "имя:значение", возврат: ["имя", "значение"]
+        private string[] Split(string s)
+        {
+            string[] res = new string[2];
+            res[0] = "";
+            res[1] = "";
+            char c = s[0];
+            res[0] += c;
+            int i = 1;
+            c = s[i];
+            while (c != ':')
+            {
+                res[0] += c;
+                c = s[++i];
+            }
+            ++i;
+            while(i < s.Length)
+            {
+                c = s[i];
+                res[1] += c;
+                i++;
+            }
+            return res;
+        }
+
         public void SerializeField<field_T>(string fieldName, field_T fieldVal)
         {
             _sb.AppendLine("{" + fieldName + ":" + fieldVal.ToString() + "}");
@@ -33,9 +59,9 @@ namespace Assets.Scripts.Systems.Net
         {
             string s_arr = "[";
             foreach (var item in arr)
-                s_arr += item.ToString() + ",";
+                s_arr += "(" + item.ToString() + "),";
             if (s_arr[s_arr.Length - 1] == ',')
-                s_arr.Remove(s_arr.Length - 1);
+                s_arr = s_arr.Remove(s_arr.Length - 1);
             s_arr += "]";
 
             _sb.AppendLine("{" + arrayName + ":" + s_arr + "}");
@@ -44,14 +70,6 @@ namespace Assets.Scripts.Systems.Net
         }
         public void SerializeList<base_T>(string listName, List<base_T> list)
         {
-            /*_sb.Append("{" + listName + ":[");
-            foreach (var elem in list)
-                _sb.Append(elem.ToString() + ",");
-            if (_sb[_sb.Length - 1] == ',')
-                _sb.Remove(_sb.Length - 1, 1);
-            _sb.Append("]}");
-            _sb.AppendLine();*/
-
             SerializeArray(listName, list.ToArray());
         }
         public override string ToString()
@@ -108,7 +126,7 @@ namespace Assets.Scripts.Systems.Net
                     new_s = new_s.Substring(1, new_s.Length - 2);
 
                     //2. "val:23" => ["val", "23"]
-                    string[] split = new_s.Split(':');
+                    string[] split = Split(new_s);
 
                     res.Add(split[0], split[1]);
                 }
@@ -132,13 +150,13 @@ namespace Assets.Scripts.Systems.Net
 
         public float GetFloat(string valName)
         {
-            
-            return float.Parse(keyValues[valName]);//(float)Convert.ToDouble(keyValues[valName]);
+            var val = keyValues[valName].Replace(',', '.');
+            return float.Parse(val, CultureInfo.InvariantCulture);
         }
 
         public double GetDouble(string valName)
         {
-            return double.Parse(keyValues[valName]);
+            return double.Parse(keyValues[valName], CultureInfo.InvariantCulture);
         }
 
         public Vector3 GetVector3(string valName)
@@ -146,15 +164,37 @@ namespace Assets.Scripts.Systems.Net
             string res = GetValue(valName);
             res = res.Substring(1, res.Length - 2);
             string[] split = res.Split(',');
-            return new Vector3(float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2]));
+            return new Vector3(float.Parse(split[0], CultureInfo.InvariantCulture), float.Parse(split[1], CultureInfo.InvariantCulture), float.Parse(split[2], CultureInfo.InvariantCulture));
         }
 
         public string[] GetArray(string valName)
         {
             string arr = GetValue(valName);
-            arr = arr.Substring(1, arr.Length - 2); //"[1,2,3]" => "1,2,3"
-            string[] split = arr.Split(',');
-            return split;
+            List<string> split = new List<string>();
+            int i = 1;
+            char c = arr[i];
+            while(c != ']')
+            {
+                if (c != '(')
+                    throw new Exception("Wrong array serialization!");
+                i++;
+                int pars = 1;
+                string new_s = "";
+                while(pars > 0)
+                {
+                    if (c == '(')
+                        pars++;
+                    if (c == ')')
+                        pars--;
+                    if(pars > 0)
+                        new_s += c;
+                    c = arr[++i];
+                }
+                split.Add(new_s);
+                if (c == ',')
+                    c = arr[++i];
+            }
+            return split.ToArray();
         }
     }
 }
