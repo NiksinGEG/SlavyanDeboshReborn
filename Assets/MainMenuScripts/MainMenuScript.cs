@@ -253,6 +253,11 @@ public class MainMenuScript : MonoBehaviour
         seedField.text = GlobalVariables.generationSettings.Seed.ToString();
     }
 
+    public void GeneratePreviewBtnOnClick()
+    {
+        
+    }
+
     public void OpenGenerationMenu()
     {
         menuManager.ShowMenu("Generation");

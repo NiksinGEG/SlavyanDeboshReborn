@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Diagnostics;
 using Assets.Scripts.Path;
+using Assets.Scripts.Logger;
 
 
 namespace Assets.Map.WorldMap
@@ -310,6 +312,9 @@ namespace Assets.Map.WorldMap
 
 		public List<HexCell> GetWay(int type, HexCell startCell, HexCell endCell)
 		{
+			Stopwatch sw = new Stopwatch();
+			Loger.Log("Logs\\CalculatePath.log", $"{ DateTime.Now}-Calculate Path: START");
+			sw.Start();
 			switch (type)
 			{
 				case 0:
@@ -325,7 +330,10 @@ namespace Assets.Map.WorldMap
 					}
 					break;
 			}
-			return A_Star.FindPath(type, startCell, endCell);
+			List<HexCell> path = A_Star.FindPath(type, startCell, endCell);
+			sw.Stop();
+			Loger.Log("Logs\\CalculatePath.log", $"{ DateTime.Now}-Calculate Path: FINISH({sw.ElapsedMilliseconds})");
+			return path;
 		}
 	}
 	
