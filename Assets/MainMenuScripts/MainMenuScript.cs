@@ -14,6 +14,8 @@ using Assets.Scripts.Logger;
 
 public class MainMenuScript : MonoBehaviour
 {
+    public MainMap mapPrefab;
+
     public InputField chunkCountXField;
     public InputField chunkCountYField;
 
@@ -43,7 +45,7 @@ public class MainMenuScript : MonoBehaviour
     public Text Client_output;
     public Text Host_output;
 
-    public InputField hostNameField;
+    public InputField hostNameField; 
 
     public HostList Host_List;
 
@@ -255,7 +257,8 @@ public class MainMenuScript : MonoBehaviour
 
     public void GeneratePreviewBtnOnClick()
     {
-        
+        Destroy(mapPrefab);
+        Instantiate(mapPrefab);
     }
 
     public void OpenGenerationMenu()

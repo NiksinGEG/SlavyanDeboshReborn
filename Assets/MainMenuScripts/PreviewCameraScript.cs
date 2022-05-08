@@ -34,6 +34,5 @@ public class PreviewCameraScript : MonoBehaviour
                   $"HexGrid pos & local pos - {map.grid.transform.position}; {map.grid.transform.localPosition} \n" +
                   $"Camera pos & local pos - {camera.transform.position}; {camera.transform.localPosition}");
         //transform.localPosition = map.grid.transform.localPosition;
-        //camera.orthographicSize = (map.grid.chunkCountX * map.grid.chunkCountZ) / 1.6f;
     }
 }
