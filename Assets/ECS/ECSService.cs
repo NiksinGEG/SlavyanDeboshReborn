@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.Systems;
@@ -20,6 +21,7 @@ public class ECSService : MonoBehaviour
         Systems.Add(new MoveSystem(this));
         Systems.Add(new AttackSystem(this));
         Systems.Add(new NetSystem(this));
+        Systems.Add(new UISystem(this));
     }
 
     void Awake()
@@ -44,6 +46,14 @@ public class ECSService : MonoBehaviour
         foreach(var s in ECSInstance.Instance().Systems)
             if (s.GetType() == typeof(T))
                 return (T)s;
+        return null;
+    }
+
+    public IECSSystem GetSystem(Type systemType)
+    {
+        foreach (var s in ECSInstance.Instance().Systems)
+            if (s.GetType() == systemType)
+                return s;
         return null;
     }
 }
