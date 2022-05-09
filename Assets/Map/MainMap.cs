@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Map.WorldMap;
 using Assets.Map.MapResources;
+using Assets.Scripts.Statics;
 
 public class MainMap : MonoBehaviour
 {

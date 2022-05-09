@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Map.WorldMap;
-using Assets.Scripts;
-using Assets.Scripts.Components;
+using Assets.Scripts.Statics;
 
 public class SelectionSystem : IECSSystem
 {
@@ -90,7 +89,7 @@ public class SelectionSystem : IECSSystem
             if (chunk != null)
             {
                 var grid = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>();
-                var unit = grid.GetByPosition(chunk.gameObject.transform.position);
+                var unit = Map.GetByPosition(chunk.gameObject.transform.position);
             }
         }
         return 0;

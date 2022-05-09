@@ -17,7 +17,6 @@ public class PreviewCameraScript : MonoBehaviour
     void Update()
     {
         var centerPos = map.grid.cellList[(map.grid.cellList.Length) / 2].transform.position;
-        //centerPos.z = -1158f;
         camera.transform.position = centerPos;
         Vector3 tmp = camera.transform.localPosition;
         tmp.z = -1158f;

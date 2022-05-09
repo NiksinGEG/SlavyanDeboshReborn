@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Assets.Map.WorldMap;
 using Assets.Scripts;
+using Assets.Scripts.Statics;
 
 public class MoveSystem : IECSSystem
 {
@@ -64,6 +65,8 @@ public class MoveSystem : IECSSystem
 
     public override void Run()
     {
+        Map.getInstance();
+
         ECSFilter f = new ECSFilter();
         List<Movable> components = f.GetComponents<Movable>();
         foreach (var c in components)
@@ -73,15 +76,16 @@ public class MoveSystem : IECSSystem
     //TODO: оптимизировать GetWay
     public void SetWay(Movable comp, RaycastHit hit)
     {
-        if (hit.transform.gameObject.GetComponentInParent<HexGridChunk>() == null) //if clicked at cell of a map
+        if (hit.transform.gameObject.GetComponentInParent<HexGridChunk>() == null && hit.transform.gameObject.GetComponent<MapResource>() == null) //if clicked at cell of a map
+                return;
+
+        var endCell = Map.GetByPosition(hit.point);
+        var startCell = Map.GetByPosition(comp.gameObject.transform.position);
+        if (startCell == endCell)
             return;
-        var grid = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>();
-        var endCell = grid.GetByPosition(hit.point);
-        var startPos = comp.gameObject.transform.position;
-        var startCell = grid.GetByPosition(startPos);
 
         comp.WayCells = new List<Vector3>();
-        List<HexCell> WayCells = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>().GetWay((int)comp.moveType, startCell, endCell);
+        List<HexCell> WayCells = Map.GetWay((int)comp.moveType, startCell, endCell);
         comp.WayCells.Add(comp.transform.position);
         foreach (var cell in WayCells)
             comp.WayCells.Add(cell.transform.position);
@@ -101,15 +105,13 @@ public class MoveSystem : IECSSystem
     {
         if (hit.transform.gameObject.GetComponentInParent<HexGridChunk>() == null) //if clicked at cell of a map
             return;
-        var grid = hit.transform.gameObject.GetComponentInParent<HexGridChunk>().gameObject.GetComponentInParent<HexGrid>();
         List<HexCell> WayCells = new List<HexCell>();
         await Task.Run(() =>
         {
-            var endCell = grid.GetByPosition(hit.point);
-            var startPos = comp.gameObject.transform.position;
-            var startCell = grid.GetByPosition(startPos);
+            var endCell = Map.GetByPosition(hit.point);
+            var startCell = Map.GetByPosition(comp.gameObject.transform.position);
 
-            WayCells = grid.GetWay((int)comp.moveType, startCell, endCell);
+            WayCells = Map.GetWay((int)comp.moveType, startCell, endCell);
         });
         comp.WayCells = new List<Vector3>();
         comp.WayCells.Add(comp.transform.position);
