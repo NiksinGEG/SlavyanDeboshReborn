@@ -30,12 +30,11 @@ public class PopupSystem : IECSSystem
     private void ShowPopup(PopupComponent c, RaycastHit hit)
     {
         c.gameObject.SetActive(true);
-        Vector3 new_pos = Camera.main.transform.position + Camera.main.transform.forward * c.Distance;
-        c.transform.position = Camera.main.transform.position;
-        c.transform.LookAt(new_pos);
-        c.transform.position = new_pos;
-        
-        //var cTrans = c.gameObject.GetComponent<RectTransform>();
-        //cTrans.rot
+
+        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition); //получаем направление на курсор
+        Vector3 new_pos = Camera.main.transform.position + inputRay.direction * c.Distance; //вычисляем новую позицию менюшки
+        c.transform.position = Camera.main.transform.position; //ставим менюшку на камеру
+        c.transform.LookAt(new_pos); //смотрим на новую позицию
+        c.transform.position = new_pos; //и когда ставим меню на новую позицию, она будет смотреть прямо на нас!
     }
 }
