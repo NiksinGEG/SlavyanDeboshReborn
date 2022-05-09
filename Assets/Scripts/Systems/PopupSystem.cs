@@ -11,6 +11,9 @@ public class PopupSystem : IECSSystem
     {
         Service.GetSystem<InputSystem>().MouseDownLKM += OnMouseLKM;
         Service.GetSystem<InputSystem>().MouseDownRKM += OnMouseRKM;
+        var comps = new ECSFilter().GetComponents<PopupComponent>();
+        foreach (var c in comps)
+            c.gameObject.SetActive(false);
     }
 
     public void OnMouseLKM(RaycastHit hit)
