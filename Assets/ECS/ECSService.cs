@@ -22,6 +22,7 @@ public class ECSService : MonoBehaviour
         Systems.Add(new AttackSystem(this));
         Systems.Add(new NetSystem(this));
         Systems.Add(new UISystem(this));
+        Systems.Add(new PopupSystem(this));
     }
 
     void Awake()
