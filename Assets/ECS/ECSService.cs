@@ -20,7 +20,7 @@ public class ECSService : MonoBehaviour
         Systems.Add(new SpawnSystem(this));
         Systems.Add(new MoveSystem(this));
         Systems.Add(new AttackSystem(this));
-        Systems.Add(new NetSystem(this));
+        //Systems.Add(new NetSystem(this));
         Systems.Add(new UISystem(this));
         Systems.Add(new PopupSystem(this));
     }

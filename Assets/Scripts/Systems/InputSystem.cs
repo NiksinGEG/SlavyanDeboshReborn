@@ -27,6 +27,9 @@ public class InputSystem : IECSSystem
     /// </summary>
     public MouseEvent MouseDownRKM = new MouseEvent();
 
+    public MouseEvent MouseUpLKM = new MouseEvent();
+    public MouseEvent MouseUpRKM = new MouseEvent();
+
     private RaycastHit? GetHit()
     {
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -62,6 +65,18 @@ public class InputSystem : IECSSystem
             var hit = GetHit();
             if (hit != null)
                 MouseDownRKM.Invoke((RaycastHit)hit);
+        }
+        if(Input.GetMouseButtonUp(0))
+        {
+            var hit = GetHit();
+            if(hit != null)
+                MouseUpLKM.Invoke((RaycastHit)hit);
+        }
+        if (Input.GetMouseButtonUp(1))
+        {
+            var hit = GetHit();
+            if (hit != null)
+                MouseUpRKM.Invoke((RaycastHit)hit);
         }
     }
 }

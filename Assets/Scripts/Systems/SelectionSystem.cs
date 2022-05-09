@@ -16,7 +16,7 @@ public class SelectionSystem : IECSSystem
         Select(c);
     }
 
-    public void OnMouseRKM(RaycastHit hit)
+    public void OnMouseRKM()
     {
         List<Selectable> selected_c = new ECSFilter().GetComponents<Selectable>(c => c.IsSelected);
         if(selected_c.Count > 0)
@@ -24,14 +24,13 @@ public class SelectionSystem : IECSSystem
             Movable mov_c = selected_c[0].gameObject.GetComponent<Movable>();
             if (mov_c == null)
                 return;
-            Service.GetSystem<MoveSystem>().SetWay(mov_c, hit);
+            Service.GetSystem<MoveSystem>().SetWay(mov_c, GlobalVariables.lastHit);
         }
     }
 
     public override void Init()
     {
         Service.GetSystem<InputSystem>().MouseDownLKM += OnMouseLKM;
-        Service.GetSystem<InputSystem>().MouseDownRKM += OnMouseRKM;
     }
 
     public void Select(Selectable comp)

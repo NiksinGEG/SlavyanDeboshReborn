@@ -14,4 +14,6 @@ public static class GlobalVariables
 
     public static string SelfName = "";
     public static string EnemyName = "";
+
+    public static RaycastHit lastHit;
 }

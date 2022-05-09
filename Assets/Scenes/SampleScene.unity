@@ -1307,6 +1307,7 @@ GameObject:
   - component: {fileID: 1314239729}
   - component: {fileID: 1314239728}
   - component: {fileID: 1314239727}
+  - component: {fileID: 1314239730}
   m_Layer: 5
   m_Name: Button1
   m_TagString: Untagged
@@ -1377,7 +1378,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1314239728}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1314239730}
+        m_TargetAssemblyTypeName: Assets.Scripts.Components.UI.ButtonComponent, Assembly-CSharp
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1314239728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1416,6 +1429,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1314239725}
   m_CullTransparentMesh: 1
+--- !u!114 &1314239730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1314239725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec32aad0385363b4c89c15fd737f6701, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Clicked: 0
+  SystemType: SelectionSystem
+  MethodName: OnMouseRKM
 --- !u!1001 &1318317660
 PrefabInstance:
   m_ObjectHideFlags: 0

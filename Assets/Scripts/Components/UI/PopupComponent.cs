@@ -5,4 +5,5 @@ using UnityEngine;
 public class PopupComponent : IECSComponent
 {
     public float Distance;
+    public RaycastHit hit; //hit который привёл к открытию попапа
 }

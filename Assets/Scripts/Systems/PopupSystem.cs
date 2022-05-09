@@ -9,8 +9,9 @@ public class PopupSystem : IECSSystem
 
     public override void Init()
     {
-        Service.GetSystem<InputSystem>().MouseDownLKM += OnMouseLKM;
+        Service.GetSystem<InputSystem>().MouseUpLKM += OnMouseLKM;
         Service.GetSystem<InputSystem>().MouseDownRKM += OnMouseRKM;
+
         var comps = new ECSFilter().GetComponents<PopupComponent>();
         foreach (var c in comps)
             c.gameObject.SetActive(false);
@@ -27,10 +28,14 @@ public class PopupSystem : IECSSystem
     {
         var comps = new ECSFilter().GetComponents<PopupComponent>();
         foreach (var c in comps)
-            ShowPopup(c, hit);
+        {
+            ShowPopup(c);
+            c.hit = hit;
+            GlobalVariables.lastHit = hit;
+        }
     }
 
-    private void ShowPopup(PopupComponent c, RaycastHit hit)
+    private void ShowPopup(PopupComponent c)
     {
         c.gameObject.SetActive(true);
 

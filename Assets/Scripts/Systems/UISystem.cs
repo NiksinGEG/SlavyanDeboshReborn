@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -35,7 +36,7 @@ public class UISystem : IECSSystem
     {
         if (!component.Clicked)
             return;
-        var sys = Service.GetSystem(component.SystemType);
+        var sys = Service.GetSystem(Type.GetType(component.SystemType));
         var method = sys.GetType().GetMethod(component.MethodName);
         method.Invoke(sys, new object[0]);
         component.Clicked = false;

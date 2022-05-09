@@ -9,9 +9,14 @@ namespace Assets.Scripts.Components.UI
     {
         public bool Clicked;
 
-        [SerializeField] public Type SystemType;
+        public string SystemType;
 
         public string MethodName;
+
+        public void OnClick()
+        {
+            Clicked = true;
+        }
     }
 }
 
