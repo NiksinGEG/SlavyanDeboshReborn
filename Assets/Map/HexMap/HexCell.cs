@@ -45,9 +45,8 @@ namespace Assets.Map.WorldMap
     public class HexCell : MonoBehaviour
     {
 
-        
 
-        [SerializeField] public int spawnChance;
+        [SerializeField] public float Height { get; set; }
         public int SpawnChance { get; set; }
 
         public CellType Type { get; set; }

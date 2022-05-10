@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using Assets.Scripts.Logger;
+using Assets.Map.WorldMap;
 
 public class MainMenuScript : MonoBehaviour
 {
@@ -27,12 +28,6 @@ public class MainMenuScript : MonoBehaviour
     public InputField standartTreeProcentField;
     public InputField winterTreeProcentField;
 
-    public Slider rockProcentSlider;
-    public InputField rockProcentField;
-
-    public Slider mainlandsCountSlider;
-    public InputField mainlandsCountField;
-
     public Slider mixingBiomesSlider;
     public InputField mixingBiomesField;
 
@@ -48,6 +43,12 @@ public class MainMenuScript : MonoBehaviour
     public InputField hostNameField; 
 
     public HostList Host_List;
+
+    public Texture2D _texture;
+    public Image mapImage;
+
+    public Slider waterLevelSlider;
+    public Slider rockLevelSlider;
 
     List<Tuple<string, string>> Hosts = new List<Tuple<string, string>>();
 
@@ -191,41 +192,6 @@ public class MainMenuScript : MonoBehaviour
         GlobalVariables.generationSettings.terrainChunkCountY = Convert.ToInt32(chunkCountYField.text);
     }
 
-    public void SwitchRockProcentFieldValue()
-    {
-        rockProcentField.text = rockProcentSlider.value.ToString();
-        GlobalVariables.generationSettings.rockProcent = Convert.ToInt32(rockProcentField.text);
-    }
-
-    public void SwitchRockProcentSliderValue()
-    {
-        try
-        {
-            rockProcentSlider.value = Convert.ToInt32(rockProcentField.text);
-        }
-        catch
-        {
-            rockProcentSlider.value = Convert.ToInt32(rockProcentField.text = "5");
-        }
-    }
-
-    public void SwitchMainlandsCountFieldValue()
-    {
-        mainlandsCountField.text = mainlandsCountSlider.value.ToString();
-        GlobalVariables.generationSettings.mainlandsCount = Convert.ToInt32(mainlandsCountField.text);
-    }
-
-    public void SwitchMainlandsCountSliderValue()
-    {
-        try
-        {
-            mainlandsCountSlider.value = Convert.ToInt32(mainlandsCountField.text);
-        }
-        catch
-        {
-            mainlandsCountSlider.value = Convert.ToInt32(mainlandsCountField.text = "3");
-        }
-    }
 
     public void SwitchMixingBiomesFieldValue()
     {
@@ -271,12 +237,62 @@ public class MainMenuScript : MonoBehaviour
         GlobalVariables.generationSettings.tropicTreeProcent = 50;
         GlobalVariables.generationSettings.standartTreeProcent = 50;
         GlobalVariables.generationSettings.winterTreeProcent = 50;
-        GlobalVariables.generationSettings.rockProcent = 5;
-        GlobalVariables.generationSettings.mainlandsCount = 3;
         GlobalVariables.generationSettings.mixingBiomesCount = 3;
 
         GlobalVariables.generationSettings.Seed = new System.Random().Next(3000000);
+
+        GlobalVariables.generationSettings.rockHeight = 0.5f;
+        GlobalVariables.generationSettings.waterHeihgt = 0.2f;
+        GlobalVariables.generationSettings.sandHeight = GlobalVariables.generationSettings.waterHeihgt + 0.5f;
+
         seedField.text = GlobalVariables.generationSettings.Seed.ToString();
+        RedrawMap();
+    }
+
+    private void RedrawMap()
+    {
+        GlobalVariables.generationSettings.heightMatrix = new float[GlobalVariables.generationSettings.terrainChunkCountX * 3, GlobalVariables.generationSettings.terrainChunkCountY * 3];
+        HexFieldGenerator.GenerateHexMap(GlobalVariables.generationSettings.heightMatrix);
+        _texture = new Texture2D(GlobalVariables.generationSettings.terrainChunkCountX * 3, GlobalVariables.generationSettings.terrainChunkCountY * 3);
+        Sprite sprite = Sprite.Create(_texture, new Rect(0, 0, _texture.width, _texture.height), new Vector2(0.0f, 1.0f), pixelsPerUnit: 1f);
+        var spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = sprite;
+
+        for (int i = 0; i < GlobalVariables.generationSettings.terrainChunkCountX * 3; i++)
+        {
+            for (int j = 0; j < GlobalVariables.generationSettings.terrainChunkCountY * 3; j++)
+            {
+                var height = GlobalVariables.generationSettings.heightMatrix[i, j];
+                Color pixelColor;
+                if(height < GlobalVariables.generationSettings.waterHeihgt)
+                {
+                    pixelColor = Color.blue;
+                }
+                else if(height < GlobalVariables.generationSettings.sandHeight)
+                {
+                    pixelColor = Color.yellow;
+                }
+                else if(height < GlobalVariables.generationSettings.rockHeight)
+                {
+                    var color1 = new Color(46f / 255, 182f / 255, 44f / 255);
+                    var color2 = new Color(0f / 255, 125f / 255, 0f / 255);
+                    var lerpValue = Color.Lerp(color1, color2, height / GlobalVariables.generationSettings.rockHeight);
+                    pixelColor = lerpValue;
+                }
+                else
+                {
+                    pixelColor = new Color(94f / 255, 103f / 255, 109f / 255);
+                }
+                _texture.SetPixel(i, j, pixelColor);
+            }
+
+        }
+        _texture.Apply();
+
+        mapImage.sprite = sprite;
+        mapImage.SetNativeSize();
+        mapImage.transform.localScale = spriteRenderer.transform.localScale; 
+                
     }
 
     public async void ListenHostsAsync()

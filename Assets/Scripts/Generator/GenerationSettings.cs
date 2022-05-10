@@ -18,9 +18,14 @@ public struct GenerationSettings
     public int terrainChunkCountX;
     public int terrainChunkCountY;
 
-    public int rockProcent;
-
-    public int mainlandsCount;
+    public float waterHeihgt;
+    public float sandHeight;
+    public float rockHeight;
 
     public int mixingBiomesCount;
+
+    public float[,] heightMatrix; 
+
+    public float minHeight;
+    public float maxHeight;
 }

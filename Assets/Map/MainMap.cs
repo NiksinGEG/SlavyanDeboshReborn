@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Map.WorldMap;
 using Assets.Map.MapResources;
-using Assets.Scripts.Statics;
 
 public class MainMap : MonoBehaviour
 {
@@ -16,8 +15,8 @@ public class MainMap : MonoBehaviour
         grid.transform.position = Vector3.zero;
         grid.transform.SetParent(transform);
 
-        resGen = FindObjectOfType<ResourceGenerator>();
-        resGen.GenerateResource(grid);
+        //resGen = FindObjectOfType<ResourceGenerator>();
+        //resGen.GenerateResource(grid);
     }
 
 }

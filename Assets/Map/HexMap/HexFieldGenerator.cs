@@ -9,6 +9,11 @@ namespace Assets.Map.WorldMap
 {
     public static class HexFieldGenerator
     {
+        private static float _baseHeight = 100f;
+        private static float _roughness = 1f;
+        private static bool _raiseToSecondPower = true;
+        private static int _smoothCycles = 1;
+
         static CellList neighbourCells; //Временная заглушка
 
         static int biomesMaxCellCount;
@@ -195,8 +200,9 @@ namespace Assets.Map.WorldMap
            
         }
 
-        public static CellList GenerateHexMap(CellList cells)
+        public static float[,] GenerateHexMap(float[,] weightMatrix)
         {
+            /*
             //Инициализация логгера и счетчика
             Loger.getInstance();
             Loger.DeleteLog("Logs\\HexMapGenerator.log");
@@ -248,199 +254,153 @@ namespace Assets.Map.WorldMap
             //Короч чтобы все "подводные клетки" были под водой, опускаем их на один уровень
             foreach (var cell in cells)
                 if (cell.Type == CellType.water)
+                    cell.Elevation = -1;*/
+            InitHeight(weightMatrix);
+            AddRandomToAngles(weightMatrix);
+            GenerateDiamondSquareTerrain(weightMatrix);
+
+            //FromHeightToTexture(cells);
+            return weightMatrix;
+        }
+
+        private static void FromHeightToTexture(CellList cells)
+        {
+            foreach(var cell in cells)
+            {
+                if(cell.Height < 0.1f)
+                {
                     cell.Elevation = -1;
-
-            return cells;
-        }
-        private static CellList GenerateStartTerrain(CellList cells)
-        {
-            for(int i = 0; i < cells.Length; i++)
-            {
-                cells[i].SetTypeAndTexture(CellType.water);
-                cells[i].Elevation = 0;
-            }
-            return cells;
-        }
-
-        //Функция генерации одного острова
-        private static void GenerateIsland(ref CellList cells, ref List<HexCell> waterList, int startCell)
-        {
-            neighbourCells = cells.GetNeighbours(startCell);
-            neighbourCells.Add(cells[startCell], 0, 0);
-            int islandsCellsCount = UnityEngine.Random.Range(0, neighbourCells.Length);
-            cells[startCell].SetTypeAndTexture(CellType.terrain);
-            waterList.Remove(cells[startCell]);
-            for (int i = 0; i < islandsCellsCount; i++)
-            {
-                cells[neighbourCells[i].CellIndex].SetTypeAndTexture(CellType.terrain);
-                cells[neighbourCells[i].CellIndex].Elevation = 1;
-                waterList.Remove(cells[neighbourCells[i].CellIndex]);
+                    cell.SetTypeAndTexture(CellType.water);
+                }
+                if (cell.Height > 0.1f && cell.Height < 0.4f)
+                    cell.SetTypeAndTexture(CellType.sand);
+                if (cell.Height > 0.4f && cell.Height < 0.7f)
+                    cell.SetTypeAndTexture(CellType.terrain);
+                if (cell.Height > 0.7f && cell.Height < 0.8f)
+                {
+                    cell.SetTypeAndTexture(CellType.rock);
+                    cell.Elevation = 1;
+                    cell.Texture = CellTexture.rock;
+                }
+                if (cell.Height > 0.8f && cell.Height < 0.9f)
+                {
+                    cell.SetTypeAndTexture(CellType.rock);
+                    cell.Elevation = 2;
+                    cell.Texture = CellTexture.winter_rock;
+                }
+                if (cell.Height > 0.9f && cell.Height <= 0.1f)
+                {
+                    cell.SetTypeAndTexture(CellType.rock);
+                    cell.Elevation = 3;
+                    cell.Texture = CellTexture.winter_1;
+                }
             }
         }
 
-        //Функция генерации островов
-        private static CellList GenerateIslands(CellList cells)
+        private static void InitHeight(float[,] weightMatrix)
         {
-            List<HexCell> waterList = CreateWaterCellsList(cells);
-            int startCell = waterList[UnityEngine.Random.Range(0, waterList.Count)].CellIndex;
-            int islandsCount = UnityEngine.Random.Range(waterList.Count / 6, waterList.Count);
-
-            while (islandsCount != 0)
-            {
-                GenerateIsland(ref cells, ref waterList, startCell);
-                startCell = waterList[UnityEngine.Random.Range(0, waterList.Count)].CellIndex;
-                islandsCount--;
-            }
-            return cells;
+            for (int i = 0; i < GlobalVariables.generationSettings.terrainChunkCountX * 3; i++)
+                for (int j = 0; j < GlobalVariables.generationSettings.terrainChunkCountY * 3; j++)
+                    weightMatrix[i, j] = float.MinValue;
         }
 
-        //Функция получения следующей клетки
-        private static int ChooseNextMainlandCell(int nextCell, int tryCount)
+        private static void AddRandomToAngles(float[,] weightMatrix)
         {
-            nextCell = UnityEngine.Random.Range(0, neighbourCells.Count());
-            if (neighbourCells[nextCell].Type == CellType.terrain)
-                nextCell = UnityEngine.Random.Range(0, neighbourCells.Count());
+            float initVal = GlobalVariables.generationSettings.terrainChunkCountX - 1;
+
+            weightMatrix[0, 0] = UnityEngine.Random.Range(-initVal, initVal);
+            weightMatrix[0, GlobalVariables.generationSettings.terrainChunkCountY - 1] = UnityEngine.Random.Range(-initVal, initVal);
+            weightMatrix[GlobalVariables.generationSettings.terrainChunkCountX - 1, 0] = UnityEngine.Random.Range(-initVal, initVal);
+            weightMatrix[GlobalVariables.generationSettings.terrainChunkCountX - 1, GlobalVariables.generationSettings.terrainChunkCountY - 1] = UnityEngine.Random.Range(-initVal, initVal);
+            UnityEngine.Debug.Log("AMOGUS!");
+        }
+
+        private static void RaiseToSecondPower(float[,] weightMatrix)
+        {
+            for (int i = 0; i < GlobalVariables.generationSettings.terrainChunkCountX * 3; i++)
+                for (int j = 0; j < GlobalVariables.generationSettings.terrainChunkCountY * 3; j++)
+                    weightMatrix[i, j] = (float)Math.Pow(weightMatrix[i, j], 2);
+        }
+
+        private static void GenerateDiamondSquareTerrain(float[,] weightMatrix)
+        {
+            for (int i = 0; i < GlobalVariables.generationSettings.terrainChunkCountX * 3; i++)
+                for (int j = 0; j < GlobalVariables.generationSettings.terrainChunkCountY * 3; j++)
+                    weightMatrix[i, j] = GetHeight(weightMatrix, i, j);
+
+            if (_raiseToSecondPower)
+                RaiseToSecondPower(weightMatrix);
+
+            Normalize(weightMatrix);
+
+        }
+
+        private static float GetHeight(float[,] weightMatrix, int x, int y)
+        {
+            if (x < 0 || x > GlobalVariables.generationSettings.terrainChunkCountX * 3 - 1 || y < 0 || y > GlobalVariables.generationSettings.terrainChunkCountY * 3 - 1)
+                return 0;
+            if (weightMatrix[x, y] != float.MinValue)
+                return weightMatrix[x, y];
+            var baseSize = 1;
+            while (((x & baseSize) == 0) && ((y & baseSize) == 0))
+                baseSize <<= 1;
+
+            if (((x & baseSize) != 0) && ((y & baseSize) != 0))
+                return SquareStep(weightMatrix, x, y, baseSize * 2);
             else
-                tryCount++;
-            if (tryCount > neighbourCells.Count())
-                nextCell = UnityEngine.Random.Range(0, neighbourCells.Count());
-            return nextCell;
+                return DiamondStep(weightMatrix, x, y, baseSize * 2);
         }
 
-        //Функция генерации одного материка
-        private static void GenerateMainland(CellList cells, List<HexCell> waterList, int startCell)
+        public static float SquareStep(float[,] weightMatrix, int x, int y, int currMax)
         {
-            int tryCount = 0;
-            int maxCount = UnityEngine.Random.Range(cells.CellCountX * cells.CellCountZ - 100, cells.CellCountX * cells.CellCountZ);
-            while (maxCount != 0)
-            {
-                int nextCell = startCell;
-                neighbourCells = cells[nextCell].neighbours;
-                neighbourCells.Add(cells[startCell], 0, 0);
-                nextCell = ChooseNextMainlandCell(nextCell, tryCount);
-                cells[neighbourCells[nextCell].CellIndex].SetTypeAndTexture(CellType.terrain);;
-                cells[neighbourCells[nextCell].CellIndex].Elevation = 0;
-                waterList.Remove(cells[neighbourCells[nextCell].CellIndex]);
-                startCell = neighbourCells[nextCell].CellIndex;
-                maxCount--;
-                if (tryCount == 3)
-                    startCell = waterList[UnityEngine.Random.Range(0, waterList.Count)].CellIndex;
-            }
+            weightMatrix[x, y] = Displace((GetHeight(weightMatrix, x - currMax / 2, y - currMax / 2) +
+                     GetHeight(weightMatrix, x + currMax / 2, y - currMax / 2) +
+                     GetHeight(weightMatrix, x + currMax / 2, y + currMax / 2) +
+                     GetHeight(weightMatrix, x - currMax / 2, y + currMax / 2)) / 4,
+                            _roughness, currMax);
+
+            return weightMatrix[x, y];
         }
 
-        //Функция генерации материкового ландшафта
-        private static CellList GenerateMainlands(CellList cells)
+        public static float DiamondStep(float[,] weightMatrix, int x, int y, int currMax)
         {
-            List<HexCell> waterList = CreateWaterCellsList(cells);
+            var halfSize = currMax / 2;
 
-            int mainlandCount = GlobalVariables.generationSettings.mainlandsCount;
-            int startCell = UnityEngine.Random.Range(0, waterList.Count);
-            for (int i = 0; i < mainlandCount; i++)
-            {
-                Loger.Log("Logs\\HexMapGenerator.log", $"\t{DateTime.Now} - GenerateMainland: START");
-                GenerateMainland(cells, waterList, startCell);
-                Loger.Log("Logs\\HexMapGenerator.log", $"\t{DateTime.Now} - GenerateMainland: FINISH");
-                startCell = waterList[UnityEngine.Random.Range(0, waterList.Count)].CellIndex;
-            }
-            return cells;
+            weightMatrix[x, y] = Displace((GetHeight(weightMatrix, x, y - halfSize) +
+                         GetHeight(weightMatrix, x + halfSize, y) +
+                         GetHeight(weightMatrix, x, y + halfSize) +
+                         GetHeight(weightMatrix, x - halfSize, y)) / 4,
+                                _roughness, currMax);
+
+            return weightMatrix[x, y];
         }
 
-        private static CellList GenerateTransition(CellList cells, int startCell, ref int maxCount)
+        public static float Displace(float val, float roughness, int currMax)
         {
-            neighbourCells = cells.GetNeighbours(startCell);
-            int minRockEleation = cells[startCell].Elevation;
-            foreach (var cell in neighbourCells)
-                if (cell.Type == CellType.rock && minRockEleation > cell.Elevation)
-                    minRockEleation = cell.Elevation;
-            foreach (var cell in neighbourCells)
-            {
-                if(cell.Type == CellType.terrain)
+            var diff = Math.Max(0.5f, Math.Min(val / _baseHeight, 1f));
+            var rnd = (float)(UnityEngine.Random.Range(0f, 1f) * 2f - 1f);
+            return val + rnd * roughness * (float)currMax;
+        }
+
+        private static void Normalize(float[,] weightMatrix)
+        {
+            var max = weightMatrix[0, 0];
+
+            for (int i = 0; i < GlobalVariables.generationSettings.terrainChunkCountX * 3; i++)
+                for (int j = 0; j < GlobalVariables.generationSettings.terrainChunkCountY * 3; j++)
                 {
-                    int index = cell.coords.MakeIndex(cells.CellCountX);
-                    cells[index].Elevation = minRockEleation - 1;
-                    maxCount--;
+                    if (weightMatrix[i, j] > max)
+                    {
+                        max = weightMatrix[i, j];
+                    }
                 }
-            }
-            CellList neighbourTerrainCells;
-            foreach(var cell in neighbourCells)
-            {
-                if(cell.Type == CellType.terrain)
+            if (max == float.MinValue) return;
+
+            for (int i = 0; i < GlobalVariables.generationSettings.terrainChunkCountX * 3; i++)
+                for (int j = 0; j < GlobalVariables.generationSettings.terrainChunkCountY * 3; j++)
                 {
-                    int indexCellElevation = cell.Elevation;
-                    int index = cell.coords.MakeIndex(cells.CellCountX);
-                    neighbourTerrainCells = cells.GetNeighbours(index);
-                    foreach(var tCell in neighbourTerrainCells)
-                        if (tCell.Elevation < cell.Elevation && tCell.Type == CellType.terrain)
-                        {
-                            int tIndex = tCell.coords.MakeIndex(cells.CellCountX);
-                            cells[tIndex].Elevation = indexCellElevation - 1;
-                            maxCount--;
-                        }
+                    weightMatrix[i, j] /= max;
                 }
-            }
-            return cells;
-        }
-
-        //Функция генерации горного биома
-        private static void GenerateRockBiome(ref CellList cells, ref List<HexCell> terrainList, ref int startCell, ref int maxCount)
-        {
-            List<HexCell> startRockCells = new List<HexCell>();
-            int rockRangeCellsCount = UnityEngine.Random.Range(3, 5);
-            int nextCell = UnityEngine.Random.Range(0, cells[startCell].neighbours.Length);
-
-            while (rockRangeCellsCount >= 0)
-            {
-                if (cells[startCell].neighbours[nextCell].Type == CellType.terrain)
-                {
-                    cells[cells[startCell].neighbours[nextCell].CellIndex].SetTypeAndTexture(CellType.rock);
-                    int Evaluate = 3;
-                    cells[cells[startCell].neighbours[nextCell].CellIndex].Elevation = Evaluate;
-                    cells[cells[startCell].neighbours[nextCell].CellIndex].Texture = CellTexture.winter_1;
-                    terrainList.Remove(cells[startCell].neighbours[nextCell]);
-
-                    startRockCells.Add(cells[startCell].neighbours[nextCell]);
-
-                    cells[startCell].SetTypeAndTexture(CellType.rock);
-                    cells[startCell].Texture = CellTexture.winter_1;
-                    terrainList.Remove(cells[startCell]);
-                    startRockCells.Add(cells[startCell]);
-                    cells[startCell].Elevation = Evaluate;
-
-                    rockRangeCellsCount -= 2;
-                    maxCount -= 2;
-
-                    nextCell = UnityEngine.Random.Range(0, cells[startCell].neighbours.Length);
-                    startCell = cells[startCell].neighbours[nextCell].CellIndex;
-                }
-                else
-                    nextCell = UnityEngine.Random.Range(0, cells[startCell].neighbours.Length);
-
-            }
-            foreach (var cell in startRockCells)
-            {
-                Loger.Log("Logs\\HexMapGenerator.log", $"\t\t{DateTime.Now} - GenerateTransition: START");
-                GenerateTransition(cells, cell.CellIndex, ref maxCount);
-                Loger.Log("Logs\\HexMapGenerator.log", $"\t\t{DateTime.Now} - GenerateTransition: FINISH");
-            }
-
-        }
-
-        //Функция генерации горного рельефа
-        private static CellList GenerateRock(CellList cells)
-        {
-            List<HexCell> terrainList = CreateTerrainCellsList(cells);
-            int maxCount = GetPercent(terrainList.Count, GlobalVariables.generationSettings.rockProcent);
-            int startCell = terrainList[UnityEngine.Random.Range(0, terrainList.Count)].CellIndex;
-
-            while (maxCount >= 0)
-            {
-                Loger.Log("Logs\\HexMapGenerator.log", $"\t{DateTime.Now} - GenerateRockBiome: START");
-                GenerateRockBiome(ref cells, ref terrainList, ref startCell, ref maxCount);
-                Loger.Log("Logs\\HexMapGenerator.log", $"\t{DateTime.Now} - GenerateRockBiome: FINISH");
-                startCell = terrainList[UnityEngine.Random.Range(0, terrainList.Count)].CellIndex;
-            }
-            cells = GenerateTrueRock(cells);
-            return cells;
-        }
+        }    
     }
 }

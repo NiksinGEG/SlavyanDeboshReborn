@@ -53,7 +53,7 @@ namespace Assets.Map.WorldMap
 			for (int i = 0; i < cells.Length; i++)
 				cells[i].neighbours = cells.GetNeighbours(i);
 
-			HexFieldGenerator.GenerateHexMap(cells);
+			//HexFieldGenerator.GenerateHexMap(cells);
 		}
 		void CreateChunks()
 		{
