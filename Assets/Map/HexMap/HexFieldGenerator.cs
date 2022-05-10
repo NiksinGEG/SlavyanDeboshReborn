@@ -263,40 +263,6 @@ namespace Assets.Map.WorldMap
             return weightMatrix;
         }
 
-        private static void FromHeightToTexture(CellList cells)
-        {
-            foreach(var cell in cells)
-            {
-                if(cell.Height < 0.1f)
-                {
-                    cell.Elevation = -1;
-                    cell.SetTypeAndTexture(CellType.water);
-                }
-                if (cell.Height > 0.1f && cell.Height < 0.4f)
-                    cell.SetTypeAndTexture(CellType.sand);
-                if (cell.Height > 0.4f && cell.Height < 0.7f)
-                    cell.SetTypeAndTexture(CellType.terrain);
-                if (cell.Height > 0.7f && cell.Height < 0.8f)
-                {
-                    cell.SetTypeAndTexture(CellType.rock);
-                    cell.Elevation = 1;
-                    cell.Texture = CellTexture.rock;
-                }
-                if (cell.Height > 0.8f && cell.Height < 0.9f)
-                {
-                    cell.SetTypeAndTexture(CellType.rock);
-                    cell.Elevation = 2;
-                    cell.Texture = CellTexture.winter_rock;
-                }
-                if (cell.Height > 0.9f && cell.Height <= 0.1f)
-                {
-                    cell.SetTypeAndTexture(CellType.rock);
-                    cell.Elevation = 3;
-                    cell.Texture = CellTexture.winter_1;
-                }
-            }
-        }
-
         private static void InitHeight(float[,] weightMatrix)
         {
             for (int i = 0; i < GlobalVariables.generationSettings.terrainChunkCountX * 3; i++)

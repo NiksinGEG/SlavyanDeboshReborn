@@ -210,22 +210,28 @@ public class MainMenuScript : MonoBehaviour
         }
     }
 
+    public void SwitchWaterHeightSLider()
+    {
+        GlobalVariables.generationSettings.waterHeihgt = waterLevelSlider.value;
+        RedrawMap();
+    }
+
     public void SwitchSeedFieldValue()
     {
         GlobalVariables.generationSettings.Seed = Convert.ToInt32(seedField.text);
         UnityEngine.Random.InitState(GlobalVariables.generationSettings.Seed);
+        GlobalVariables.generationSettings.heightMatrix = new float[GlobalVariables.generationSettings.terrainChunkCountX * 3, GlobalVariables.generationSettings.terrainChunkCountY * 3];
+        HexFieldGenerator.GenerateHexMap(GlobalVariables.generationSettings.heightMatrix);
+        RedrawMap();
     }
 
     public void GenerateSeedOnClick()
     {
         GlobalVariables.generationSettings.Seed = new System.Random().Next(3000000);
         seedField.text = GlobalVariables.generationSettings.Seed.ToString();
-    }
-
-    public void GeneratePreviewBtnOnClick()
-    {
-        Destroy(mapPrefab);
-        Instantiate(mapPrefab);
+        GlobalVariables.generationSettings.heightMatrix = new float[GlobalVariables.generationSettings.terrainChunkCountX * 3, GlobalVariables.generationSettings.terrainChunkCountY * 3];
+        HexFieldGenerator.GenerateHexMap(GlobalVariables.generationSettings.heightMatrix);
+        RedrawMap();
     }
 
     public void OpenGenerationMenu()
@@ -246,17 +252,18 @@ public class MainMenuScript : MonoBehaviour
         GlobalVariables.generationSettings.sandHeight = GlobalVariables.generationSettings.waterHeihgt + 0.5f;
 
         seedField.text = GlobalVariables.generationSettings.Seed.ToString();
+
+        GlobalVariables.generationSettings.heightMatrix = new float[GlobalVariables.generationSettings.terrainChunkCountX * 3, GlobalVariables.generationSettings.terrainChunkCountY * 3];
+        HexFieldGenerator.GenerateHexMap(GlobalVariables.generationSettings.heightMatrix);
         RedrawMap();
     }
 
     private void RedrawMap()
     {
-        GlobalVariables.generationSettings.heightMatrix = new float[GlobalVariables.generationSettings.terrainChunkCountX * 3, GlobalVariables.generationSettings.terrainChunkCountY * 3];
-        HexFieldGenerator.GenerateHexMap(GlobalVariables.generationSettings.heightMatrix);
         _texture = new Texture2D(GlobalVariables.generationSettings.terrainChunkCountX * 3, GlobalVariables.generationSettings.terrainChunkCountY * 3);
         Sprite sprite = Sprite.Create(_texture, new Rect(0, 0, _texture.width, _texture.height), new Vector2(0.0f, 1.0f), pixelsPerUnit: 1f);
-        var spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = sprite;
+        //var spriteRenderer = GetComponent<SpriteRenderer>();
+        //spriteRenderer.sprite = sprite;
 
         for (int i = 0; i < GlobalVariables.generationSettings.terrainChunkCountX * 3; i++)
         {
@@ -290,8 +297,9 @@ public class MainMenuScript : MonoBehaviour
         _texture.Apply();
 
         mapImage.sprite = sprite;
-        mapImage.SetNativeSize();
-        mapImage.transform.localScale = spriteRenderer.transform.localScale; 
+        //mapImage.SetNativeSize();
+        //Vector2 tmp = new Vector2(GlobalVariables.generationSettings.terrainChunkCountX * 3, GlobalVariables.generationSettings.terrainChunkCountY * 3);
+        //mapImage.transform.localScale = tmp;
                 
     }
 
