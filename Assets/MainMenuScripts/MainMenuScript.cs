@@ -137,6 +137,7 @@ public class MainMenuScript : MonoBehaviour
 
         Client_output.text = $"Readed config!";
 
+        GlobalVariables.Multiplayer = true;
         EnterGame();
     }
 

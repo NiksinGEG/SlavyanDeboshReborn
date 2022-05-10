@@ -47,6 +47,11 @@ namespace Assets.Map.WorldMap
             cells = res;
         }
 
+        public HexCell Get(int x, int z)
+        {
+            return cells[CellCountX * z + x];
+        }
+
         public HexCell this[int i]
         {
             get {
