@@ -213,6 +213,14 @@ public class MainMenuScript : MonoBehaviour
     public void SwitchWaterHeightSLider()
     {
         GlobalVariables.generationSettings.waterHeihgt = waterLevelSlider.value;
+        GlobalVariables.generationSettings.sandHeight = GlobalVariables.generationSettings.waterHeihgt + 0.05f;
+        GlobalVariables.generationSettings.terrainHeight = GlobalVariables.generationSettings.sandHeight + 0.5f;
+        RedrawMap();
+    }
+
+    public void SwitchRockHeightSlider()
+    {
+        GlobalVariables.generationSettings.rockHeight = rockLevelSlider.value;
         RedrawMap();
     }
 
@@ -249,7 +257,8 @@ public class MainMenuScript : MonoBehaviour
 
         GlobalVariables.generationSettings.rockHeight = 0.5f;
         GlobalVariables.generationSettings.waterHeihgt = 0.2f;
-        GlobalVariables.generationSettings.sandHeight = GlobalVariables.generationSettings.waterHeihgt + 0.5f;
+        GlobalVariables.generationSettings.sandHeight = GlobalVariables.generationSettings.waterHeihgt + 0.05f;
+        GlobalVariables.generationSettings.terrainHeight = GlobalVariables.generationSettings.sandHeight + 0.5f;
 
         seedField.text = GlobalVariables.generationSettings.Seed.ToString();
 
@@ -278,6 +287,10 @@ public class MainMenuScript : MonoBehaviour
                 else if(height < GlobalVariables.generationSettings.sandHeight)
                 {
                     pixelColor = Color.yellow;
+                }
+                else if(height < GlobalVariables.generationSettings.terrainHeight)
+                {
+                    pixelColor = Color.green;
                 }
                 else if(height < GlobalVariables.generationSettings.rockHeight)
                 {

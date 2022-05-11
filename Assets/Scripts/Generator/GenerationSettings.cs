@@ -20,6 +20,7 @@ public struct GenerationSettings
 
     public float waterHeihgt;
     public float sandHeight;
+    public float terrainHeight;
     public float rockHeight;
 
     public int mixingBiomesCount;
