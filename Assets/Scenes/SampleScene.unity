@@ -793,8 +793,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -450, y: -30}
-  m_SizeDelta: {x: 900, y: 60}
+  m_AnchoredPosition: {x: -350, y: -30}
+  m_SizeDelta: {x: 700, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &629585634
 MonoBehaviour:
@@ -2355,7 +2355,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u041F\u0440\u043E\u0442\u0438\u0432\u043D\u0438\u043A: Amogus228"
+  m_Text: "\u041F\u0440\u043E\u0442\u0438\u0432\u043D\u0438\u043A: Player1"
 --- !u!222 &1334038713
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3453,7 +3453,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0426\u0435\u043B\u043E\u0435 \u043D\u0438\u0447\u0435\u0433\u043E"
+  m_Text: 
 --- !u!222 &2112146182
 CanvasRenderer:
   m_ObjectHideFlags: 0
