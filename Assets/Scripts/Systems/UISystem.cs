@@ -17,9 +17,8 @@ public class UISystem : IECSSystem
 
     public void SetText(string text, string name)
     {
-        var f = new ECSFilter();
-        var cs = f.GetComponents<TextComponent>();
-        foreach (var c in cs)
+        var f = new ECSFilter<TextComponent>();
+        foreach (var c in f)
             if (c.Name == name)
                 c.Text = text;
     }
@@ -49,15 +48,14 @@ public class UISystem : IECSSystem
 
     public override void Run()
     {
-        var f = new ECSFilter();
-        var hComps = f.GetComponents<Hideable>();
-        foreach (var c in hComps)
+        var h_f = new ECSFilter<Hideable>();
+        var b_f = new ECSFilter<ButtonComponent>();
+        var t_f = new ECSFilter<TextComponent>();
+        foreach (var c in h_f)
             Handle(c);
-        var btnComps = f.GetComponents<ButtonComponent>();
-        foreach (var c in btnComps)
+        foreach (var c in b_f)
             Handle(c);
-        var txtComps = f.GetComponents<TextComponent>();
-        foreach (var c in txtComps)
+        foreach (var c in t_f)
             Handle(c);
     }
 }

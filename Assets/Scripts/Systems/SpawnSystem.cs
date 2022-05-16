@@ -14,10 +14,9 @@ public class SpawnSystem : IECSSystem
     public override void Run()
     {
         //Как получить все компоненты "SpawnComponent":
-        ECSFilter f = new ECSFilter();
-        List<SpawnComponent> components = f.GetComponents<SpawnComponent>();
+        ECSFilter<SpawnComponent> f = new ECSFilter<SpawnComponent>();
         //Конец мема. Чтобы работать с компонентом именно как с SpawnComponent (пример):
-        foreach (var c in components)
+        foreach (var c in f)
         {
             if(c.spawn)
             {

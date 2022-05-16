@@ -18,10 +18,10 @@ public class SelectionSystem : IECSSystem
 
     public void OnMouseRKM()
     {
-        List<Selectable> selected_c = new ECSFilter().GetComponents<Selectable>(c => c.IsSelected);
-        if(selected_c.Count > 0)
+        ECSFilter<Selectable> f = new ECSFilter<Selectable>(c => c.IsSelected);
+        if(f.Count > 0)
         {
-            Movable mov_c = selected_c[0].gameObject.GetComponent<Movable>();
+            Movable mov_c = f.First().gameObject.GetComponent<Movable>();
             if (mov_c == null)
                 return;
             Service.GetSystem<MoveSystem>().SetWay(mov_c, GlobalVariables.lastHit);
@@ -40,9 +40,8 @@ public class SelectionSystem : IECSSystem
             comp.IsSelected = false;
             return;
         }
-        ECSFilter filter = new ECSFilter();
-        List<Selectable> selectable_comps = filter.GetComponents<Selectable>(s => s.IsSelected);
-        foreach (var c in selectable_comps)
+        ECSFilter<Selectable> filter = new ECSFilter<Selectable>(s => s.IsSelected);
+        foreach (var c in filter)
             c.IsSelected = false;
         comp.IsSelected = true;
     }
@@ -96,9 +95,8 @@ public class SelectionSystem : IECSSystem
 
     public override void Run()
     {
-        ECSFilter f = new ECSFilter();
-        List<Selectable> components = f.GetComponents<Selectable>();
-        foreach(var c in components)
+        ECSFilter<Selectable> f = new ECSFilter<Selectable>();
+        foreach(var c in f)
         {
             if (c.IsSelected)
                 WhileSelected(c);

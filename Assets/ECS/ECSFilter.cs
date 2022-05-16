@@ -3,45 +3,77 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ECSFilter
+/// <summary>
+/// Используется для получения системой компонентов
+/// </summary>
+/// <typeparam name="T">Тип компонентов, с которыми будет работать система</typeparam>
+public class ECSFilter<T> : IEnumerable<T>, IEnumerator<T> where T: IECSComponent
 {
-    public List<IECSComponent> Components;
-    public ECSFilter(IECSComponent[] components) { Components = new List<IECSComponent>(components); }
-    public ECSFilter(List<IECSComponent> components) { Components = components; }
-    public ECSFilter() { Components = ECSInstance.Instance().Components; }
-    
-    public ECSFilter OfType<T>()
+    private int _pos;
+    private Func<T, bool> _pred;
+
+    public ECSFilter()
     {
-        List<IECSComponent> new_list = new List<IECSComponent>();
-        foreach(var c in Components)
-            if(c.GetType() == typeof(T))
-                new_list.Add(c);
-        return new ECSFilter(new_list);
-    }
-    public ECSFilter WithoutType<T>()
-    {
-        List<IECSComponent> new_list = new List<IECSComponent>();
-        foreach (var c in Components)
-            if (c.GetType() != typeof(T))
-                new_list.Add(c);
-        return new ECSFilter(new_list);
+        _pos = -1;
+        _pred = null;
     }
 
-    public List<T> GetComponents<T>() where T: IECSComponent
+    public ECSFilter(Func<T, bool> predicate)
     {
-        List<T> new_list = new List<T>();
-        foreach (var c in Components)
-            if (c.GetType() == typeof(T))
-                new_list.Add((T)c);
-        return new_list;
+        _pos = -1;
+        _pred = predicate;
     }
-    public List<T> GetComponents<T>(Func<T, bool> predicate) where T: IECSComponent
+
+    public bool MoveNext()
     {
-        List<T> new_list = new List<T>();
-        foreach (var c in Components)
-            if (c.GetType() == typeof(T))
-                if(predicate.Invoke((T)c))
-                    new_list.Add((T)c);
-        return new_list;
+        var cnt = ECSInstance.Instance().Components.Count;
+        while (_pos < cnt 
+                && ECSInstance.Instance().Components[_pos].GetType() != typeof(T)
+                && (_pred == null || !_pred.Invoke((T)ECSInstance.Instance().Components[_pos])))
+            _pos++;
+        return _pos < cnt;
+    }
+
+    public void Reset()
+    {
+        _pos = -1;
+    }
+    public void Dispose() { }
+
+    public T Current
+    {
+        get
+        {
+            if (_pos == -1 || _pos >= ECSInstance.Instance().Components.Count)
+                throw new ArgumentException();
+            return (T)ECSInstance.Instance().Components[_pos];
+        }
+    }
+    object IEnumerator.Current => throw new NotImplementedException();
+    IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
+    public IEnumerator<T> GetEnumerator()
+    {
+        for (int i = 0; i < ECSInstance.Instance().Components.Count; i++)
+            if (ECSInstance.Instance().Components[i].GetType() == typeof(T)
+                && (_pred == null || _pred.Invoke((T)ECSInstance.Instance().Components[i])))
+                yield return (T)ECSInstance.Instance().Components[i];
+    }
+
+    public int Count
+    {
+        get
+        {
+            int res = 0;
+            foreach (var c in this)
+                res++;
+            return res;
+        }
+    }
+
+    public T First()
+    {
+        foreach (var c in this)
+            return c;
+        return null;
     }
 }

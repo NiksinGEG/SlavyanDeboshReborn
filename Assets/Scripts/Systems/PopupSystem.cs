@@ -12,22 +12,22 @@ public class PopupSystem : IECSSystem
         Service.GetSystem<InputSystem>().MouseUpLKM += OnMouseLKM;
         Service.GetSystem<InputSystem>().MouseDownRKM += OnMouseRKM;
 
-        var comps = new ECSFilter().GetComponents<PopupComponent>();
-        foreach (var c in comps)
+        ECSFilter<PopupComponent> f = new ECSFilter<PopupComponent>();
+        foreach (var c in f)
             c.gameObject.SetActive(false);
     }
 
     public void OnMouseLKM(RaycastHit hit)
     {
-        var comps = new ECSFilter().GetComponents<PopupComponent>();
-        foreach (var c in comps)
+        ECSFilter<PopupComponent> f = new ECSFilter<PopupComponent>();
+        foreach (var c in f)
             c.gameObject.SetActive(false);
     }
 
     public void OnMouseRKM(RaycastHit hit)
     {
-        var comps = new ECSFilter().GetComponents<PopupComponent>();
-        foreach (var c in comps)
+        ECSFilter<PopupComponent> f = new ECSFilter<PopupComponent>();
+        foreach (var c in f)
         {
             ShowPopup(c);
             c.hit = hit;

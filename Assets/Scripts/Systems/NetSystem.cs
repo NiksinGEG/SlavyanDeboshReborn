@@ -92,9 +92,8 @@ public class NetSystem : IECSSystem
 
     public override void Run()
     {
-        ECSFilter f = new ECSFilter();
-        var netComps = f.GetComponents<NetComponent>();
-        foreach(var c in netComps)
+        ECSFilter<NetComponent> f = new ECSFilter<NetComponent>();
+        foreach(var c in f)
         {
             if(c.NeedSend)
             {
@@ -110,7 +109,8 @@ public class NetSystem : IECSSystem
             Serializer s = new Serializer(resp);
             string comp = s.GetValue("Component");
             int id = s.GetInt("Id");
-            var netComp = f.GetComponents<NetComponent>(c => c.Id == id)[0];
+            f = new ECSFilter<NetComponent>(c => c.Id == id);
+            var netComp = f.First();
             netComp.gameObject.GetComponent<Movable>().Set(comp);
         }
         recievedStrings.Clear();

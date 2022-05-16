@@ -67,9 +67,8 @@ public class MoveSystem : IECSSystem
     {
         Map.getInstance();
 
-        ECSFilter f = new ECSFilter();
-        List<Movable> components = f.GetComponents<Movable>();
-        foreach (var c in components)
+        ECSFilter<Movable> f = new ECSFilter<Movable>();
+        foreach (var c in f)
             UpdateComponent(c);
     }
 
